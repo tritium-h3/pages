@@ -1,0 +1,12 @@
+{
+  "colony-db32-buildings-ready": {
+    "0,0": "headquarters",
+    "0,1": "mine",
+    "0,2": "greenhouse"
+  },
+  "colony-db32-grounds-ready": [
+    "sand",
+    "dirt",
+    "grass"
+  ]
+}

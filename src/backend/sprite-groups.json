@@ -1,0 +1,188 @@
+{
+  "groups": [
+    {
+      "name": "BUILDING_GREY_1",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 0,
+      "startCol": 0,
+      "widthTiles": 5,
+      "heightTiles": 3
+    },
+    {
+      "name": "BUILDING_GREY_1B",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 0,
+      "startCol": 5,
+      "widthTiles": 5,
+      "heightTiles": 3
+    },
+    {
+      "name": "BUILDING_GREY_2",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 3,
+      "startCol": 0,
+      "widthTiles": 5,
+      "heightTiles": 3
+    },
+    {
+      "name": "BUILDING_GREY_2B",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 3,
+      "startCol": 5,
+      "widthTiles": 5,
+      "heightTiles": 3
+    },
+    {
+      "name": "BUILDING_GREY_3",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 6,
+      "startCol": 0,
+      "widthTiles": 5,
+      "heightTiles": 3
+    },
+    {
+      "name": "BUILDING_GREY_3B",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 6,
+      "startCol": 5,
+      "widthTiles": 5,
+      "heightTiles": 3
+    },
+    {
+      "name": "BUILDING_GREY_4",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 9,
+      "startCol": 0,
+      "widthTiles": 5,
+      "heightTiles": 3
+    },
+    {
+      "name": "BUILDING_GREY_4B",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 9,
+      "startCol": 5,
+      "widthTiles": 5,
+      "heightTiles": 3
+    },
+    {
+      "name": "BUILDING_GREY_5",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 12,
+      "startCol": 0,
+      "widthTiles": 5,
+      "heightTiles": 3
+    },
+    {
+      "name": "BUILDING_GREY_5B",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 12,
+      "startCol": 5,
+      "widthTiles": 5,
+      "heightTiles": 3
+    },
+    {
+      "name": "BUILDING_GREY_6",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 15,
+      "startCol": 0,
+      "widthTiles": 5,
+      "heightTiles": 2
+    },
+    {
+      "name": "BUILDING_GREY_6B",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 15,
+      "startCol": 5,
+      "widthTiles": 5,
+      "heightTiles": 2
+    },
+    {
+      "name": "HOUSE_GREY_1",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 17,
+      "startCol": 0,
+      "widthTiles": 2,
+      "heightTiles": 3
+    },
+    {
+      "name": "HOUSE_GREY_2",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 17,
+      "startCol": 2,
+      "widthTiles": 2,
+      "heightTiles": 3
+    },
+    {
+      "name": "HOUSE_GREY_3",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 20,
+      "startCol": 0,
+      "widthTiles": 2,
+      "heightTiles": 3
+    },
+    {
+      "name": "HOUSE_GREY_4",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 20,
+      "startCol": 2,
+      "widthTiles": 2,
+      "heightTiles": 3
+    },
+    {
+      "name": "ELEC_GREY_1",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 12,
+      "startCol": 10,
+      "widthTiles": 3,
+      "heightTiles": 3
+    },
+    {
+      "name": "ELEC_GREY_2",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 12,
+      "startCol": 13,
+      "widthTiles": 3,
+      "heightTiles": 3
+    },
+    {
+      "name": "FACTORY_GREY_1",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 15,
+      "startCol": 10,
+      "widthTiles": 3,
+      "heightTiles": 4
+    },
+    {
+      "name": "FACTORY_GREY_2",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 15,
+      "startCol": 13,
+      "widthTiles": 3,
+      "heightTiles": 4
+    },
+    {
+      "name": "OFFICE_GREY_1",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 19,
+      "startCol": 10,
+      "widthTiles": 2,
+      "heightTiles": 4
+    },
+    {
+      "name": "OFFICE_GREY_2",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 19,
+      "startCol": 12,
+      "widthTiles": 2,
+      "heightTiles": 4
+    },
+    {
+      "name": "TALL_GREY_1",
+      "sheet": "colony-db32-buildings-ready",
+      "startRow": 14,
+      "startCol": 17,
+      "widthTiles": 3,
+      "heightTiles": 9
+    }
+  ]
+}

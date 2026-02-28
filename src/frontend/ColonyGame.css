@@ -1,0 +1,70 @@
+/* ColonyGame styles */
+
+.colony-game {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e8edf5 0%, #dce6f0 100%);
+}
+
+.colony-game h1 {
+  margin-bottom: 10px;
+}
+
+.colony-controls {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.colony-build-panel h3,
+.colony-info-panel h3 {
+  margin-top: 0;
+}
+
+.colony-build-btn {
+  display: block;
+  margin: 5px 0;
+  padding: 8px 16px;
+  background-color: #ddd;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.colony-build-btn.selected {
+  background-color: #4caf50;
+  font-weight: bold;
+}
+
+.colony-info-box {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.colony-layout-info {
+  margin-top: 12px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.colony-layout-info-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.colony-instructions {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.colony-canvas {
+  border: 2px solid #000;
+  cursor: crosshair;
+  background-color: #1a1a1a;
+}
