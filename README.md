@@ -59,25 +59,47 @@ The build script:
 
 To assign custom labels, create `assets/sprite-labels.json` using `assets/sprite-labels.example.json` as a template.
 
-### Optional explicit building mapping (TMX GIDs)
-
-To force stable sprite assignment per building type, create `assets/building-gid-map.json` using `assets/building-gid-map.example.json`.
-
-The build writes explicit mappings into `public/sprites/manifest.json` under:
-
-- `mappings.buildingTypeToGid`
-- `mappings.buildingTypeToUrl`
-
-`ColonyGame` now prefers these explicit mappings first, then falls back to suggested/automatic selection.
-
 ### Frontend usage
 
 Use `src/frontend/sprites.ts`:
 
 ```ts
-import { loadSpriteManifest, getSpriteUrl } from './sprites';
+import {
+  loadSpriteManifest,
+  getSpriteUrl,
+  loadSpriteGroups,
+  resolveSpriteGroup,
+} from './sprites';
 
+// Load manifest (tile URLs, TMX data, etc.)
 const manifest = await loadSpriteManifest();
+const tileUrl = getSpriteUrl(manifest, 'colony-db32-grounds-ready:0,0');
+
+// Load sprite group definitions saved via the Sprite Group Editor
+const { groups } = await loadSpriteGroups();
+const group = groups.find(g => g.name === 'BUILDING_GREY_5');
+
+// Resolve to a 2-D URL grid (null = transparent/empty tile)
+const tileGrid = resolveSpriteGroup(group, manifest);
+// tileGrid[row][col] is a URL string or null
+```
+
+### Defining multi-tile sprites (Sprite Group Editor)
+
+Navigate to `/sprite-editor` to visually map rectangular regions of a sprite sheet to named groups. Groups are saved to `src/backend/sprite-groups.json` via `POST /api/sprite-groups` and served to games at startup via `GET /api/sprite-groups`.
+
+Group schema:
+
+```json
+{
+  "name": "BUILDING_GREY_5",
+  "sheet": "colony-db32-buildings-ready",
+  "startRow": 0, "startCol": 0,
+  "widthTiles": 4, "heightTiles": 4
+}
+```
+
+Coordinates are sheet-relative and stable across manifest rebuilds. Games look up a group by name and call `resolveSpriteGroup()` to get tile URLs — no hardcoded row/column constants needed.
 const roadSprite = getSpriteUrl(manifest, 'colony-db32-grounds-ready:0,0');
 ```
 

@@ -183,6 +183,126 @@
       "startCol": 17,
       "widthTiles": 3,
       "heightTiles": 9
+    },
+    {
+      "name": "PATH_ES",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 0,
+      "startCol": 13,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_WS",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 0,
+      "startCol": 15,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_NE",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 2,
+      "startCol": 13,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_NW",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 2,
+      "startCol": 15,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_WE",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 0,
+      "startCol": 14,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_NS",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 1,
+      "startCol": 13,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_NES",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 3,
+      "startCol": 15,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_WES",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 3,
+      "startCol": 16,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_NWE",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 4,
+      "startCol": 15,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_WES",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 4,
+      "startCol": 16,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_NWES",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 0,
+      "startCol": 16,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_S",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 1,
+      "startCol": 16,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_N",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 2,
+      "startCol": 16,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_E",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 3,
+      "startCol": 13,
+      "widthTiles": 1,
+      "heightTiles": 1
+    },
+    {
+      "name": "PATH_W",
+      "sheet": "colony-db32-grounds-ready",
+      "startRow": 3,
+      "startCol": 14,
+      "widthTiles": 1,
+      "heightTiles": 1
     }
   ]
 }

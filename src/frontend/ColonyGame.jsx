@@ -14,6 +14,53 @@ const BUILDING_TYPES = {
 // found in the API data (e.g. before any groups have been saved).
 const BUILDING_SPRITE_LAYOUT = {};
 
+// All path sprite group names in the order they appear in sprite-groups.json.
+const PATH_TILE_NAMES = [
+  'PATH_ES', 'PATH_WS', 'PATH_NE', 'PATH_NW', 'PATH_WE', 'PATH_NS',
+  'PATH_NES', 'PATH_WES', 'PATH_NWE', 'PATH_NWES',
+  'PATH_S', 'PATH_N', 'PATH_E', 'PATH_W',
+];
+
+/**
+ * Returns the cells that make up a straight horizontal or vertical line between
+ * two grid positions. Picks the dominant axis; ties go to horizontal.
+ */
+function getStraightLineCells(start, end) {
+  if (!start || !end) return [];
+  const dx = Math.abs(end.x - start.x);
+  const dy = Math.abs(end.y - start.y);
+  const cells = [];
+  if (dx >= dy) {
+    // Horizontal
+    const minX = Math.min(start.x, end.x);
+    const maxX = Math.max(start.x, end.x);
+    for (let x = minX; x <= maxX; x += 1) {
+      cells.push({ x, y: start.y });
+    }
+  } else {
+    // Vertical
+    const minY = Math.min(start.y, end.y);
+    const maxY = Math.max(start.y, end.y);
+    for (let y = minY; y <= maxY; y += 1) {
+      cells.push({ x: start.x, y });
+    }
+  }
+  return cells;
+}
+
+/**
+ * Returns the PATH_* sprite name for a cell given which cardinal neighbors are
+ * also path cells. The canonical name order is N W E S.
+ */
+function getPathTileName(n, w, e, s) {
+  const parts = [];
+  if (n) parts.push('N');
+  if (w) parts.push('W');
+  if (e) parts.push('E');
+  if (s) parts.push('S');
+  return parts.length > 0 ? `PATH_${parts.join('')}` : 'PATH_NWES';
+}
+
 function inferFlatGroundUrls(manifest, groundsSheet) {
   const fallback = (groundsSheet?.sprites ?? []).slice(0, 1).map((sprite) => sprite.url);
   if (!groundsSheet?.sprites?.length) {
@@ -91,6 +138,13 @@ export default function ColonyGame() {
   const [buildingSpriteTilesByType, setBuildingSpriteTilesByType] = useState({});
   const [spriteImages, setSpriteImages] = useState({});
 
+  // Path building state
+  const [mode, setMode] = useState('build'); // 'build' | 'path'
+  const [paths, setPaths] = useState(new Set()); // Set of "x,y" strings
+  const [pathDragStart, setPathDragStart] = useState(null);
+  const [pathPreviewCells, setPathPreviewCells] = useState([]);
+  const [pathSpriteTilesByName, setPathSpriteTilesByName] = useState({});
+
   const canvasRef = useRef(null);
 
   // Returns the tile dimensions { w, h } of a building type from its loaded
@@ -138,8 +192,9 @@ export default function ColonyGame() {
     return true;
   };
 
-  // Handle canvas click
+  // Handle canvas click (build mode only)
   const handleCanvasClick = (e) => {
+    if (mode !== 'build') return;
     const { x, y } = getGridCell(e);
     const { w, h } = getFootprint(selectedBuildingType);
     const originX = x - Math.floor(w / 2);
@@ -154,13 +209,39 @@ export default function ColonyGame() {
     }
   };
 
+  const handleCanvasMouseDown = (e) => {
+    if (mode !== 'path') return;
+    const cell = getGridCell(e);
+    setPathDragStart(cell);
+    setPathPreviewCells([cell]);
+  };
+
+  const handleCanvasMouseUp = (e) => {
+    if (mode !== 'path' || !pathDragStart) return;
+    if (pathPreviewCells.length > 0) {
+      setPaths((prev) => {
+        const next = new Set(prev);
+        pathPreviewCells.forEach(({ x, y }) => next.add(`${x},${y}`));
+        return next;
+      });
+    }
+    setPathDragStart(null);
+    setPathPreviewCells([]);
+  };
+
   const handleCanvasMouseMove = (e) => {
     const { x, y } = getGridCell(e);
     setHoverCell({ x, y });
+    if (mode === 'path' && pathDragStart) {
+      setPathPreviewCells(getStraightLineCells(pathDragStart, { x, y }));
+    }
   };
 
   const handleCanvasMouseLeave = () => {
     setHoverCell(null);
+    if (mode === 'path') {
+      setPathPreviewCells([]);
+    }
   };
 
   useEffect(() => {
@@ -204,8 +285,20 @@ export default function ColonyGame() {
           }
         });
 
+        // Load path sprites (each group is 1×1 tile on the grounds sheet)
+        const nextPathSpriteUrlByName = {};
+        PATH_TILE_NAMES.forEach((pathName) => {
+          const group = spriteGroupsData?.groups.find((g) => g.name === pathName);
+          if (group) {
+            const resolved = resolveSpriteGroup(group, manifest);
+            const url = resolved[0]?.[0] ?? null;
+            if (url) nextPathSpriteUrlByName[pathName] = url;
+          }
+        });
+
         setGroundSpriteUrls(nextGroundUrls);
         setBuildingSpriteTilesByType(nextBuildingTilesByType);
+        setPathSpriteTilesByName(nextPathSpriteUrlByName);
       } catch (error) {
         console.error('Unable to load sprite manifest. Using fallback colors.', error);
       }
@@ -222,6 +315,7 @@ export default function ColonyGame() {
     const urls = [
       ...groundSpriteUrls,
       ...Object.values(buildingSpriteTilesByType).flatMap((grid) => grid.flat()),
+      ...Object.values(pathSpriteTilesByName),
     ].filter(Boolean);
 
     if (urls.length === 0) {
@@ -260,7 +354,7 @@ export default function ColonyGame() {
     return () => {
       cancelled = true;
     };
-  }, [groundSpriteUrls, buildingSpriteTilesByType]);
+  }, [groundSpriteUrls, buildingSpriteTilesByType, pathSpriteTilesByName]);
 
   // Draw the game
   useEffect(() => {
@@ -313,6 +407,49 @@ export default function ColonyGame() {
       ctx.stroke();
     }
     
+    // Draw placed paths (ground overlays — drawn before buildings)
+    paths.forEach((key) => {
+      const [px, py] = key.split(',').map(Number);
+      const n = paths.has(`${px},${py - 1}`);
+      const s = paths.has(`${px},${py + 1}`);
+      const e = paths.has(`${px + 1},${py}`);
+      const w = paths.has(`${px - 1},${py}`);
+      const tileName = getPathTileName(n, w, e, s);
+      const url = pathSpriteTilesByName[tileName] ?? pathSpriteTilesByName['PATH_NWES'];
+      const img = spriteImages[url];
+      if (img) {
+        ctx.drawImage(img, px * CELL_SIZE, py * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+      } else {
+        ctx.fillStyle = 'rgba(120, 90, 50, 0.6)';
+        ctx.fillRect(px * CELL_SIZE + 1, py * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+      }
+    });
+
+    // Draw path drag preview
+    if (mode === 'path' && pathPreviewCells.length > 0) {
+      const previewSet = new Set(pathPreviewCells.map((c) => `${c.x},${c.y}`));
+      const allCells = new Set([...paths, ...previewSet]);
+      ctx.save();
+      ctx.globalAlpha = 0.65;
+      pathPreviewCells.forEach(({ x, y }) => {
+        if (x < 0 || y < 0 || x >= GRID_SIZE || y >= GRID_SIZE) return;
+        const n = allCells.has(`${x},${y - 1}`);
+        const s = allCells.has(`${x},${y + 1}`);
+        const e = allCells.has(`${x + 1},${y}`);
+        const w = allCells.has(`${x - 1},${y}`);
+        const tileName = getPathTileName(n, w, e, s);
+        const url = pathSpriteTilesByName[tileName] ?? pathSpriteTilesByName['PATH_NWES'];
+        const img = spriteImages[url];
+        if (img) {
+          ctx.drawImage(img, x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        } else {
+          ctx.fillStyle = 'rgba(160, 120, 60, 0.7)';
+          ctx.fillRect(x * CELL_SIZE + 1, y * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+        }
+      });
+      ctx.restore();
+    }
+
     // Draw buildings
     buildings.forEach(building => {
       const buildingType = BUILDING_TYPES[building.type];
@@ -338,8 +475,8 @@ export default function ColonyGame() {
       }
     });
 
-    // Draw hover placement preview
-    if (hoverCell) {
+    // Draw hover placement preview (build mode only)
+    if (mode === 'build' && hoverCell) {
       const { w: fw, h: fh } = getFootprint(selectedBuildingType);
       const originX = hoverCell.x - Math.floor(fw / 2);
       const originY = hoverCell.y - Math.floor(fh / 2);
@@ -390,7 +527,7 @@ export default function ColonyGame() {
       ctx.restore();
     }
 
-  }, [buildings, selectedBuildingType, hoverCell, groundSpriteUrls, buildingSpriteTilesByType, spriteImages]);
+  }, [buildings, selectedBuildingType, hoverCell, groundSpriteUrls, buildingSpriteTilesByType, spriteImages, paths, mode, pathPreviewCells, pathSpriteTilesByName]);
 
   return (
     <div className="colony-game">
@@ -398,16 +535,34 @@ export default function ColonyGame() {
       
       <div className="colony-controls">
         <div className="colony-build-panel">
-          <h3>Build:</h3>
-          {Object.entries(BUILDING_TYPES).map(([key, type]) => (
-            <button
-              key={key}
-              onClick={() => setSelectedBuildingType(key)}
-              className={`colony-build-btn${selectedBuildingType === key ? ' selected' : ''}`}
-            >
-              {type.name}
-            </button>
-          ))}
+          <h3>Mode:</h3>
+          <button
+            onClick={() => setMode('build')}
+            className={`colony-build-btn${mode === 'build' ? ' selected' : ''}`}
+          >
+            🏗 Build
+          </button>
+          <button
+            onClick={() => { setMode('path'); setPathDragStart(null); setPathPreviewCells([]); }}
+            className={`colony-build-btn${mode === 'path' ? ' selected' : ''}`}
+          >
+            🛤 Path
+          </button>
+
+          {mode === 'build' && (
+            <>
+              <h3 style={{ marginTop: '0.75rem' }}>Building:</h3>
+              {Object.entries(BUILDING_TYPES).map(([key, type]) => (
+                <button
+                  key={key}
+                  onClick={() => setSelectedBuildingType(key)}
+                  className={`colony-build-btn${selectedBuildingType === key ? ' selected' : ''}`}
+                >
+                  {type.name}
+                </button>
+              ))}
+            </>
+          )}
         </div>
 
         <div className="colony-info-panel">
@@ -418,9 +573,19 @@ export default function ColonyGame() {
 
           <div className="colony-instructions">
             <p><strong>Instructions:</strong></p>
-            <p>• Click places a building centered on your cursor</p>
-            <p>• Select a building type from the left</p>
-            <p>• Buildings cannot overlap</p>
+            {mode === 'build' ? (
+              <>
+                <p>• Click places a building centered on your cursor</p>
+                <p>• Select a building type from the left</p>
+                <p>• Buildings cannot overlap</p>
+              </>
+            ) : (
+              <>
+                <p>• Click and drag to draw a straight path</p>
+                <p>• Paths snap to horizontal or vertical lines</p>
+                <p>• Path tiles update automatically at junctions</p>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -430,9 +595,12 @@ export default function ColonyGame() {
         width={GRID_SIZE * CELL_SIZE}
         height={GRID_SIZE * CELL_SIZE}
         onClick={handleCanvasClick}
+        onMouseDown={handleCanvasMouseDown}
+        onMouseUp={handleCanvasMouseUp}
         onMouseMove={handleCanvasMouseMove}
         onMouseLeave={handleCanvasMouseLeave}
         className="colony-canvas"
+        style={{ cursor: mode === 'path' ? 'crosshair' : 'default' }}
       />
     </div>
   );

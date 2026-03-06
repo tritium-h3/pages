@@ -5,6 +5,7 @@ import WikiStory from './WikiStory'
 import TodoList from './TodoList'
 import LLMDuoChat from './LLMDuoChat'
 import SpriteEditor from './SpriteEditor'
+import TransitDisplay from './TransitDisplay'
 import { getBackendOrigin, apiUrl } from './backendApi'
 import './App.css'
 
@@ -107,6 +108,10 @@ function App() {
     return <SpriteEditor />
   }
 
+  if (pathname === '/transit') {
+    return <TransitDisplay />
+  }
+
   return (
     <div className="app-menu">
       <div className="backend-status">
@@ -134,6 +139,9 @@ function App() {
       </button>
       <button className="menu-btn" onClick={() => navigateTo('/sprite-editor')}>
         🖼 Sprite Group Editor
+      </button>
+      <button className="menu-btn" onClick={() => navigateTo('/transit')}>
+        🚇 Transit Display
       </button>
     </div>
   )

@@ -1,9 +1,11 @@
+import 'dotenv/config';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import http from 'http';
 
 // Import route modules
 import todosRouter, { initTodoStorage } from './routes/todos.js';
+import mbtaRouter from './routes/mbta.js';
 import llmDuoChatRouter, { initLLMDuoChatWebSocket } from './routes/llm-duo-chat.js';
 import wikipediaStoryRouter from './routes/wikipedia-story.js';
 import spriteGroupsRouter from './routes/sprite-groups.js';
@@ -53,6 +55,7 @@ app.use('/api', todosRouter);
 app.use('/api', llmDuoChatRouter);
 app.use('/api', wikipediaStoryRouter);
 app.use('/api', spriteGroupsRouter);
+app.use('/api', mbtaRouter);
 
 // Error handling
 app.use((err: Error, req: Request, res: Response) => {

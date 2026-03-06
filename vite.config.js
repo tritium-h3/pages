@@ -7,5 +7,9 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     allowedHosts: ['torment-nexus.local', 'samarkand.hopto.org'],
+    proxy: {
+      '/api': 'http://localhost:5174',
+      '/ws': { target: 'ws://localhost:5174', ws: true },
+    },
   },
 })
