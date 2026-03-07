@@ -62,6 +62,7 @@ interface JourneyOption {
   arriveTransferInMins: number; // minutes from now when you arrive at the transfer stop
   waitMins: number;             // minutes spent waiting at the transfer stop
   connectDepartsInMins: number; // minutes from now when the connecting service departs
+  isEstimated?: boolean;        // true when derived from schedule frequency, not live prediction
 }
 
 // One catchable service reachable from Green Street
@@ -126,14 +127,27 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
   }
 
   try {
+    // HH:MM string for schedule min_time filter — only fetch future departures
+    const nowHHMM = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
     // Parallel fetch: Green Street + every transfer/connecting stop
     const [
       gsPreds,
       dtxRedPreds,
       stateBlueEastPreds,
-      hayGreenPreds,
+      stateBlueWestPreds,
+      stateBlueEastScheds,
+      stateBlueWestScheds,
+      hayGreenBranchPreds,
+      hayGreenGLXPreds,
       backBayCRPreds,
       northCRPreds,
+      backBayCRScheds,
+      northCRScheds,
+      sstCRPreds,
+      sstCRScheds,
+      forlCRPreds,
+      forlCRScheds,
       alertsResp,
     ] = await Promise.all([
       mbtaFetch(
@@ -141,7 +155,7 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
         apiKey,
       ),
       mbtaFetch(
-        `/predictions?filter[stop]=place-dwnxg&filter[route]=Red&sort=departure_time`,
+        `/predictions?filter[stop]=place-dwnxg&filter[route]=Red&sort=departure_time&include=trip`,
         apiKey,
       ),
       mbtaFetch(
@@ -149,7 +163,26 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
         apiKey,
       ),
       mbtaFetch(
-        `/predictions?filter[stop]=place-haecl&filter[route]=Green-B,Green-C,Green-D,Green-E&filter[direction_id]=0&sort=departure_time`,
+        `/predictions?filter[stop]=place-state&filter[route]=Blue&filter[direction_id]=1&sort=departure_time`,
+        apiKey,
+      ),
+      // Blue Line schedules — fallback when prediction window is too short
+      mbtaFetch(
+        `/schedules?filter[stop]=place-state&filter[route]=Blue&filter[direction_id]=0&filter[min_time]=${nowHHMM}&sort=departure_time&page[limit]=8`,
+        apiKey,
+      ),
+      mbtaFetch(
+        `/schedules?filter[stop]=place-state&filter[route]=Blue&filter[direction_id]=1&filter[min_time]=${nowHHMM}&sort=departure_time&page[limit]=8`,
+        apiKey,
+      ),
+      // Green Line at Park Street (via DTX underground concourse) — direction_id=0 = outbound to branches
+      mbtaFetch(
+        `/predictions?filter[stop]=place-pktrm&filter[route]=Green-B,Green-C,Green-D,Green-E&filter[direction_id]=0&sort=departure_time`,
+        apiKey,
+      ),
+      // Green Line at Park Street — direction_id=1 = inbound/GLX (toward Medford/Union Sq)
+      mbtaFetch(
+        `/predictions?filter[stop]=place-pktrm&filter[route]=Green-D,Green-E&filter[direction_id]=1&sort=departure_time`,
         apiKey,
       ),
       // Back Bay CR — both directions so inbound trains are also visible
@@ -159,6 +192,33 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       ),
       mbtaFetch(
         `/predictions?filter[stop]=place-north&filter[route_type]=2&sort=departure_time`,
+        apiKey,
+      ),
+      // CR schedules — fallback when predictions are unavailable (off-peak gaps)
+      mbtaFetch(
+        `/schedules?filter[stop]=place-bbsta&filter[route_type]=2&filter[min_time]=${nowHHMM}&sort=departure_time&page[limit]=24`,
+        apiKey,
+      ),
+      mbtaFetch(
+        `/schedules?filter[stop]=place-north&filter[route_type]=2&filter[min_time]=${nowHHMM}&sort=departure_time&page[limit]=24`,
+        apiKey,
+      ),
+      // South Station CR (walk from DTX ~5 min) — South Side lines only
+      mbtaFetch(
+        `/predictions?filter[stop]=place-sstat&filter[route_type]=2&sort=departure_time`,
+        apiKey,
+      ),
+      mbtaFetch(
+        `/schedules?filter[stop]=place-sstat&filter[route_type]=2&filter[min_time]=${nowHHMM}&sort=departure_time&page[limit]=24`,
+        apiKey,
+      ),
+      // Forest Hills CR (OL southbound, 4 min) — Needham Line only
+      mbtaFetch(
+        `/predictions?filter[stop]=place-forhl&filter[route]=CR-Needham&sort=departure_time`,
+        apiKey,
+      ),
+      mbtaFetch(
+        `/schedules?filter[stop]=place-forhl&filter[route]=CR-Needham&filter[min_time]=${nowHHMM}&sort=departure_time&page[limit]=12`,
         apiKey,
       ),
       mbtaFetch(
@@ -172,6 +232,14 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
     for (const inc of gsPreds.included ?? []) {
       if (inc.type === 'trip' && typeof inc.attributes.headsign === 'string') {
         headsignById[inc.id] = inc.attributes.headsign;
+      }
+    }
+
+    // Also build headsign lookup for DTX Red Line trips
+    const dtxHeadsignById: Record<string, string> = {};
+    for (const inc of dtxRedPreds.included ?? []) {
+      if (inc.type === 'trip' && typeof inc.attributes.headsign === 'string') {
+        dtxHeadsignById[inc.id] = inc.attributes.headsign;
       }
     }
 
@@ -189,6 +257,9 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       const tripId = p.relationships?.trip?.data?.id;
       const headsign = tripId ? (headsignById[tripId] ?? null) : null;
       const dep: Departure = { time, minutesAway: Math.max(0, mins), headsign };
+      // Only include trains with >2 min until departure — 3 min walk from home means
+      // anything at 0-2 min is already missed.
+      if (mins <= 2) continue;
       if (stopId === GS_NORTH) northbound.push(dep);
       else southbound.push(dep);
     }
@@ -222,8 +293,36 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       return null;
     }
 
-    // For each OL train (up to 5), compute the soonest catchable connection.
-    // Returns up to 2 journey options.
+    // Estimate wait from schedule frequency when no live predictions are available.
+    // Returns half the average headway between upcoming scheduled trips.
+    function headwayEstimate(
+      scheds: MbtaApiResponse,
+      arrivalDate: Date,
+    ): { minutesFromNow: number; waitMins: number } | null {
+      const upcoming = scheds.data
+        .map(s => pickTime(s.attributes))
+        .filter((t): t is string => t !== null)
+        .map(t => new Date(t))
+        .filter(d => !isNaN(d.getTime()) && d >= arrivalDate)
+        .sort((a, b) => a.getTime() - b.getTime());
+      if (upcoming.length < 2) return null;
+      const sample = Math.min(upcoming.length, 4);
+      let totalGapMs = 0;
+      for (let i = 1; i < sample; i++) {
+        totalGapMs += upcoming[i].getTime() - upcoming[i - 1].getTime();
+      }
+      const headwayMins = totalGapMs / (sample - 1) / 60_000;
+      const waitMins = Math.max(1, Math.round(headwayMins / 2));
+      const estimatedDep = new Date(arrivalDate.getTime() + waitMins * 60_000);
+      return {
+        minutesFromNow: Math.max(0, Math.round((estimatedDep.getTime() - now.getTime()) / 60_000)),
+        waitMins,
+      };
+    }
+
+    // For each OL train (up to 6), compute the soonest catchable connection.
+    // Falls back to schedule-frequency estimate when predictions are empty.
+    // Returns up to 2 journey options (only 1 if estimated).
     function buildJourneys(
       olTrains: Departure[],
       olDir: 'N' | 'S',
@@ -231,24 +330,113 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       olTravelMins: number,
       walkMins: number,
       connectPreds: MbtaApiResponse,
+      connectScheds?: MbtaApiResponse,
     ): JourneyOption[] {
       const results: JourneyOption[] = [];
       for (const train of olTrains.slice(0, 6)) {
         const arrivalDate = new Date(train.time);
         arrivalDate.setMinutes(arrivalDate.getMinutes() + olTravelMins + walkMins);
-        const conn = firstAfter(connectPreds, arrivalDate);
-        if (!conn) continue;
         const arriveTransferInMins = Math.round(
           (arrivalDate.getTime() - now.getTime()) / 60_000,
         );
-        results.push({
-          olDepartsInMins: train.minutesAway,
-          olDirection: olDir,
-          transferStop: transferStopName,
-          arriveTransferInMins,
-          waitMins: conn.waitMins,
-          connectDepartsInMins: conn.minutesFromNow,
-        });
+        const conn = firstAfter(connectPreds, arrivalDate);
+        if (conn) {
+          results.push({
+            olDepartsInMins: train.minutesAway,
+            olDirection: olDir,
+            transferStop: transferStopName,
+            arriveTransferInMins,
+            waitMins: conn.waitMins,
+            connectDepartsInMins: conn.minutesFromNow,
+          });
+          if (results.length >= 2) break;
+        } else if (connectScheds && results.length === 0) {
+          // No live prediction — estimate from schedule headway for first journey only
+          const est = headwayEstimate(connectScheds, arrivalDate);
+          if (est) {
+            results.push({
+              olDepartsInMins: train.minutesAway,
+              olDirection: olDir,
+              transferStop: transferStopName,
+              arriveTransferInMins,
+              waitMins: est.waitMins,
+              connectDepartsInMins: est.minutesFromNow,
+              isEstimated: true,
+            });
+            break; // Only one estimated journey
+          }
+        }
+      }
+      return results;
+    }
+
+    // Tries all transfer options for each OL train and returns the best 2 journeys
+    // across all options, sorted by earliest board time.
+    function buildBestJourneys(
+      transferOptions: Array<{
+        stopName: string;
+        olDir: 'N' | 'S';
+        olTravelMins: number;
+        walkMins: number;
+        preds: MbtaApiResponse;
+        scheds?: MbtaApiResponse;
+      }>,
+    ): JourneyOption[] {
+      const pool: JourneyOption[] = [];
+      for (const opt of transferOptions) {
+        const olTrains = opt.olDir === 'N' ? northbound : southbound;
+        let foundLive = false;
+        for (const train of olTrains.slice(0, 6)) {
+          const arrivalDate = new Date(train.time);
+          arrivalDate.setMinutes(arrivalDate.getMinutes() + opt.olTravelMins + opt.walkMins);
+          const arriveTransferInMins = Math.round((arrivalDate.getTime() - now.getTime()) / 60_000);
+          const conn = firstAfter(opt.preds, arrivalDate);
+          if (conn) {
+            foundLive = true;
+            pool.push({
+              olDepartsInMins: train.minutesAway,
+              olDirection: opt.olDir,
+              transferStop: opt.stopName,
+              arriveTransferInMins,
+              waitMins: conn.waitMins,
+              connectDepartsInMins: conn.minutesFromNow,
+            });
+          }
+        }
+        // Schedule fallback only if this option had zero live predictions
+        if (!foundLive && opt.scheds) {
+          for (const train of olTrains.slice(0, 3)) {
+            const arrivalDate = new Date(train.time);
+            arrivalDate.setMinutes(arrivalDate.getMinutes() + opt.olTravelMins + opt.walkMins);
+            const arriveTransferInMins = Math.round((arrivalDate.getTime() - now.getTime()) / 60_000);
+            const est = headwayEstimate(opt.scheds, arrivalDate);
+            if (est) {
+              pool.push({
+                olDepartsInMins: train.minutesAway,
+                olDirection: opt.olDir,
+                transferStop: opt.stopName,
+                arriveTransferInMins,
+                waitMins: est.waitMins,
+                connectDepartsInMins: est.minutesFromNow,
+                isEstimated: true,
+              });
+              break;
+            }
+          }
+        }
+      }
+      // Sort by earliest board time; pick best 2 ensuring the 2nd uses a different OL departure
+      pool.sort((a, b) => a.connectDepartsInMins - b.connectDepartsInMins);
+      const results: JourneyOption[] = [];
+      const seenConnect = new Set<string>();
+      const seenOLDep = new Set<number>();
+      for (const j of pool) {
+        const connectKey = `${j.transferStop}:${j.connectDepartsInMins}`;
+        if (seenConnect.has(connectKey)) continue;
+        if (results.length > 0 && seenOLDep.has(j.olDepartsInMins)) continue;
+        seenConnect.add(connectKey);
+        seenOLDep.add(j.olDepartsInMins);
+        results.push(j);
         if (results.length >= 2) break;
       }
       return results;
@@ -261,8 +449,8 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
     // 1. Orange Line — Northbound (direct)
     routes.push({
       id: 'ol-north',
-      routeName: 'Orange Line',
-      direction: 'Northbound · Oak Grove',
+      routeName: 'Oak Grove',
+      direction: 'Northbound',
       shortCode: 'OL',
       lineColor: '#ED8B00',
       lineTextColor: '#FFFFFF',
@@ -274,8 +462,8 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
     // 2. Orange Line — Southbound (direct)
     routes.push({
       id: 'ol-south',
-      routeName: 'Orange Line',
-      direction: 'Southbound · Forest Hills',
+      routeName: 'Forest Hills',
+      direction: 'Southbound',
       shortCode: 'OL',
       lineColor: '#ED8B00',
       lineTextColor: '#FFFFFF',
@@ -292,8 +480,8 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
     if (redAlewifeJourneys.length > 0) {
       routes.push({
         id: 'rl-alewife',
-        routeName: 'Red Line',
-        direction: 'via Downtown Crossing · Alewife',
+        routeName: 'Alewife',
+        direction: 'via Downtown Crossing',
         shortCode: 'RL',
         lineColor: '#DA291C',
         lineTextColor: '#FFFFFF',
@@ -303,16 +491,23 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       });
     }
 
-    // 4. Red Line — toward Ashmont / Braintree (DTX, OL North, direction_id=0 on Red)
-    const dtxRedAshmont = { data: dtxRedPreds.data.filter(p => p.attributes.direction_id === 0) };
+    // 4a. Red Line — toward Ashmont (DTX, direction_id=0, headsign contains "Ashmont")
+    const dtxRedAshmont = {
+      data: dtxRedPreds.data.filter(p => {
+        if (p.attributes.direction_id !== 0) return false;
+        const tripId = p.relationships?.trip?.data?.id;
+        const hs = tripId ? dtxHeadsignById[tripId] : undefined;
+        return !hs || hs.toLowerCase().includes('ashmont');
+      }),
+    };
     const redAshmontJourneys = buildJourneys(
       northbound, 'N', 'Downtown Crossing', OL_TRAVEL['place-dwnxg'], 2, dtxRedAshmont,
     );
     if (redAshmontJourneys.length > 0) {
       routes.push({
         id: 'rl-ashmont',
-        routeName: 'Red Line',
-        direction: 'via Downtown Crossing · Ashmont / Braintree',
+        routeName: 'Ashmont',
+        direction: 'via Downtown Crossing',
         shortCode: 'RL',
         lineColor: '#DA291C',
         lineTextColor: '#FFFFFF',
@@ -322,66 +517,91 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       });
     }
 
-    // 5. Blue Line — eastbound toward Airport / Wonderland
-    const blueJourneys = buildJourneys(
-      northbound, 'N', 'State Street', OL_TRAVEL['place-state'], 3, stateBlueEastPreds,
+    // 4b. Red Line — toward Braintree (DTX, direction_id=0, headsign contains "Braintree")
+    const dtxRedBraintree = {
+      data: dtxRedPreds.data.filter(p => {
+        if (p.attributes.direction_id !== 0) return false;
+        const tripId = p.relationships?.trip?.data?.id;
+        const hs = tripId ? dtxHeadsignById[tripId] : undefined;
+        return hs?.toLowerCase().includes('braintree') ?? false;
+      }),
+    };
+    const redBraintreeJourneys = buildJourneys(
+      northbound, 'N', 'Downtown Crossing', OL_TRAVEL['place-dwnxg'], 2, dtxRedBraintree,
     );
-    if (blueJourneys.length > 0) {
+    if (redBraintreeJourneys.length > 0) {
+      routes.push({
+        id: 'rl-braintree',
+        routeName: 'Braintree',
+        direction: 'via Downtown Crossing',
+        shortCode: 'RL',
+        lineColor: '#DA291C',
+        lineTextColor: '#FFFFFF',
+        isDirect: false,
+        directDeps: [],
+        journeys: redBraintreeJourneys,
+      });
+    }
+
+    // 5a. Blue Line — eastbound toward Wonderland
+    const blueEastJourneys = buildJourneys(
+      northbound, 'N', 'State Street', OL_TRAVEL['place-state'], 3, stateBlueEastPreds, stateBlueEastScheds,
+    );
+    if (blueEastJourneys.length > 0) {
       routes.push({
         id: 'bl-east',
-        routeName: 'Blue Line',
-        direction: 'via State St · Airport / Wonderland',
+        routeName: 'Wonderland',
+        direction: 'via State Street',
         shortCode: 'BL',
         lineColor: '#003DA5',
         lineTextColor: '#FFFFFF',
         isDirect: false,
         directDeps: [],
-        journeys: blueJourneys,
+        journeys: blueEastJourneys,
       });
     }
 
-    // 6. Green Line — westbound toward Copley / Boylston
-    const greenJourneys = buildJourneys(
-      northbound, 'N', 'Haymarket', OL_TRAVEL['place-haecl'], 2, hayGreenPreds,
+    // 5b. Blue Line — westbound toward Bowdoin / Government Center
+    const blueWestJourneys = buildJourneys(
+      northbound, 'N', 'State Street', OL_TRAVEL['place-state'], 3, stateBlueWestPreds, stateBlueWestScheds,
     );
-    if (greenJourneys.length > 0) {
+    if (blueWestJourneys.length > 0) {
       routes.push({
-        id: 'gl-west',
-        routeName: 'Green Line',
-        direction: 'via Haymarket · Copley / Boylston',
-        shortCode: 'GL',
-        lineColor: '#00843D',
+        id: 'bl-west',
+        routeName: 'Bowdoin',
+        direction: 'via State Street',
+        shortCode: 'BL',
+        lineColor: '#003DA5',
         lineTextColor: '#FFFFFF',
         isDirect: false,
         directDeps: [],
-        journeys: greenJourneys,
+        journeys: blueWestJourneys,
       });
     }
 
-    // 7–N. Commuter Rail at Back Bay (one card per line)
-    const bbCRRouteIds = [
-      ...new Set(
-        backBayCRPreds.data
-          .map(p => p.relationships?.route?.data?.id)
-          .filter((id): id is string => Boolean(id)),
-      ),
+    // 6a. Green Line — outbound branches (B/C/D/E) from Park Street via DTX concourse
+    const GL_BRANCHES: Array<{ id: string; name: string }> = [
+      { id: 'Green-B', name: 'Boston College' },
+      { id: 'Green-C', name: 'Cleveland Circle' },
+      { id: 'Green-D', name: 'Riverside' },
+      { id: 'Green-E', name: 'Heath Street' },
     ];
-    for (const routeId of bbCRRouteIds) {
-      const routePreds = {
-        data: backBayCRPreds.data.filter(
-          p => p.relationships?.route?.data?.id === routeId,
+    for (const branch of GL_BRANCHES) {
+      const branchPreds = {
+        data: hayGreenBranchPreds.data.filter(
+          p => p.relationships?.route?.data?.id === branch.id,
         ),
       };
       const journeys = buildJourneys(
-        northbound, 'N', 'Back Bay', OL_TRAVEL['place-bbsta'], 0, routePreds,
+        northbound, 'N', 'Park Street', OL_TRAVEL['place-dwnxg'], 4, branchPreds,
       );
       if (journeys.length === 0) continue;
       routes.push({
-        id: `cr-bb-${routeId.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
-        routeName: crName(routeId) + ' Line',
-        direction: 'via Back Bay · Commuter Rail',
-        shortCode: 'CR',
-        lineColor: '#80276C',
+        id: `gl-${branch.id.toLowerCase().replace('green-', '')}`,
+        routeName: branch.name,
+        direction: 'via Park Street',
+        shortCode: 'GL',
+        lineColor: '#00843D',
         lineTextColor: '#FFFFFF',
         isDirect: false,
         directDeps: [],
@@ -389,28 +609,52 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       });
     }
 
-    // N+. Commuter Rail at North Station (one card per line)
-    const nsCRRouteIds = [
+    // 6b. Green Line — GLX inbound (toward Medford / Union Sq) from Park Street
+    const greenGLXJourneys = buildJourneys(
+      northbound, 'N', 'Park Street', OL_TRAVEL['place-dwnxg'], 4, hayGreenGLXPreds,
+    );
+    if (greenGLXJourneys.length > 0) {
+      routes.push({
+        id: 'gl-glx',
+        routeName: 'Medford / Union Sq',
+        direction: 'via Park Street',
+        shortCode: 'GL',
+        lineColor: '#00843D',
+        lineTextColor: '#FFFFFF',
+        isDirect: false,
+        directDeps: [],
+        journeys: greenGLXJourneys,
+      });
+    }
+
+    // 7–N. Commuter Rail — one card per line, best available transfer
+    const allCRRouteIds = [
       ...new Set(
-        northCRPreds.data
+        [
+          ...backBayCRPreds.data, ...backBayCRScheds.data,
+          ...northCRPreds.data,   ...northCRScheds.data,
+          ...sstCRPreds.data,     ...sstCRScheds.data,
+          ...forlCRPreds.data,    ...forlCRScheds.data,
+        ]
           .map(p => p.relationships?.route?.data?.id)
           .filter((id): id is string => Boolean(id)),
       ),
     ];
-    for (const routeId of nsCRRouteIds) {
-      const routePreds = {
-        data: northCRPreds.data.filter(
-          p => p.relationships?.route?.data?.id === routeId,
-        ),
-      };
-      const journeys = buildJourneys(
-        northbound, 'N', 'North Station', OL_TRAVEL['place-north'], 0, routePreds,
-      );
+    for (const routeId of allCRRouteIds) {
+      const f = (src: MbtaApiResponse) => ({
+        data: src.data.filter(p => p.relationships?.route?.data?.id === routeId),
+      });
+      const journeys = buildBestJourneys([
+        { stopName: 'Back Bay',      olDir: 'N', olTravelMins: OL_TRAVEL['place-bbsta'], walkMins: 0, preds: f(backBayCRPreds), scheds: f(backBayCRScheds) },
+        { stopName: 'South Station', olDir: 'N', olTravelMins: OL_TRAVEL['place-dwnxg'], walkMins: 5, preds: f(sstCRPreds),     scheds: f(sstCRScheds)     },
+        { stopName: 'North Station', olDir: 'N', olTravelMins: OL_TRAVEL['place-north'], walkMins: 0, preds: f(northCRPreds),   scheds: f(northCRScheds)   },
+        { stopName: 'Forest Hills',  olDir: 'S', olTravelMins: OL_TRAVEL['place-forhl'], walkMins: 0, preds: f(forlCRPreds),    scheds: f(forlCRScheds)    },
+      ]);
       if (journeys.length === 0) continue;
       routes.push({
-        id: `cr-ns-${routeId.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
+        id: `cr-${routeId.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
         routeName: crName(routeId) + ' Line',
-        direction: 'via North Station · Commuter Rail',
+        direction: `via ${journeys[0].transferStop}`,
         shortCode: 'CR',
         lineColor: '#80276C',
         lineTextColor: '#FFFFFF',

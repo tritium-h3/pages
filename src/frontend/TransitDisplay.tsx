@@ -10,6 +10,7 @@ interface JourneyOption {
   arriveTransferInMins: number;
   waitMins: number;
   connectDepartsInMins: number;
+  isEstimated?: boolean;
 }
 
 interface RouteCard {
@@ -58,9 +59,8 @@ function effectLabel(effect: string): string {
 }
 
 function depClass(mins: number): string {
-  if (mins <= 0) return 'rc-dep-brd';
-  if (mins <= 2) return 'rc-dep-imminent';
-  if (mins <= 6) return 'rc-dep-soon';
+  if (mins <= 8) return 'rc-dep-imminent'; // 3–8 min: blink — leave now window
+  if (mins <= 12) return 'rc-dep-soon';
   return '';
 }
 
@@ -83,7 +83,7 @@ function DirectCard({ card }: { card: RouteCard }) {
           ? <span className="rc-no-service">NO SERVICE</span>
           : card.directDeps.map((d, i) => (
               <span key={i} className={`rc-dep-pill ${depClass(d.mins)}`}>
-                {d.mins <= 0 ? 'BRD' : `${d.mins}m`}
+                {d.mins}m
               </span>
             ))
         }
@@ -106,13 +106,13 @@ function ConnectingCard({ card }: { card: RouteCard }) {
         </div>
         {first && (
           <span className={`rc-board-clock ${depClass(first.connectDepartsInMins)}`}>
-            {first.connectDepartsInMins}m
+            {first.isEstimated && '~'}{first.connectDepartsInMins}m
           </span>
         )}
       </div>
       <div className="rc-journeys">
         {card.journeys.map((j, i) => (
-          <div key={i} className={`rc-journey ${i > 0 ? 'rc-journey-alt' : ''}`}>
+          <div key={i} className={`rc-journey ${i > 0 ? 'rc-journey-alt' : ''} ${j.isEstimated ? 'rc-journey-estimated' : ''}`}>
             <span className="rc-seg rc-seg-ol">
               OL&nbsp;{j.olDirection === 'N' ? '▲' : '▼'}&nbsp;<strong>{j.olDepartsInMins}m</strong>
             </span>
@@ -121,11 +121,11 @@ function ConnectingCard({ card }: { card: RouteCard }) {
             {j.waitMins > 0 && (
               <>
                 <span className="rc-arrow">→</span>
-                <span className="rc-seg rc-seg-wait">wait&nbsp;{j.waitMins}m</span>
+                <span className="rc-seg rc-seg-wait">wait&nbsp;{j.isEstimated ? '~' : ''}{j.waitMins}m</span>
               </>
             )}
             <span className="rc-arrow">→</span>
-            <span className="rc-seg rc-seg-board">board&nbsp;<strong>{j.connectDepartsInMins}m</strong></span>
+            <span className="rc-seg rc-seg-board">board&nbsp;<strong>{j.isEstimated ? '~' : ''}{j.connectDepartsInMins}m</strong></span>
           </div>
         ))}
       </div>
@@ -230,21 +230,28 @@ export default function TransitDisplay() {
         )}
 
         {data && (
-          <div className="rc-grid">
-            {data.routes.map(card =>
-              card.isDirect
-                ? <DirectCard key={card.id} card={card} />
-                : <ConnectingCard key={card.id} card={card} />,
-            )}
-            {data.routes.length === 0 && (
-              <div className="td-error">
-                <span className="td-error-title">NO SERVICE DATA</span>
-                <span className="td-error-msg">
-                  {majorAlerts[0]?.header ?? 'No predictions available at this time.'}
-                </span>
-              </div>
-            )}
-          </div>
+          <>
+            {/* OL direct cards always at top, full-width 2-up row */}
+            <div className="rc-ol-row">
+              {data.routes.filter(c => c.isDirect).map(card =>
+                <DirectCard key={card.id} card={card} />
+              )}
+            </div>
+            {/* All connecting cards below */}
+            <div className="rc-grid">
+              {data.routes.filter(c => !c.isDirect).map(card =>
+                <ConnectingCard key={card.id} card={card} />,
+              )}
+              {data.routes.filter(c => !c.isDirect).length === 0 && (
+                <div className="td-error">
+                  <span className="td-error-title">NO SERVICE DATA</span>
+                  <span className="td-error-msg">
+                    {majorAlerts[0]?.header ?? 'No predictions available at this time.'}
+                  </span>
+                </div>
+              )}
+            </div>
+          </>
         )}
       </main>
 

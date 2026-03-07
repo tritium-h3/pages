@@ -183,6 +183,14 @@
   min-height: 0;
 }
 
+/* ── OL direct cards — full-width 2-up row at top ──────────────────────────── */
+.rc-ol-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  padding-bottom: 0.45rem;
+}
+
 /* ── Route card grid ────────────────────────────────────────────────────────── */
 .rc-grid {
   display: grid;
@@ -331,6 +339,18 @@
 /* Backup option — clearly secondary */
 .rc-journey-alt {
   opacity: 0.4;
+}
+
+/* Schedule-estimated journey — dimmer amber with italic tilde prefix */
+.rc-journey-estimated {
+  opacity: 0.7;
+  font-style: italic;
+  color: var(--td-amber-dim);
+}
+
+.rc-journey-estimated .rc-seg-board strong,
+.rc-journey-estimated .rc-board-clock {
+  color: var(--td-amber-dim);
 }
 
 .rc-arrow {

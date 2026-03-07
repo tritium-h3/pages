@@ -38,7 +38,19 @@
   {
     "id": "1770862548411",
     "text": "dog grooming",
-    "completed": false,
+    "completed": true,
     "createdAt": "2026-02-12T02:15:48.411Z"
+  },
+  {
+    "id": "1772757136521",
+    "text": "taxes",
+    "completed": false,
+    "createdAt": "2026-03-06T00:32:16.521Z"
+  },
+  {
+    "id": "1772757140507",
+    "text": "fridge",
+    "completed": false,
+    "createdAt": "2026-03-06T00:32:20.507Z"
   }
 ]
