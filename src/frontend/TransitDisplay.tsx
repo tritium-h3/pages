@@ -77,16 +77,16 @@ function DirectCard({ card }: { card: RouteCard }) {
           <span className="rc-route-name">{card.routeName}</span>
           <span className="rc-direction">{card.direction}</span>
         </div>
-      </div>
-      <div className="rc-deps">
-        {card.directDeps.length === 0
-          ? <span className="rc-no-service">NO SERVICE</span>
-          : card.directDeps.map((d, i) => (
-              <span key={i} className={`rc-dep-pill ${depClass(d.mins)}`}>
-                {d.mins}m
-              </span>
-            ))
-        }
+        <div className="rc-deps">
+          {card.directDeps.length === 0
+            ? <span className="rc-no-service">NO SERVICE</span>
+            : card.directDeps.map((d, i) => (
+                <span key={i} className={`rc-dep-pill ${depClass(d.mins)}`}>
+                  {d.mins}m
+                </span>
+              ))
+          }
+        </div>
       </div>
     </div>
   );

@@ -194,7 +194,7 @@
 /* ── Route card grid ────────────────────────────────────────────────────────── */
 .rc-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.45rem;
   padding-bottom: 0.55rem;
 }
@@ -277,6 +277,16 @@
 
 .rc-board-clock.rc-dep-soon {
   color: var(--td-amber-soon);
+}
+
+.rc-direct .rc-deps {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* rc-names should not steal all space in direct cards — deps sits beside it */
+.rc-direct .rc-names {
+  flex: 0 1 auto;
 }
 
 /* ── Direct card: large departure time pills ────────────────────────────────── */
