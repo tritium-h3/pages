@@ -134,6 +134,8 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
     const [
       gsPreds,
       dtxRedPreds,
+      dtxRedSouthScheds,
+      dtxRedNorthScheds,
       stateBlueEastPreds,
       stateBlueWestPreds,
       stateBlueEastScheds,
@@ -156,6 +158,15 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       ),
       mbtaFetch(
         `/predictions?filter[stop]=place-dwnxg&filter[route]=Red&sort=departure_time&include=trip`,
+        apiKey,
+      ),
+      // Red Line schedules — fallback when predictions have null times
+      mbtaFetch(
+        `/schedules?filter[stop]=place-dwnxg&filter[route]=Red&filter[direction_id]=0&filter[min_time]=${nowHHMM}&sort=departure_time&page[limit]=8`,
+        apiKey,
+      ),
+      mbtaFetch(
+        `/schedules?filter[stop]=place-dwnxg&filter[route]=Red&filter[direction_id]=1&filter[min_time]=${nowHHMM}&sort=departure_time&page[limit]=8`,
         apiKey,
       ),
       mbtaFetch(
@@ -489,7 +500,7 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
     // 3. Red Line — toward Alewife (DTX, OL North, direction_id=1 on Red)
     const dtxRedAlewife = { data: dtxRedPreds.data.filter(p => p.attributes.direction_id === 1) };
     const redAlewifeJourneys = buildJourneys(
-      northbound, 'N', 'Downtown Crossing', OL_TRAVEL['place-dwnxg'], 2, dtxRedAlewife,
+      northbound, 'N', 'Downtown Crossing', OL_TRAVEL['place-dwnxg'], 2, dtxRedAlewife, dtxRedNorthScheds,
     );
     if (redAlewifeJourneys.length > 0) {
       routes.push({
@@ -515,7 +526,7 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       }),
     };
     const redAshmontJourneys = buildJourneys(
-      northbound, 'N', 'Downtown Crossing', OL_TRAVEL['place-dwnxg'], 2, dtxRedAshmont,
+      northbound, 'N', 'Downtown Crossing', OL_TRAVEL['place-dwnxg'], 2, dtxRedAshmont, dtxRedSouthScheds,
     );
     if (redAshmontJourneys.length > 0) {
       routes.push({
@@ -541,7 +552,7 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       }),
     };
     const redBraintreeJourneys = buildJourneys(
-      northbound, 'N', 'Downtown Crossing', OL_TRAVEL['place-dwnxg'], 2, dtxRedBraintree,
+      northbound, 'N', 'Downtown Crossing', OL_TRAVEL['place-dwnxg'], 2, dtxRedBraintree, dtxRedSouthScheds,
     );
     if (redBraintreeJourneys.length > 0) {
       routes.push({
