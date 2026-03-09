@@ -268,30 +268,7 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    // Sort connecting preds by time, find first departing at or after arrivalDate
-    function firstAfter(
-      preds: MbtaApiResponse,
-      arrivalDate: Date,
-    ): { minutesFromNow: number; waitMins: number } | null {
-      const sortedTimes = preds.data
-        .map(p => pickTime(p.attributes))
-        .filter((t): t is string => t !== null)
-        .sort();
-      for (const t of sortedTimes) {
-        const dep = new Date(t);
-        if (dep >= arrivalDate) {
-          const waitMins = Math.max(
-            0,
-            Math.round((dep.getTime() - arrivalDate.getTime()) / 60_000),
-          );
-          return {
-            minutesFromNow: Math.max(0, minutesUntil(t, now) ?? 0),
-            waitMins,
-          };
-        }
-      }
-      return null;
-    }
+    const TRANSFER_BUFFER_MINS = 2;
 
     // Estimate wait from schedule frequency when no live predictions are available.
     // Returns half the average headway between upcoming scheduled trips.
@@ -320,9 +297,23 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       };
     }
 
-    // For each OL train (up to 6), compute the soonest catchable connection.
-    // Falls back to schedule-frequency estimate when predictions are empty.
-    // Returns up to 2 journey options (only 1 if estimated).
+    // For a given connecting departure time, find the latest OL train that arrives
+    // at the transfer stop with at least TRANSFER_BUFFER_MINS to spare.
+    function latestOLFor(
+      olTrains: Departure[],
+      connectDate: Date,
+      totalTransitMins: number,
+    ): Departure | null {
+      const latestDepMs = connectDate.getTime() - (totalTransitMins + TRANSFER_BUFFER_MINS) * 60_000;
+      let best: Departure | null = null;
+      for (const train of olTrains) {
+        if (new Date(train.time).getTime() <= latestDepMs) best = train; // sorted asc, keep updating
+      }
+      return best;
+    }
+
+    // For each connecting departure (earliest first), find the latest OL train that
+    // makes it with buffer. Returns up to 2 journeys. Falls back to headway estimate.
     function buildJourneys(
       olTrains: Departure[],
       olDir: 'N' | 'S',
@@ -332,46 +323,60 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       connectPreds: MbtaApiResponse,
       connectScheds?: MbtaApiResponse,
     ): JourneyOption[] {
+      const totalTransitMins = olTravelMins + walkMins;
+      const connectTimes = connectPreds.data
+        .map(p => pickTime(p.attributes))
+        .filter((t): t is string => t !== null)
+        .sort();
+
       const results: JourneyOption[] = [];
-      for (const train of olTrains.slice(0, 6)) {
-        const arrivalDate = new Date(train.time);
-        arrivalDate.setMinutes(arrivalDate.getMinutes() + olTravelMins + walkMins);
-        const arriveTransferInMins = Math.round(
-          (arrivalDate.getTime() - now.getTime()) / 60_000,
-        );
-        const conn = firstAfter(connectPreds, arrivalDate);
-        if (conn) {
-          results.push({
-            olDepartsInMins: train.minutesAway,
-            olDirection: olDir,
-            transferStop: transferStopName,
-            arriveTransferInMins,
-            waitMins: conn.waitMins,
-            connectDepartsInMins: conn.minutesFromNow,
-          });
-          if (results.length >= 2) break;
-        } else if (connectScheds && results.length === 0) {
-          // No live prediction — estimate from schedule headway for first journey only
+      const seenConnect = new Set<string>();
+
+      for (const ct of connectTimes) {
+        if (results.length >= 2) break;
+        if (seenConnect.has(ct)) continue;
+        seenConnect.add(ct);
+        const connectDate = new Date(ct);
+        const connectMins = minutesUntil(ct, now);
+        if (connectMins === null || connectMins < 0) continue;
+        const bestTrain = latestOLFor(olTrains, connectDate, totalTransitMins);
+        if (!bestTrain) continue;
+        const arrivalMs = new Date(bestTrain.time).getTime() + totalTransitMins * 60_000;
+        results.push({
+          olDepartsInMins: bestTrain.minutesAway,
+          olDirection: olDir,
+          transferStop: transferStopName,
+          arriveTransferInMins: Math.round((arrivalMs - now.getTime()) / 60_000),
+          waitMins: Math.max(0, Math.round((connectDate.getTime() - arrivalMs) / 60_000)),
+          connectDepartsInMins: Math.max(0, connectMins),
+        });
+      }
+
+      // Schedule fallback when no live predictions
+      if (results.length === 0 && connectScheds) {
+        const firstTrain = olTrains[0];
+        if (firstTrain) {
+          const arrivalDate = new Date(new Date(firstTrain.time).getTime() + totalTransitMins * 60_000);
           const est = headwayEstimate(connectScheds, arrivalDate);
           if (est) {
             results.push({
-              olDepartsInMins: train.minutesAway,
+              olDepartsInMins: firstTrain.minutesAway,
               olDirection: olDir,
               transferStop: transferStopName,
-              arriveTransferInMins,
+              arriveTransferInMins: Math.round((arrivalDate.getTime() - now.getTime()) / 60_000),
               waitMins: est.waitMins,
               connectDepartsInMins: est.minutesFromNow,
               isEstimated: true,
             });
-            break; // Only one estimated journey
           }
         }
       }
+
       return results;
     }
 
-    // Tries all transfer options for each OL train and returns the best 2 journeys
-    // across all options, sorted by earliest board time.
+    // Tries all transfer options, inverts to find latest OL for each connection,
+    // then returns the best 2 journeys sorted by earliest board time.
     function buildBestJourneys(
       transferOptions: Array<{
         stopName: string;
@@ -383,59 +388,68 @@ router.get('/mbta/transit-board', async (_req: Request, res: Response) => {
       }>,
     ): JourneyOption[] {
       const pool: JourneyOption[] = [];
+
       for (const opt of transferOptions) {
         const olTrains = opt.olDir === 'N' ? northbound : southbound;
+        const totalTransitMins = opt.olTravelMins + opt.walkMins;
+
+        const connectTimes = opt.preds.data
+          .map(p => pickTime(p.attributes))
+          .filter((t): t is string => t !== null)
+          .sort();
+
         let foundLive = false;
-        for (const train of olTrains.slice(0, 6)) {
-          const arrivalDate = new Date(train.time);
-          arrivalDate.setMinutes(arrivalDate.getMinutes() + opt.olTravelMins + opt.walkMins);
-          const arriveTransferInMins = Math.round((arrivalDate.getTime() - now.getTime()) / 60_000);
-          const conn = firstAfter(opt.preds, arrivalDate);
-          if (conn) {
-            foundLive = true;
-            pool.push({
-              olDepartsInMins: train.minutesAway,
-              olDirection: opt.olDir,
-              transferStop: opt.stopName,
-              arriveTransferInMins,
-              waitMins: conn.waitMins,
-              connectDepartsInMins: conn.minutesFromNow,
-            });
-          }
+        const seenConnect = new Set<string>();
+
+        for (const ct of connectTimes) {
+          if (seenConnect.has(ct)) continue;
+          seenConnect.add(ct);
+          const connectDate = new Date(ct);
+          const connectMins = minutesUntil(ct, now);
+          if (connectMins === null || connectMins < 0) continue;
+          const bestTrain = latestOLFor(olTrains, connectDate, totalTransitMins);
+          if (!bestTrain) continue;
+          foundLive = true;
+          const arrivalMs = new Date(bestTrain.time).getTime() + totalTransitMins * 60_000;
+          pool.push({
+            olDepartsInMins: bestTrain.minutesAway,
+            olDirection: opt.olDir,
+            transferStop: opt.stopName,
+            arriveTransferInMins: Math.round((arrivalMs - now.getTime()) / 60_000),
+            waitMins: Math.max(0, Math.round((connectDate.getTime() - arrivalMs) / 60_000)),
+            connectDepartsInMins: Math.max(0, connectMins),
+          });
         }
+
         // Schedule fallback only if this option had zero live predictions
         if (!foundLive && opt.scheds) {
-          for (const train of olTrains.slice(0, 3)) {
-            const arrivalDate = new Date(train.time);
-            arrivalDate.setMinutes(arrivalDate.getMinutes() + opt.olTravelMins + opt.walkMins);
-            const arriveTransferInMins = Math.round((arrivalDate.getTime() - now.getTime()) / 60_000);
+          const firstTrain = olTrains[0];
+          if (firstTrain) {
+            const arrivalDate = new Date(new Date(firstTrain.time).getTime() + totalTransitMins * 60_000);
             const est = headwayEstimate(opt.scheds, arrivalDate);
             if (est) {
               pool.push({
-                olDepartsInMins: train.minutesAway,
+                olDepartsInMins: firstTrain.minutesAway,
                 olDirection: opt.olDir,
                 transferStop: opt.stopName,
-                arriveTransferInMins,
+                arriveTransferInMins: Math.round((arrivalDate.getTime() - now.getTime()) / 60_000),
                 waitMins: est.waitMins,
                 connectDepartsInMins: est.minutesFromNow,
                 isEstimated: true,
               });
-              break;
             }
           }
         }
       }
-      // Sort by earliest board time; pick best 2 ensuring the 2nd uses a different OL departure
+
+      // Sort by earliest board time, pick best 2 (deduplicate exact same connection)
       pool.sort((a, b) => a.connectDepartsInMins - b.connectDepartsInMins);
       const results: JourneyOption[] = [];
       const seenConnect = new Set<string>();
-      const seenOLDep = new Set<number>();
       for (const j of pool) {
         const connectKey = `${j.transferStop}:${j.connectDepartsInMins}`;
         if (seenConnect.has(connectKey)) continue;
-        if (results.length > 0 && seenOLDep.has(j.olDepartsInMins)) continue;
         seenConnect.add(connectKey);
-        seenOLDep.add(j.olDepartsInMins);
         results.push(j);
         if (results.length >= 2) break;
       }
