@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Markdown from 'react-markdown';
-import { getBackendOrigin, apiUrl } from './backendApi';
+import { apiUrl, wsUrl } from './backendApi';
 
 interface Message {
   speaker: string;
@@ -67,10 +67,8 @@ export default function LLMDuoChat() {
     console.log('Creating new WebSocket connection');
     
     try {
-      // Create WebSocket connection
-      const backendOrigin = getBackendOrigin();
-      const wsUrl = backendOrigin.replace('http://', 'ws://').replace('https://', 'wss://');
-      const ws = new WebSocket(`${wsUrl}/ws/llm-duo-chat`);
+      // Create WebSocket connection (same-origin, via the Vite /ws proxy)
+      const ws = new WebSocket(wsUrl('/ws/llm-duo-chat'));
       wsRef.current = ws;
 
       ws.onopen = () => {

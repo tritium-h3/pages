@@ -26,7 +26,7 @@
   {
     "id": "1770862528204",
     "text": "car service",
-    "completed": false,
+    "completed": true,
     "createdAt": "2026-02-12T02:15:28.204Z"
   },
   {
@@ -44,13 +44,31 @@
   {
     "id": "1772757136521",
     "text": "taxes",
-    "completed": false,
+    "completed": true,
     "createdAt": "2026-03-06T00:32:16.521Z"
   },
   {
     "id": "1772757140507",
     "text": "fridge",
-    "completed": false,
+    "completed": true,
     "createdAt": "2026-03-06T00:32:20.507Z"
+  },
+  {
+    "id": "1775437093364",
+    "text": "financial statement!",
+    "completed": true,
+    "createdAt": "2026-04-06T00:58:13.365Z"
+  },
+  {
+    "id": "1775437102688",
+    "text": "pictures",
+    "completed": false,
+    "createdAt": "2026-04-06T00:58:22.688Z"
+  },
+  {
+    "id": "1775437106278",
+    "text": "living room",
+    "completed": false,
+    "createdAt": "2026-04-06T00:58:26.278Z"
   }
 ]

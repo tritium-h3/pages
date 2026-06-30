@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"tsx ./src/backend/index.ts\"",
+    "dev": "concurrently \"vite\" \"tsx watch ./src/backend/index.ts\"",
     "dev:status": "node ./scripts/dev-status.mjs",
     "dev:restart": "systemctl --user restart pages",
     "build:sprites": "node ./scripts/build-sprites.mjs",
     "build": "npm run build:sprites && vite build && tsc -p src/backend/tsconfig.json",
-    "start": "concurrently \"vite\" \"tsx ./src/backend/index.ts\"",
+    "start": "concurrently \"vite\" \"tsx watch ./src/backend/index.ts\"",
     "lint": "eslint .",
     "preview": "vite preview"
   },

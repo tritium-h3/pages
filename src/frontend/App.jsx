@@ -6,13 +6,12 @@ import TodoList from './TodoList'
 import LLMDuoChat from './LLMDuoChat'
 import SpriteEditor from './SpriteEditor'
 import TransitDisplay from './TransitDisplay'
-import { getBackendOrigin, apiUrl } from './backendApi'
+import { apiUrl } from './backendApi'
 import './App.css'
 
 function App() {
   const [pathname, setPathname] = useState(window.location.pathname)
   const [backendHealth, setBackendHealth] = useState({ status: 'checking', timestamp: null })
-  const backendUrl = getBackendOrigin()
 
   const navigateTo = (path) => {
     if (window.location.pathname === path) return
@@ -21,8 +20,6 @@ function App() {
   }
 
   useEffect(() => {
-    console.log('Backend URL:', backendUrl)
-    
     const checkBackendHealth = async () => {
       try {
         console.log('Checking backend health at:', apiUrl('/health'))
@@ -40,7 +37,7 @@ function App() {
     const interval = setInterval(checkBackendHealth, 10000) // Check every 10 seconds
     
     return () => clearInterval(interval)
-  }, [backendUrl])
+  }, [])
 
   useEffect(() => {
     const handlePopState = () => setPathname(window.location.pathname)
