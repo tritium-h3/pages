@@ -27,7 +27,24 @@ export default defineConfig({
     },
     allowedHosts: ['torment-nexus.local', 'samarkand.hopto.org'],
     proxy: {
-      '/api': 'http://localhost:5174',
+      '/api': {
+        target: 'http://localhost:5174',
+        // http-proxy does not propagate a client disconnect to the upstream for
+        // long-lived streaming responses (e.g. the /api/image-hunt SSE stream).
+        // Without this, the backend never sees req 'close', so its scan loop runs
+        // forever after the browser stops/reloads and zombie loops pile up and
+        // flood Ollama. Destroy the upstream request when the browser-facing
+        // request closes. (For an active SSE, req 'close' only fires on a real
+        // disconnect; for normal completed requests the upstream is already done,
+        // so destroy() is a harmless no-op. Note: keying off res 'close' +
+        // writableFinished does NOT work here — writableFinished reads true even on
+        // mid-stream client disconnect, so the destroy would never fire.)
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq, req) => {
+            req.on('close', () => proxyReq.destroy());
+          });
+        },
+      },
       '/ws': { target: 'ws://localhost:5174', ws: true },
     },
   },

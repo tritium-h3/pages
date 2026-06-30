@@ -9,6 +9,7 @@ import mbtaRouter from './routes/mbta.js';
 import llmDuoChatRouter, { initLLMDuoChatWebSocket } from './routes/llm-duo-chat.js';
 import wikipediaStoryRouter from './routes/wikipedia-story.js';
 import spriteGroupsRouter from './routes/sprite-groups.js';
+import imageHuntRouter from './routes/image-hunt.js';
 
 const app: Express = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5174;
@@ -56,6 +57,7 @@ app.use('/api', llmDuoChatRouter);
 app.use('/api', wikipediaStoryRouter);
 app.use('/api', spriteGroupsRouter);
 app.use('/api', mbtaRouter);
+app.use('/api', imageHuntRouter);
 
 // Error handling
 app.use((err: Error, req: Request, res: Response) => {

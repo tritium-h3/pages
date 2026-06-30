@@ -15,6 +15,8 @@ export interface OllamaGenerateRequest {
   prompt: string;
   stream?: boolean;
   keep_alive?: string;
+  images?: string[]; // base64-encoded images for vision models
+  format?: 'json';   // constrain output to valid JSON
   options?: {
     temperature?: number;
     top_p?: number;
@@ -87,9 +89,35 @@ export class OllamaClient {
   }
 
   /**
-   * Generate text from a prompt (non-streaming)
+   * List model names that accept image input (vision capability), per Ollama's
+   * /api/show capabilities. Sorted alphabetically.
    */
-  async generate(request: OllamaGenerateRequest): Promise<string> {
+  async listVisionModels(): Promise<string[]> {
+    const models = await this.listModels();
+    const checked = await Promise.all(
+      models.map(async (m) => {
+        try {
+          const response = await fetch(`${this.baseUrl}/api/show`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model: m.name }),
+          });
+          if (!response.ok) return null;
+          const data = (await response.json()) as { capabilities?: string[] };
+          return data.capabilities?.includes('vision') ? m.name : null;
+        } catch {
+          return null;
+        }
+      })
+    );
+    return checked.filter((name): name is string => name !== null).sort();
+  }
+
+  /**
+   * Generate text from a prompt (non-streaming).
+   * Pass an AbortSignal to cancel the in-flight request (e.g. on client disconnect).
+   */
+  async generate(request: OllamaGenerateRequest, signal?: AbortSignal): Promise<string> {
     const response = await fetch(`${this.baseUrl}/api/generate`, {
       method: 'POST',
       headers: {
@@ -99,6 +127,7 @@ export class OllamaClient {
         ...request,
         stream: false,
       }),
+      signal,
     });
 
     if (!response.ok) {
