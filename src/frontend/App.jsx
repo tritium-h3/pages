@@ -7,6 +7,7 @@ import LLMDuoChat from './LLMDuoChat'
 import SpriteEditor from './SpriteEditor'
 import TransitDisplay from './TransitDisplay'
 import ImageHunt from './ImageHunt'
+import SkyPantone from './SkyPantone'
 import { apiUrl } from './backendApi'
 import './App.css'
 
@@ -121,6 +122,17 @@ function App() {
     )
   }
 
+  if (pathname === '/sky') {
+    return (
+      <div>
+        <button className="back-btn" onClick={() => navigateTo('/')}>
+          ← Back to Menu
+        </button>
+        <SkyPantone />
+      </div>
+    )
+  }
+
   return (
     <div className="app-menu">
       <div className="backend-status">
@@ -154,6 +166,9 @@ function App() {
       </button>
       <button className="menu-btn" onClick={() => navigateTo('/imagehunt')}>
         🔍 Image Hunt
+      </button>
+      <button className="menu-btn" onClick={() => navigateTo('/sky')}>
+        🌇 Sky Pantone
       </button>
     </div>
   )

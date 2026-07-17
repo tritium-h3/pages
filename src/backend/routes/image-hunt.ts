@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { ollama } from '../ollama.js';
+import * as sessions from '../image-hunt-sessions.js';
 
 const router = Router();
 
@@ -110,6 +111,66 @@ router.get('/image-hunt/models', async (_req: Request, res: Response) => {
   }
 });
 
+// List saved sessions (summaries) for the picker, most-recently-updated first.
+router.get('/image-hunt/sessions', async (_req: Request, res: Response) => {
+  try {
+    res.json({ sessions: await sessions.listSessions() });
+  } catch (err) {
+    console.error('failed to list sessions:', err);
+    res.status(500).json({ error: 'Failed to list sessions' });
+  }
+});
+
+// Full session (with matches), loaded when the user selects one.
+router.get('/image-hunt/sessions/:id', async (req: Request, res: Response) => {
+  try {
+    const session = await sessions.getSession(req.params.id);
+    if (!session) {
+      res.status(404).json({ error: 'Session not found' });
+      return;
+    }
+    res.json(session);
+  } catch (err) {
+    console.error('failed to get session:', err);
+    res.status(500).json({ error: 'Failed to get session' });
+  }
+});
+
+// Rename a session.
+router.patch('/image-hunt/sessions/:id', async (req: Request, res: Response) => {
+  const label = String(req.body?.label ?? '').trim();
+  if (!label) {
+    res.status(400).json({ error: 'label is required' });
+    return;
+  }
+  try {
+    const ok = await sessions.renameSession(req.params.id, label);
+    if (!ok) {
+      res.status(404).json({ error: 'Session not found' });
+      return;
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('failed to rename session:', err);
+    res.status(500).json({ error: 'Failed to rename session' });
+  }
+});
+
+// Delete a session.
+router.delete('/image-hunt/sessions/:id', async (req: Request, res: Response) => {
+  try {
+    const ok = await sessions.deleteSession(req.params.id);
+    if (!ok) {
+      res.status(404).json({ error: 'Session not found' });
+      return;
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('failed to delete session:', err);
+    res.status(500).json({ error: 'Failed to delete session' });
+  }
+});
+
 router.get('/image-hunt', async (req: Request, res: Response) => {
   const description = String(req.query.description ?? '').trim();
   if (!description) {
@@ -117,6 +178,19 @@ router.get('/image-hunt', async (req: Request, res: Response) => {
     return;
   }
   const model = String(req.query.model ?? '').trim() || DEFAULT_MODEL;
+
+  const requestedSessionId = String(req.query.sessionId ?? '').trim();
+  // Resolve continuation target before we commit to the SSE response. If the id
+  // is unknown (e.g. deleted), fall through as a fresh hunt.
+  let sessionId: string | null = null;
+  let baseAttempts = 0;
+  if (requestedSessionId) {
+    const existing = await sessions.getSession(requestedSessionId);
+    if (existing) {
+      sessionId = existing.id;
+      baseAttempts = existing.attempts;
+    }
+  }
 
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
@@ -152,28 +226,45 @@ router.get('/image-hunt', async (req: Request, res: Response) => {
       const image = await fetchRandomCommonsImage(controller.signal);
       if (closed) break;
       if (!image) {
-        send('checking', { attempts, title: '(no image)' });
+        send('checking', { attempts: baseAttempts + attempts, title: '(no image)' });
         await sleep(300); // throttle: no slow model call happened this iteration
         continue;
       }
       if (!image.mime.startsWith('image/')) {
-        send('checking', { attempts, title: image.title });
+        send('checking', { attempts: baseAttempts + attempts, title: image.title });
         await sleep(300); // throttle: skipped non-image, no model call
         continue;
       }
-      send('checking', { attempts, title: image.title }); // show before the slow judge
+      send('checking', { attempts: baseAttempts + attempts, title: image.title }); // show before the slow judge
       const base64 = await fetchImageAsBase64(image.thumbUrl, controller.signal);
       if (closed) break;
       const verdict = await judgeImage(model, description, base64, controller.signal);
       if (closed) break;
       if (verdict.match) {
-        send('match', {
-          id: String(++matchId),
+        // Lazily create the session on the first match of a fresh hunt, so empty
+        // hunts never clutter storage. Continued hunts already have a sessionId.
+        if (!sessionId) {
+          const created = await sessions.createSession(description);
+          sessionId = created.id;
+          baseAttempts = 0;
+          send('session', { id: created.id, label: created.label });
+        }
+        const match = {
+          id: `${Date.now()}-${++matchId}`, // unique within a pooled session
           thumbUrl: image.thumbUrl,
           pageUrl: image.pageUrl,
           title: image.title,
           reason: verdict.reason,
-        });
+          description,
+          model,
+          foundAt: new Date().toISOString(),
+        };
+        await sessions.appendMatch(sessionId, match);
+        // Persist the running count now too (crash-safety checkpoint); the
+        // post-loop bumpAttempts sets the final total. bumpAttempts is an
+        // absolute set, so the two calls never double-count.
+        await sessions.bumpAttempts(sessionId, baseAttempts + attempts);
+        send('match', match);
       }
       consecutiveFailures = 0; // a full successful iteration clears the failure streak
     } catch (err) {
@@ -186,8 +277,19 @@ router.get('/image-hunt', async (req: Request, res: Response) => {
         send('error', { message: 'Repeated failures (Commons or Ollama may be unreachable). Stopping.' });
         break;
       }
-      send('checking', { attempts, title: '(error, skipped)' });
+      send('checking', { attempts: baseAttempts + attempts, title: '(error, skipped)' });
       await sleep(500); // throttle on error so we don't spin
+    }
+  }
+
+  // A continued session that found nothing new this run should still record the
+  // attempts it spent. (A fresh hunt with no matches created no session — nothing
+  // to persist, by design.)
+  if (sessionId) {
+    try {
+      await sessions.bumpAttempts(sessionId, baseAttempts + attempts);
+    } catch (err) {
+      console.error('failed to persist final attempts:', err);
     }
   }
 

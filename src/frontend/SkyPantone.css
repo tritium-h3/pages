@@ -1,0 +1,77 @@
+.sky-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 3rem 1rem 2rem;
+  transition: background 1.2s ease;
+  font-family: system-ui, sans-serif;
+}
+
+/* The page is flooded with the live sky colour, which ranges from near-black
+   night skies to near-white overcast. Text colour is chosen at render time
+   (see relativeLuminance/isLightBackground in SkyPantone.tsx) via one of
+   these two modifiers, rather than assuming a theme. */
+.sky-page--light {
+  color: #111;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.45);
+}
+.sky-page--dark {
+  color: #f5f5f7;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+}
+
+.sky-page--loading,
+.sky-page--error { justify-content: center; background: #dfe4ec; color: #111; text-shadow: none; }
+
+.sky-hero { text-align: center; }
+.sky-hero__code {
+  font-size: 0.8rem; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.75;
+}
+.sky-hero__name {
+  font-size: clamp(2.5rem, 9vw, 5.5rem); font-weight: 700; margin: 0.2em 0; line-height: 1;
+}
+.sky-hero__asof { font-size: 0.9rem; opacity: 0.75; }
+
+.sky-bands {
+  display: flex; width: min(680px, 100%);
+  border-radius: 12px; overflow: hidden; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+}
+.sky-band {
+  flex: 1; padding: 1.1rem 0.6rem; display: flex; flex-direction: column; gap: 0.15rem;
+  align-items: center; text-align: center;
+}
+/* A band's own colour can land on the opposite side of the luminance threshold
+   from the hero, so each band overrides the page's text colour for itself. */
+.sky-band--light {
+  color: #111;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.45);
+}
+.sky-band--dark {
+  color: #f5f5f7;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+}
+.sky-band__label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.7; }
+.sky-band__name { font-weight: 600; font-size: 0.95rem; }
+.sky-band__code { font-size: 0.7rem; opacity: 0.65; }
+
+.sky-frame {
+  width: min(500px, 100%); border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
+}
+
+.sky-footer {
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  font-size: 0.78rem; opacity: 0.8; text-align: center; margin-top: auto; padding-top: 1rem;
+}
+.sky-badge {
+  background: rgba(255, 255, 255, 0.5); border-radius: 999px; padding: 0.25rem 0.75rem;
+}
+/* On dark skies a light-tinted pill washes out light text; switch the pill
+   to a dark tint so the (light) text stays legible. */
+.sky-page--dark .sky-badge {
+  background: rgba(0, 0, 0, 0.55);
+}
+.sky-credit a { color: inherit; text-decoration-color: currentColor; }
+.sky-note { font-style: italic; opacity: 0.75; }

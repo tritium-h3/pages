@@ -1,0 +1,77 @@
+// ---------------------------------------------------------------------------
+// NOAA solar position algorithm. Pure arithmetic, no dependencies.
+// ---------------------------------------------------------------------------
+
+const rad = (d: number): number => (d * Math.PI) / 180;
+const deg = (r: number): number => (r * 180) / Math.PI;
+
+/**
+ * NOAA solar position algorithm. Returns degrees; elevation is negative below
+ * the horizon, azimuth is clockwise from north. Geometric — no refraction
+ * correction, so visual sunset reads at roughly -0.83 rather than 0.
+ */
+export function solarPosition(
+  lat: number,
+  lon: number,
+  date: Date
+): { elevation: number; azimuth: number } {
+  const jd = date.getTime() / 86400000 + 2440587.5;
+  const t = (jd - 2451545.0) / 36525.0; // Julian century
+
+  const meanLong = (280.46646 + t * (36000.76983 + t * 0.0003032)) % 360;
+  const meanAnom = 357.52911 + t * (35999.05029 - 0.0001537 * t);
+  const eccent = 0.016708634 - t * (0.000042037 + 0.0000001267 * t);
+
+  const eqCtr =
+    Math.sin(rad(meanAnom)) * (1.914602 - t * (0.004817 + 0.000014 * t)) +
+    Math.sin(rad(2 * meanAnom)) * (0.019993 - 0.000101 * t) +
+    Math.sin(rad(3 * meanAnom)) * 0.000289;
+
+  const trueLong = meanLong + eqCtr;
+  const omega = 125.04 - 1934.136 * t;
+  const appLong = trueLong - 0.00569 - 0.00478 * Math.sin(rad(omega));
+
+  const meanObliq =
+    23 + (26 + (21.448 - t * (46.815 + t * (0.00059 - t * 0.001813))) / 60) / 60;
+  const obliqCorr = meanObliq + 0.00256 * Math.cos(rad(omega));
+
+  const declin = deg(Math.asin(Math.sin(rad(obliqCorr)) * Math.sin(rad(appLong))));
+
+  const y = Math.pow(Math.tan(rad(obliqCorr / 2)), 2);
+  const eqTime =
+    4 *
+    deg(
+      y * Math.sin(2 * rad(meanLong)) -
+        2 * eccent * Math.sin(rad(meanAnom)) +
+        4 * eccent * y * Math.sin(rad(meanAnom)) * Math.cos(2 * rad(meanLong)) -
+        0.5 * y * y * Math.sin(4 * rad(meanLong)) -
+        1.25 * eccent * eccent * Math.sin(2 * rad(meanAnom))
+    );
+
+  const utcMin =
+    date.getUTCHours() * 60 + date.getUTCMinutes() + date.getUTCSeconds() / 60;
+  const trueSolarTime = (utcMin + eqTime + 4 * lon + 1440) % 1440;
+  const hourAngle = trueSolarTime / 4 < 0 ? trueSolarTime / 4 + 180 : trueSolarTime / 4 - 180;
+
+  const zenith = deg(
+    Math.acos(
+      Math.sin(rad(lat)) * Math.sin(rad(declin)) +
+        Math.cos(rad(lat)) * Math.cos(rad(declin)) * Math.cos(rad(hourAngle))
+    )
+  );
+  const elevation = 90 - zenith;
+
+  // NOTE: denominator is sin(zenith), not cos(zenith). Getting this wrong pins
+  // azimuth to exactly 180 at sunrise/sunset and looks plausible elsewhere.
+  let azimuth: number;
+  const denom = Math.sin(rad(zenith)) * Math.cos(rad(lat));
+  if (Math.abs(denom) > 1e-9) {
+    const cosAz = (Math.sin(rad(lat)) * Math.cos(rad(zenith)) - Math.sin(rad(declin))) / denom;
+    const az = deg(Math.acos(Math.min(1, Math.max(-1, cosAz))));
+    azimuth = hourAngle > 0 ? (az + 180) % 360 : (540 - az) % 360;
+  } else {
+    azimuth = declin > 0 ? 180 : 0;
+  }
+
+  return { elevation, azimuth };
+}

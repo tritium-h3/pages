@@ -10,6 +10,8 @@ import llmDuoChatRouter, { initLLMDuoChatWebSocket } from './routes/llm-duo-chat
 import wikipediaStoryRouter from './routes/wikipedia-story.js';
 import spriteGroupsRouter from './routes/sprite-groups.js';
 import imageHuntRouter from './routes/image-hunt.js';
+import { initSessionStorage } from './image-hunt-sessions.js';
+import skyRouter from './routes/sky.js';
 
 const app: Express = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5174;
@@ -58,6 +60,7 @@ app.use('/api', wikipediaStoryRouter);
 app.use('/api', spriteGroupsRouter);
 app.use('/api', mbtaRouter);
 app.use('/api', imageHuntRouter);
+app.use('/api', skyRouter);
 
 // Error handling
 app.use((err: Error, req: Request, res: Response) => {
@@ -72,7 +75,7 @@ const server = http.createServer(app);
 initLLMDuoChatWebSocket(server);
 
 // Initialize storage and start server
-initTodoStorage().then(() => {
+Promise.all([initTodoStorage(), initSessionStorage()]).then(() => {
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`Backend server running on http://0.0.0.0:${PORT}`);
     console.log(`WebSocket server ready at ws://0.0.0.0:${PORT}/ws/llm-duo-chat`);
