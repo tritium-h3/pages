@@ -1,4 +1,4 @@
-import { analyzeSky, type SkyReading } from './sky-color.js';
+import { analyzeSky, type SkyReading } from './sky-frame.js';
 import type { SkyCam } from './sky-cams.js';
 
 const USER_AGENT = 'pages-sky/1.0 (https://samarkand.hopto.org)';

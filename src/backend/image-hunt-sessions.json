@@ -1752,8 +1752,8 @@
       "id": "1782957050725",
       "label": "sexy",
       "createdAt": "2026-07-02T01:50:50.725Z",
-      "updatedAt": "2026-07-16T03:10:27.016Z",
-      "attempts": 1152,
+      "updatedAt": "2026-07-18T04:39:56.040Z",
+      "attempts": 1981,
       "matches": [
         {
           "id": "1782957050728-1",
@@ -1874,6 +1874,96 @@
           "description": "sexy",
           "model": "qwen3-vl:30b",
           "foundAt": "2026-07-16T03:08:05.416Z"
+        },
+        {
+          "id": "1784344268950-1",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Blauer_Pfau.JPG/960px-Blauer_Pfau.JPG",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Blauer_Pfau.JPG",
+          "title": "File:Blauer Pfau.JPG",
+          "reason": "The peacock's vibrant plumage is often associated with allure and attraction.",
+          "description": "sexy",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T03:11:08.950Z"
+        },
+        {
+          "id": "1784347370404-2",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Jared_Padalecki_%289365027564%29.jpg/960px-Jared_Padalecki_%289365027564%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Jared_Padalecki_(9365027564).jpg",
+          "title": "File:Jared Padalecki (9365027564).jpg",
+          "reason": "The description 'sexy' is subjective, but the person's appearance may be perceived as attractive by some viewers.",
+          "description": "sexy",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T04:02:50.404Z"
+        },
+        {
+          "id": "1784347391403-3",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Japan-Mobility-Show-2025-RuinDig_3099.jpg/960px-Japan-Mobility-Show-2025-RuinDig_3099.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Japan-Mobility-Show-2025-RuinDig_3099.jpg",
+          "title": "File:Japan-Mobility-Show-2025-RuinDig 3099.jpg",
+          "reason": "The sleek luxury car's design is considered attractive.",
+          "description": "sexy",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T04:03:11.403Z"
+        },
+        {
+          "id": "1784347520440-4",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Beach_handball_at_the_2018_Summer_Youth_Olympics_%E2%80%93_Girls_Consolation_Round_%E2%80%93_ASA-TUR_206.jpg/960px-Beach_handball_at_the_2018_Summer_Youth_Olympics_%E2%80%93_Girls_Consolation_Round_%E2%80%93_ASA-TUR_206.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Beach_handball_at_the_2018_Summer_Youth_Olympics_%E2%80%93_Girls_Consolation_Round_%E2%80%93_ASA-TUR_206.jpg",
+          "title": "File:Beach handball at the 2018 Summer Youth Olympics – Girls Consolation Round – ASA-TUR 206.jpg",
+          "reason": "The image shows women in athletic bikini attire which is often considered 'sexy' in context of sportswear.",
+          "description": "sexy",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T04:05:20.440Z"
+        },
+        {
+          "id": "1784347794974-5",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/FF28_DSC9276_57.jpg/960px-FF28_DSC9276_57.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:FF28_DSC9276_57.jpg",
+          "title": "File:FF28 DSC9276 57.jpg",
+          "reason": "The outfit and styling are provocative and suggestive.",
+          "description": "sexy",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T04:09:54.974Z"
+        },
+        {
+          "id": "1784349008621-6",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Uri_Leizerowitz.jpg/960px-Uri_Leizerowitz.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Uri_Leizerowitz.jpg",
+          "title": "File:Uri Leizerowitz.jpg",
+          "reason": "The image's stylish appearance and confident demeanor align with common perceptions of 'sexy'.",
+          "description": "sexy",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T04:30:08.621Z"
+        },
+        {
+          "id": "1784349019735-7",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Torino_Museo_Nazionale_dell%27Automobile_Alfa_Romeo_Disco_Volante_3.jpg/960px-Torino_Museo_Nazionale_dell%27Automobile_Alfa_Romeo_Disco_Volante_3.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Torino_Museo_Nazionale_dell%27Automobile_Alfa_Romeo_Disco_Volante_3.jpg",
+          "title": "File:Torino Museo Nazionale dell'Automobile Alfa Romeo Disco Volante 3.jpg",
+          "reason": "The sleek, shiny red sports car has an attractive design often associated with 'sexy' aesthetics.",
+          "description": "sexy",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T04:30:19.735Z"
+        },
+        {
+          "id": "1784349214251-8",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Celosia_cristata_%28Cockscomb%29_Flower_in_Chandigarh_-4.jpg/960px-Celosia_cristata_%28Cockscomb%29_Flower_in_Chandigarh_-4.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Celosia_cristata_(Cockscomb)_Flower_in_Chandigarh_-4.jpg",
+          "title": "File:Celosia cristata (Cockscomb) Flower in Chandigarh -4.jpg",
+          "reason": "The vibrant, textured flower may be perceived as visually appealing or 'sexy' to some viewers.",
+          "description": "sexy",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T04:33:34.251Z"
+        },
+        {
+          "id": "1784349325131-9",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/2022-02-20_09-52-53_rassemblement-voit-am-Andelnans.jpg/960px-2022-02-20_09-52-53_rassemblement-voit-am-Andelnans.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:2022-02-20_09-52-53_rassemblement-voit-am-Andelnans.jpg",
+          "title": "File:2022-02-20 09-52-53 rassemblement-voit-am-Andelnans.jpg",
+          "reason": "The sleek sports car in the image is often considered 'sexy' due to its design.",
+          "description": "sexy",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T04:35:25.131Z"
         }
       ]
     },
@@ -1990,8 +2080,8 @@
       "id": "1783044585457",
       "label": "Trivial and meaningless",
       "createdAt": "2026-07-03T02:09:45.457Z",
-      "updatedAt": "2026-07-03T02:48:50.369Z",
-      "attempts": 301,
+      "updatedAt": "2026-07-18T23:51:04.768Z",
+      "attempts": 850,
       "matches": [
         {
           "id": "1783044585459-1",
@@ -2112,6 +2202,586 @@
           "description": "Trivial and meaningless",
           "model": "qwen3-vl:30b",
           "foundAt": "2026-07-03T02:45:15.992Z"
+        },
+        {
+          "id": "1784414306826-1",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Aeropuerto_el_dorado_70.jpg/960px-Aeropuerto_el_dorado_70.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Aeropuerto_el_dorado_70.jpg",
+          "title": "File:Aeropuerto el dorado 70.jpg",
+          "reason": "The image depicts a mundane, unremarkable scene with no clear significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:38:26.826Z"
+        },
+        {
+          "id": "1784414317119-2",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Rotonda_Riu_Congost_amb_Llibertat_-_Montorn%C3%A8s_Nord_-_20240714_203512.jpg/960px-Rotonda_Riu_Congost_amb_Llibertat_-_Montorn%C3%A8s_Nord_-_20240714_203512.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Rotonda_Riu_Congost_amb_Llibertat_-_Montorn%C3%A8s_Nord_-_20240714_203512.jpg",
+          "title": "File:Rotonda Riu Congost amb Llibertat - Montornès Nord - 20240714 203512.jpg",
+          "reason": "The image depicts a mundane urban scene without notable significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:38:37.119Z"
+        },
+        {
+          "id": "1784414356807-3",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Hamm%2C_Germany_-_panoramio_%28125%29.jpg/960px-Hamm%2C_Germany_-_panoramio_%28125%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Hamm,_Germany_-_panoramio_(125).jpg",
+          "title": "File:Hamm, Germany - panoramio (125).jpg",
+          "reason": "The image depicts a routine urban street scene, which is mundane and lacks specific significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:39:16.807Z"
+        },
+        {
+          "id": "1784414362333-4",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/8/81/Track_to_Organswick_Farm_-_geograph.org.uk_-_4789441.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Track_to_Organswick_Farm_-_geograph.org.uk_-_4789441.jpg",
+          "title": "File:Track to Organswick Farm - geograph.org.uk - 4789441.jpg",
+          "reason": "The image depicts a mundane rural landscape without significant context or meaning.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:39:22.333Z"
+        },
+        {
+          "id": "1784414456639-5",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Fr%C3%A9d%C3%A9ric_Christol_-_L%27art_dans_l%27Afrique_australe%2C_1911_%28page_186-2_crop%29.jpg/960px-Fr%C3%A9d%C3%A9ric_Christol_-_L%27art_dans_l%27Afrique_australe%2C_1911_%28page_186-2_crop%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Fr%C3%A9d%C3%A9ric_Christol_-_L%27art_dans_l%27Afrique_australe,_1911_(page_186-2_crop).jpg",
+          "title": "File:Frédéric Christol - L'art dans l'Afrique australe, 1911 (page 186-2 crop).jpg",
+          "reason": "The image is a simple, unelaborated sketch without notable significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:40:56.639Z"
+        },
+        {
+          "id": "1784414469448-6",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Fire-fighting-facility_node-4191945297.jpg/960px-Fire-fighting-facility_node-4191945297.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Fire-fighting-facility_node-4191945297.jpg",
+          "title": "File:Fire-fighting-facility node-4191945297.jpg",
+          "reason": "The image depicts a mundane street scene with no significant or meaningful content.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:41:09.448Z"
+        },
+        {
+          "id": "1784414527191-7",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Zaporizhzhya_Artema_14-27_%28YDS_6973%29.JPG/960px-Zaporizhzhya_Artema_14-27_%28YDS_6973%29.JPG",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Zaporizhzhya_Artema_14-27_(YDS_6973).JPG",
+          "title": "File:Zaporizhzhya Artema 14-27 (YDS 6973).JPG",
+          "reason": "The image depicts a mundane urban scene with no inherent significance or depth, fitting the description.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:42:07.191Z"
+        },
+        {
+          "id": "1784414552104-8",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Rue_Chevreul_-_Maisons-Alfort_%28FR94%29_-_2021-02-25_-_4.jpg/960px-Rue_Chevreul_-_Maisons-Alfort_%28FR94%29_-_2021-02-25_-_4.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Rue_Chevreul_-_Maisons-Alfort_(FR94)_-_2021-02-25_-_4.jpg",
+          "title": "File:Rue Chevreul - Maisons-Alfort (FR94) - 2021-02-25 - 4.jpg",
+          "reason": "The image depicts a mundane street scene, which is trivial and lacks deeper significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:42:32.104Z"
+        },
+        {
+          "id": "1784414614547-9",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/2020-11-05_Gohrischstra%C3%9Fe%2C_Dresden_04.jpg/960px-2020-11-05_Gohrischstra%C3%9Fe%2C_Dresden_04.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:2020-11-05_Gohrischstra%C3%9Fe,_Dresden_04.jpg",
+          "title": "File:2020-11-05 Gohrischstraße, Dresden 04.jpg",
+          "reason": "The image shows a mundane street scene with no deeper significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:43:34.547Z"
+        },
+        {
+          "id": "1784414661448-10",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/7/79/Coastal_track_near_the_Castle_of_Mey_-_geograph.org.uk_-_5103838.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Coastal_track_near_the_Castle_of_Mey_-_geograph.org.uk_-_5103838.jpg",
+          "title": "File:Coastal track near the Castle of Mey - geograph.org.uk - 5103838.jpg",
+          "reason": "The image shows a simple, ordinary landscape with no significant or meaningful elements.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:44:21.448Z"
+        },
+        {
+          "id": "1784414727730-11",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Dipsacus_strigosus_sl22.jpg/960px-Dipsacus_strigosus_sl22.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Dipsacus_strigosus_sl22.jpg",
+          "title": "File:Dipsacus strigosus sl22.jpg",
+          "reason": "The image shows a plain natural scene with no obvious significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:45:27.730Z"
+        },
+        {
+          "id": "1784414735330-12",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/056_U_Berounky_k_SZ.JPG/960px-056_U_Berounky_k_SZ.JPG",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:056_U_Berounky_k_SZ.JPG",
+          "title": "File:056 U Berounky k SZ.JPG",
+          "reason": "The image shows a routine urban scene with a bridge, trees, and a car, which is mundane and lacks significant meaning.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:45:35.330Z"
+        },
+        {
+          "id": "1784414923935-13",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Landhausbrunnen_%28Bern%29_15.jpg/960px-Landhausbrunnen_%28Bern%29_15.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Landhausbrunnen_(Bern)_15.jpg",
+          "title": "File:Landhausbrunnen (Bern) 15.jpg",
+          "reason": "The image depicts a mundane urban scene with no apparent significance or deeper meaning.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:48:43.935Z"
+        },
+        {
+          "id": "1784414941645-14",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/8/84/Howlinmoonz.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Howlinmoonz.jpg",
+          "title": "File:Howlinmoonz.jpg",
+          "reason": "The image is a straightforward portrait with no profound context or significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:49:01.645Z"
+        },
+        {
+          "id": "1784414985194-15",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Dolmen_de_Bois-l%27%C3%89v%C3%AAque_2.jpg/960px-Dolmen_de_Bois-l%27%C3%89v%C3%AAque_2.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Dolmen_de_Bois-l%27%C3%89v%C3%AAque_2.jpg",
+          "title": "File:Dolmen de Bois-l'Évêque 2.jpg",
+          "reason": "The image depicts a natural scene with moss-covered stones that appear unremarkable without additional context.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:49:45.194Z"
+        },
+        {
+          "id": "1784415084834-16",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Canon_%C3%A9toile_%28676p144%29_%28074_of_144%29.png",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Canon_%C3%A9toile_(676p144)_(074_of_144).png",
+          "title": "File:Canon étoile (676p144) (074 of 144).png",
+          "reason": "The image consists of random, unordered dots without any discernible meaning or purpose.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:51:24.834Z"
+        },
+        {
+          "id": "1784415093924-17",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Cats_of_KD%27s_Home_18.jpg/960px-Cats_of_KD%27s_Home_18.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Cats_of_KD%27s_Home_18.jpg",
+          "title": "File:Cats of KD's Home 18.jpg",
+          "reason": "The image depicts a simple, unremarkable scene of a cat, aligning with 'trivial and meaningless'.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:51:33.924Z"
+        },
+        {
+          "id": "1784415207090-18",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Limaces_Route_Sorbier_-_Saint-Cyr-sur-Menthon_%28FR01%29_-_2021-07-15_-_3.jpg/960px-Limaces_Route_Sorbier_-_Saint-Cyr-sur-Menthon_%28FR01%29_-_2021-07-15_-_3.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Limaces_Route_Sorbier_-_Saint-Cyr-sur-Menthon_(FR01)_-_2021-07-15_-_3.jpg",
+          "title": "File:Limaces Route Sorbier - Saint-Cyr-sur-Menthon (FR01) - 2021-07-15 - 3.jpg",
+          "reason": "The image depicts a mundane natural scene with no apparent deeper significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:53:27.090Z"
+        },
+        {
+          "id": "1784415249015-19",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Cobb_Linc_Rapid_Gillig_BRT_40%27_Cumberland_Blvd_near_Spring_Rd_%2853171590657%29.jpg/960px-Cobb_Linc_Rapid_Gillig_BRT_40%27_Cumberland_Blvd_near_Spring_Rd_%2853171590657%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Cobb_Linc_Rapid_Gillig_BRT_40%27_Cumberland_Blvd_near_Spring_Rd_(53171590657).jpg",
+          "title": "File:Cobb Linc Rapid Gillig BRT 40' Cumberland Blvd near Spring Rd (53171590657).jpg",
+          "reason": "The image depicts a mundane street scene, which aligns with 'trivial and meaningless'.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:54:09.015Z"
+        },
+        {
+          "id": "1784415487109-20",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/The_history_of_England_Fleuron_T137515-55.png/960px-The_history_of_England_Fleuron_T137515-55.png",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:The_history_of_England_Fleuron_T137515-55.png",
+          "title": "File:The history of England Fleuron T137515-55.png",
+          "reason": "The repetitive, featureless pattern lacks purpose or significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T22:58:07.109Z"
+        },
+        {
+          "id": "1784415890519-21",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Felix_Wiedwald_2012_3.jpg/960px-Felix_Wiedwald_2012_3.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Felix_Wiedwald_2012_3.jpg",
+          "title": "File:Felix Wiedwald 2012 3.jpg",
+          "reason": "The image is a straightforward photograph with no deeper significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:04:50.519Z"
+        },
+        {
+          "id": "1784415903945-22",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Pau_-_KMB_-_16001000211086.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Pau_-_KMB_-_16001000211086.jpg",
+          "title": "File:Pau - KMB - 16001000211086.jpg",
+          "reason": "The image depicts a mundane street scene with ordinary buildings, fitting 'trivial and meaningless'.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:05:03.945Z"
+        },
+        {
+          "id": "1784415981068-23",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Spanish_treasury_in_Peru_-_DPLA_-_55a249c97b0e7a53c1bd7f081e9cbd65_%28page_26%29.jpg/960px-Spanish_treasury_in_Peru_-_DPLA_-_55a249c97b0e7a53c1bd7f081e9cbd65_%28page_26%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Spanish_treasury_in_Peru_-_DPLA_-_55a249c97b0e7a53c1bd7f081e9cbd65_(page_26).jpg",
+          "title": "File:Spanish treasury in Peru - DPLA - 55a249c97b0e7a53c1bd7f081e9cbd65 (page 26).jpg",
+          "reason": "The image shows a mostly blank page with faint, illegible writing, matching 'trivial and meaningless'.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:06:21.068Z"
+        },
+        {
+          "id": "1784416053958-24",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/MobilioDD4RS18WhiteFR.jpg/960px-MobilioDD4RS18WhiteFR.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:MobilioDD4RS18WhiteFR.jpg",
+          "title": "File:MobilioDD4RS18WhiteFR.jpg",
+          "reason": "The image depicts a common car in a parking lot, lacking significant context or purpose.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:07:33.958Z"
+        },
+        {
+          "id": "1784416167807-25",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Lulu_Fyffe_IMG_7122_%2814630475787%29.jpg/960px-Lulu_Fyffe_IMG_7122_%2814630475787%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Lulu_Fyffe_IMG_7122_(14630475787).jpg",
+          "title": "File:Lulu Fyffe IMG 7122 (14630475787).jpg",
+          "reason": "The image depicts a simple, unremarkable seascape with no apparent significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:09:27.807Z"
+        },
+        {
+          "id": "1784416217751-26",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/DEK_Deutsche_Einheitskurzschrift_-_Verkehrsschrift_-_Verkenntnis.svg/960px-DEK_Deutsche_Einheitskurzschrift_-_Verkehrsschrift_-_Verkenntnis.svg.png",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:DEK_Deutsche_Einheitskurzschrift_-_Verkehrsschrift_-_Verkenntnis.svg",
+          "title": "File:DEK Deutsche Einheitskurzschrift - Verkehrsschrift - Verkenntnis.svg",
+          "reason": "The image displays a random, meaningless wavy line.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:10:17.751Z"
+        },
+        {
+          "id": "1784416299015-27",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Cloghan_Townland_-_geograph.org.uk_-_730856.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Cloghan_Townland_-_geograph.org.uk_-_730856.jpg",
+          "title": "File:Cloghan Townland - geograph.org.uk - 730856.jpg",
+          "reason": "The image shows a mundane road sign in a rural landscape, fitting 'trivial and meaningless' as it lacks significant purpose or deeper meaning.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:11:39.015Z"
+        },
+        {
+          "id": "1784416340284-28",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Stacja_Uzdatniania_Wody_w_D%C4%99binach_-_widok_2.jpg/960px-Stacja_Uzdatniania_Wody_w_D%C4%99binach_-_widok_2.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Stacja_Uzdatniania_Wody_w_D%C4%99binach_-_widok_2.jpg",
+          "title": "File:Stacja Uzdatniania Wody w Dębinach - widok 2.jpg",
+          "reason": "The image shows ordinary infrastructure with no evident deeper significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:12:20.284Z"
+        },
+        {
+          "id": "1784416371019-29",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Mapillary_%28osmplus_org%29_2026-04-03_10H24M53S000_%28923927203775179_at_9kmr2ozTJ4pqPMHIw7jXR8%29.jpg/960px-Mapillary_%28osmplus_org%29_2026-04-03_10H24M53S000_%28923927203775179_at_9kmr2ozTJ4pqPMHIw7jXR8%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Mapillary_(osmplus_org)_2026-04-03_10H24M53S000_(923927203775179_at_9kmr2ozTJ4pqPMHIw7jXR8).jpg",
+          "title": "File:Mapillary (osmplus org) 2026-04-03 10H24M53S000 (923927203775179 at 9kmr2ozTJ4pqPMHIw7jXR8).jpg",
+          "reason": "The image depicts a common, unremarkable landscape scene.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:12:51.019Z"
+        },
+        {
+          "id": "1784416382626-30",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Entstehung_der_Deponie_Harrisleehof_%28Am_Rand_von_Flensburg_2014-09-29%29%2C_Bild_07.jpg/960px-Entstehung_der_Deponie_Harrisleehof_%28Am_Rand_von_Flensburg_2014-09-29%29%2C_Bild_07.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Entstehung_der_Deponie_Harrisleehof_(Am_Rand_von_Flensburg_2014-09-29),_Bild_07.jpg",
+          "title": "File:Entstehung der Deponie Harrisleehof (Am Rand von Flensburg 2014-09-29), Bild 07.jpg",
+          "reason": "The image depicts a mundane rural landscape lacking notable significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:13:02.626Z"
+        },
+        {
+          "id": "1784416503323-31",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Mapillary_%28osmplus_org%29_2026-04-08_12H22M21S416_%281669632090987590_at_pVhxZ4vXWQUj5DP816Tkwm%29.jpg/960px-Mapillary_%28osmplus_org%29_2026-04-08_12H22M21S416_%281669632090987590_at_pVhxZ4vXWQUj5DP816Tkwm%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Mapillary_(osmplus_org)_2026-04-08_12H22M21S416_(1669632090987590_at_pVhxZ4vXWQUj5DP816Tkwm).jpg",
+          "title": "File:Mapillary (osmplus org) 2026-04-08 12H22M21S416 (1669632090987590 at pVhxZ4vXWQUj5DP816Tkwm).jpg",
+          "reason": "The image depicts a common, unremarkable highway scene.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:15:03.323Z"
+        },
+        {
+          "id": "1784416540365-32",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Mapillary_%28osmplus_org%29_2025-07-23_07H05M43S958_%281086010299644615_at_UBSchF3pOi7HTr64snQ0Vw%29.jpg/960px-Mapillary_%28osmplus_org%29_2025-07-23_07H05M43S958_%281086010299644615_at_UBSchF3pOi7HTr64snQ0Vw%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Mapillary_(osmplus_org)_2025-07-23_07H05M43S958_(1086010299644615_at_UBSchF3pOi7HTr64snQ0Vw).jpg",
+          "title": "File:Mapillary (osmplus org) 2025-07-23 07H05M43S958 (1086010299644615 at UBSchF3pOi7HTr64snQ0Vw).jpg",
+          "reason": "The image shows a routine road scene with no unique or significant elements, fitting the description of trivial and meaningless.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:15:40.365Z"
+        },
+        {
+          "id": "1784416636727-33",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/3374Common_houseflies_eating_Bataw_fruit_15.jpg/960px-3374Common_houseflies_eating_Bataw_fruit_15.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:3374Common_houseflies_eating_Bataw_fruit_15.jpg",
+          "title": "File:3374Common houseflies eating Bataw fruit 15.jpg",
+          "reason": "The image shows a mundane scene of a fly on plant slices, fitting 'trivial and meaningless'.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:17:16.727Z"
+        },
+        {
+          "id": "1784416646151-34",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/%D0%9F%D0%BE%D0%B3%D0%BB%D0%B5%D0%B4_%D0%B2%D0%BE_%D0%A4%D1%80%D0%B0%D0%BD%D0%B3%D0%BE%D0%B2%D0%BE.jpg/960px-%D0%9F%D0%BE%D0%B3%D0%BB%D0%B5%D0%B4_%D0%B2%D0%BE_%D0%A4%D1%80%D0%B0%D0%BD%D0%B3%D0%BE%D0%B2%D0%BE.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:%D0%9F%D0%BE%D0%B3%D0%BB%D0%B5%D0%B4_%D0%B2%D0%BE_%D0%A4%D1%80%D0%B0%D0%BD%D0%B3%D0%BE%D0%B2%D0%BE.jpg",
+          "title": "File:Поглед во Франгово.jpg",
+          "reason": "The image shows a mundane street scene with no apparent significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:17:26.151Z"
+        },
+        {
+          "id": "1784416799085-35",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Mapillary_%28startless%29_2025-07-31_19H57M31S000_%281281547040368825_at_E4aI3CB1Gx6fchmRN7n0Wz%29_taken_with_GoPro_HERO13_Black.jpg/960px-Mapillary_%28startless%29_2025-07-31_19H57M31S000_%281281547040368825_at_E4aI3CB1Gx6fchmRN7n0Wz%29_taken_with_GoPro_HERO13_Black.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Mapillary_(startless)_2025-07-31_19H57M31S000_(1281547040368825_at_E4aI3CB1Gx6fchmRN7n0Wz)_taken_with_GoPro_HERO13_Black.jpg",
+          "title": "File:Mapillary (startless) 2025-07-31 19H57M31S000 (1281547040368825 at E4aI3CB1Gx6fchmRN7n0Wz) taken with GoPro HERO13 Black.jpg",
+          "reason": "The image depicts a common, unremarkable road scene that lacks significant meaning or purpose.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:19:59.085Z"
+        },
+        {
+          "id": "1784416807677-36",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/4/45/The_Moorings%2C_St_Dogmaels_-_geograph.org.uk_-_1731388.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:The_Moorings,_St_Dogmaels_-_geograph.org.uk_-_1731388.jpg",
+          "title": "File:The Moorings, St Dogmaels - geograph.org.uk - 1731388.jpg",
+          "reason": "The image depicts a mundane residential street scene, fitting the description of 'trivial and meaningless'.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:20:07.677Z"
+        },
+        {
+          "id": "1784416861403-37",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/4/48/Jaroslav_%C5%A0v%C3%A1b_signatura.jpeg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Jaroslav_%C5%A0v%C3%A1b_signatura.jpeg",
+          "title": "File:Jaroslav Šváb signatura.jpeg",
+          "reason": "The image shows a trivial handwritten signature with a date.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:21:01.403Z"
+        },
+        {
+          "id": "1784416886047-38",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Huibert_Pollmann_Terschelling.png/960px-Huibert_Pollmann_Terschelling.png",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Huibert_Pollmann_Terschelling.png",
+          "title": "File:Huibert Pollmann Terschelling.png",
+          "reason": "The image is a simple portrait lacking inherent significance or context.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:21:26.047Z"
+        },
+        {
+          "id": "1784416965235-39",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Rue_Pr%C3%A9toria_-_Champigny-sur-Marne_%28FR94%29_-_2021-03-25_-_2.jpg/960px-Rue_Pr%C3%A9toria_-_Champigny-sur-Marne_%28FR94%29_-_2021-03-25_-_2.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Rue_Pr%C3%A9toria_-_Champigny-sur-Marne_(FR94)_-_2021-03-25_-_2.jpg",
+          "title": "File:Rue Prétoria - Champigny-sur-Marne (FR94) - 2021-03-25 - 2.jpg",
+          "reason": "The image shows a mundane residential street scene lacking significant meaning.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:22:45.235Z"
+        },
+        {
+          "id": "1784417234103-40",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/La_palma-tomate_cherry_pera.JPG/960px-La_palma-tomate_cherry_pera.JPG",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:La_palma-tomate_cherry_pera.JPG",
+          "title": "File:La palma-tomate cherry pera.JPG",
+          "reason": "The image of tomatoes is a simple, ordinary scene without deeper significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:27:14.103Z"
+        },
+        {
+          "id": "1784417246906-41",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Heerdestra%C3%9Fe_20_Wohnhaus_A_IMG_1789.jpg/960px-Heerdestra%C3%9Fe_20_Wohnhaus_A_IMG_1789.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Heerdestra%C3%9Fe_20_Wohnhaus_A_IMG_1789.jpg",
+          "title": "File:Heerdestraße 20 Wohnhaus A IMG 1789.jpg",
+          "reason": "The image shows a common urban scene with a building and cars, fitting the description of 'trivial and meaningless' as it lacks notable or profound elements.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:27:26.906Z"
+        },
+        {
+          "id": "1784417350078-42",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/BSicon_uvexLABZgr-LABZgrv.svg/960px-BSicon_uvexLABZgr-LABZgrv.svg.png",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:BSicon_uvexLABZgr-LABZgrv.svg",
+          "title": "File:BSicon uvexLABZgr-LABZgrv.svg",
+          "reason": "The image consists of randomly placed blue circles with no discernible meaning or purpose.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:29:10.078Z"
+        },
+        {
+          "id": "1784417428854-43",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/317_Casa_al_carrer_d%27en_Moles%2C_4_%28Matar%C3%B3%29.jpg/960px-317_Casa_al_carrer_d%27en_Moles%2C_4_%28Matar%C3%B3%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:317_Casa_al_carrer_d%27en_Moles,_4_(Matar%C3%B3).jpg",
+          "title": "File:317 Casa al carrer d'en Moles, 4 (Mataró).jpg",
+          "reason": "The image depicts a mundane street scene of a building, aligning with the description of 'trivial and meaningless'.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:30:28.854Z"
+        },
+        {
+          "id": "1784417952951-44",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Inverted_Hawaii_Flag_%28copy%29.png/960px-Inverted_Hawaii_Flag_%28copy%29.png",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Inverted_Hawaii_Flag_(copy).png",
+          "title": "File:Inverted Hawaii Flag (copy).png",
+          "reason": "The image is a stylized graphic with no clear significance or deeper meaning.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:39:12.951Z"
+        },
+        {
+          "id": "1784417967826-45",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/%C3%9Eingvellir-Haki%C3%B0_29.jpg/960px-%C3%9Eingvellir-Haki%C3%B0_29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:%C3%9Eingvellir-Haki%C3%B0_29.jpg",
+          "title": "File:Þingvellir-Hakið 29.jpg",
+          "reason": "The image shows a simple pile of rocks with no discernible purpose or significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:39:27.826Z"
+        },
+        {
+          "id": "1784417974247-46",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Freedom_Square_Kharkiv.jpg/960px-Freedom_Square_Kharkiv.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Freedom_Square_Kharkiv.jpg",
+          "title": "File:Freedom Square Kharkiv.jpg",
+          "reason": "The image depicts a mundane urban scene with no notable significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:39:34.247Z"
+        },
+        {
+          "id": "1784418029388-47",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/%C2%AE_S.D._MADRID_E.U.S._PALACIO_DE_CIBELES-REFLEJOS_-_panoramio_%286%29.jpg/960px-%C2%AE_S.D._MADRID_E.U.S._PALACIO_DE_CIBELES-REFLEJOS_-_panoramio_%286%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:%C2%AE_S.D._MADRID_E.U.S._PALACIO_DE_CIBELES-REFLEJOS_-_panoramio_(6).jpg",
+          "title": "File:® S.D. MADRID E.U.S. PALACIO DE CIBELES-REFLEJOS - panoramio (6).jpg",
+          "reason": "The image depicts a mundane architectural scene without deeper significance.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:40:29.388Z"
+        },
+        {
+          "id": "1784418064466-48",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Noto_Emoji_KitKat_1f38a.svg/960px-Noto_Emoji_KitKat_1f38a.svg.png",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Noto_Emoji_KitKat_1f38a.svg",
+          "title": "File:Noto Emoji KitKat 1f38a.svg",
+          "reason": "The image depicts a simple, decorative, and non - substantive design.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:41:04.466Z"
+        },
+        {
+          "id": "1784418083376-49",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/International_9900i_2008_%2815475518219%29.jpg/960px-International_9900i_2008_%2815475518219%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:International_9900i_2008_(15475518219).jpg",
+          "title": "File:International 9900i 2008 (15475518219).jpg",
+          "reason": "The image depicts a common, unremarkable truck scene, fitting 'trivial and meaningless'.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:41:23.376Z"
+        },
+        {
+          "id": "1784418266601-50",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Range_Book_v._08-_Range_14%2C_Town_9_%28Athens_Township%2C_Athens_County%2C_Ohio%29_-_DPLA_-_5b7c67428bec2dbf0bfe57ad05ae586d_%28page_213%29.jpg/960px-Range_Book_v._08-_Range_14%2C_Town_9_%28Athens_Township%2C_Athens_County%2C_Ohio%29_-_DPLA_-_5b7c67428bec2dbf0bfe57ad05ae586d_%28page_213%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Range_Book_v._08-_Range_14,_Town_9_(Athens_Township,_Athens_County,_Ohio)_-_DPLA_-_5b7c67428bec2dbf0bfe57ad05ae586d_(page_213).jpg",
+          "title": "File:Range Book v. 08- Range 14, Town 9 (Athens Township, Athens County, Ohio) - DPLA - 5b7c67428bec2dbf0bfe57ad05ae586d (page 213).jpg",
+          "reason": "The image shows a blank page with no content, aligning with 'trivial and meaningless'.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:44:26.601Z"
+        },
+        {
+          "id": "1784418332809-51",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Owlcotes_Lane_crosses_the_ring_road_-_geograph.org.uk_-_6749472.jpg/960px-Owlcotes_Lane_crosses_the_ring_road_-_geograph.org.uk_-_6749472.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Owlcotes_Lane_crosses_the_ring_road_-_geograph.org.uk_-_6749472.jpg",
+          "title": "File:Owlcotes Lane crosses the ring road - geograph.org.uk - 6749472.jpg",
+          "reason": "The image depicts a mundane roadside scene without any significant meaning.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:45:32.809Z"
+        },
+        {
+          "id": "1784418368847-52",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Interieur%2C_deur_-_Holwerd_-_20114269_-_RCE.jpg/960px-Interieur%2C_deur_-_Holwerd_-_20114269_-_RCE.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Interieur,_deur_-_Holwerd_-_20114269_-_RCE.jpg",
+          "title": "File:Interieur, deur - Holwerd - 20114269 - RCE.jpg",
+          "reason": "The image shows a mundane door, which is trivial and lacks inherent meaning.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:46:08.847Z"
+        },
+        {
+          "id": "1784418386596-53",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/%22Melle_de_Launai%22_%C3%A0_la_Bastille%2C_op%C3%A9ra-comique_%28et_autres_%C5%93uvres_non_identifi%C3%A9es%29_Par_S._Gail._Fragments_chant_et_piano_et_chant_et_orchestre_-_btv1b52525877r_%28160_of_382%29.jpg/960px-thumbnail.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:%22Melle_de_Launai%22_%C3%A0_la_Bastille,_op%C3%A9ra-comique_(et_autres_%C5%93uvres_non_identifi%C3%A9es)_Par_S._Gail._Fragments_chant_et_piano_et_chant_et_orchestre_-_btv1b52525877r_(160_of_382).jpg",
+          "title": "File:\"Melle de Launai\" à la Bastille, opéra-comique (et autres œuvres non identifiées) Par S. Gail. Fragments chant et piano et chant et orchestre - btv1b52525877r (160 of 382).jpg",
+          "reason": "The image shows a blank music staff, which lacks musical content and is therefore trivial and meaningless.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:46:26.596Z"
+        },
+        {
+          "id": "1784418394301-54",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/%E8%A5%BF%E6%AD%A6%E9%AB%98%E9%80%9F46Km-47Km_-_panoramio.jpg/960px-%E8%A5%BF%E6%AD%A6%E9%AB%98%E9%80%9F46Km-47Km_-_panoramio.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:%E8%A5%BF%E6%AD%A6%E9%AB%98%E9%80%9F46Km-47Km_-_panoramio.jpg",
+          "title": "File:西武高速46Km-47Km - panoramio.jpg",
+          "reason": "The image depicts a mundane, ordinary scene without significant meaning.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:46:34.301Z"
+        },
+        {
+          "id": "1784418412836-55",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Hayes_Rd_Groveport_Canal_Winchester_-_DPLA_-_7bfcdfe69fc818c23c2163cb8588446d_%28page_2%29.jpg/960px-Hayes_Rd_Groveport_Canal_Winchester_-_DPLA_-_7bfcdfe69fc818c23c2163cb8588446d_%28page_2%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Hayes_Rd_Groveport_Canal_Winchester_-_DPLA_-_7bfcdfe69fc818c23c2163cb8588446d_(page_2).jpg",
+          "title": "File:Hayes Rd Groveport Canal Winchester - DPLA - 7bfcdfe69fc818c23c2163cb8588446d (page 2).jpg",
+          "reason": "The image lacks meaningful content and appears empty.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:46:52.836Z"
+        },
+        {
+          "id": "1784418533388-56",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Manualetto_del_cinedilettante_%28page_10-5crop%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Manualetto_del_cinedilettante_(page_10-5crop).jpg",
+          "title": "File:Manualetto del cinedilettante (page 10-5crop).jpg",
+          "reason": "The image is a simple, unelaborate sketch with no apparent depth or significant meaning.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:48:53.388Z"
+        },
+        {
+          "id": "1784418591490-57",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Removable_Car_Rear_Passenger_Seat_Waste_Bin_Next_To_Tissue_Box.png",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Removable_Car_Rear_Passenger_Seat_Waste_Bin_Next_To_Tissue_Box.png",
+          "title": "File:Removable Car Rear Passenger Seat Waste Bin Next To Tissue Box.png",
+          "reason": "The image depicts a simple, seemingly arbitrary diagram with unclear purpose.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:49:51.490Z"
+        },
+        {
+          "id": "1784418645220-58",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Haeuser_Heyestrasse_149_bis_157_und_Morper_Strasse_3_bis_11_in_Duesseldorf-Gerresheim%2C_von_Nordwesten.jpg/960px-Haeuser_Heyestrasse_149_bis_157_und_Morper_Strasse_3_bis_11_in_Duesseldorf-Gerresheim%2C_von_Nordwesten.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Haeuser_Heyestrasse_149_bis_157_und_Morper_Strasse_3_bis_11_in_Duesseldorf-Gerresheim,_von_Nordwesten.jpg",
+          "title": "File:Haeuser Heyestrasse 149 bis 157 und Morper Strasse 3 bis 11 in Duesseldorf-Gerresheim, von Nordwesten.jpg",
+          "reason": "The image shows a mundane street scene without significant meaning.",
+          "description": "Trivial and meaningless",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T23:50:45.220Z"
         }
       ]
     },
@@ -2119,8 +2789,8 @@
       "id": "1784250784544",
       "label": "magical, mystical or arcane",
       "createdAt": "2026-07-17T01:13:04.544Z",
-      "updatedAt": "2026-07-17T01:33:12.017Z",
-      "attempts": 179,
+      "updatedAt": "2026-07-18T21:41:40.584Z",
+      "attempts": 433,
       "matches": [
         {
           "id": "1784250784546-1",
@@ -2211,6 +2881,156 @@
           "description": "magical, mystical or arcane",
           "model": "qwen3-vl:30b",
           "foundAt": "2026-07-17T01:31:07.705Z"
+        },
+        {
+          "id": "1784409175561-1",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Birateshwor_Mahadev_Pashupati_Area_Pashupatinath_Kathmandu_Nepal_Rajesh_Dhungana_%282%29.jpg/960px-Birateshwor_Mahadev_Pashupati_Area_Pashupatinath_Kathmandu_Nepal_Rajesh_Dhungana_%282%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Birateshwor_Mahadev_Pashupati_Area_Pashupatinath_Kathmandu_Nepal_Rajesh_Dhungana_(2).jpg",
+          "title": "File:Birateshwor Mahadev Pashupati Area Pashupatinath Kathmandu Nepal Rajesh Dhungana (2).jpg",
+          "reason": "The ancient stone structure and temple context imply mystical religious significance.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:12:55.561Z"
+        },
+        {
+          "id": "1784409217176-2",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Les_Elfes._Valse_%28pour_orchestre%29%2C_Ferdinand_Raynal_-_bpt6k326134k_%2809_of_34%29.jpg/960px-Les_Elfes._Valse_%28pour_orchestre%29%2C_Ferdinand_Raynal_-_bpt6k326134k_%2809_of_34%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Les_Elfes._Valse_(pour_orchestre),_Ferdinand_Raynal_-_bpt6k326134k_(09_of_34).jpg",
+          "title": "File:Les Elfes. Valse (pour orchestre), Ferdinand Raynal - bpt6k326134k (09 of 34).jpg",
+          "reason": "The sheet music is titled \"LES ELFES,\" referencing elves which are associated with magical, mystical, or arcane themes.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:13:37.176Z"
+        },
+        {
+          "id": "1784409690036-3",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3c/DOUCAD.JPG",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:DOUCAD.JPG",
+          "title": "File:DOUCAD.JPG",
+          "reason": "The image features a mythical winged creature, which is associated with magical or mystical themes.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:21:30.036Z"
+        },
+        {
+          "id": "1784409724838-4",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Wooden_door_of_Sridharjiu_temple_of_Hazra_family_at_Joykrishnapur_in_Paschim_Medinipur_district%2C_West_Bengal_04.jpg/960px-Wooden_door_of_Sridharjiu_temple_of_Hazra_family_at_Joykrishnapur_in_Paschim_Medinipur_district%2C_West_Bengal_04.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Wooden_door_of_Sridharjiu_temple_of_Hazra_family_at_Joykrishnapur_in_Paschim_Medinipur_district,_West_Bengal_04.jpg",
+          "title": "File:Wooden door of Sridharjiu temple of Hazra family at Joykrishnapur in Paschim Medinipur district, West Bengal 04.jpg",
+          "reason": "The aged, intricately carved door evokes a mysterious, ancient feel suggesting magic or mysticism.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:22:04.838Z"
+        },
+        {
+          "id": "1784409775078-5",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/%E0%B4%95%E0%B5%BC%E0%B4%A3%E0%B5%8D%E0%B4%A3%E0%B4%B6%E0%B4%AA%E0%B4%A5%E0%B4%82_%E0%B4%95%E0%B4%A5%E0%B4%95%E0%B4%B3%E0%B4%BF_86.jpg/960px-%E0%B4%95%E0%B5%BC%E0%B4%A3%E0%B5%8D%E0%B4%A3%E0%B4%B6%E0%B4%AA%E0%B4%A5%E0%B4%82_%E0%B4%95%E0%B4%A5%E0%B4%95%E0%B4%B3%E0%B4%BF_86.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:%E0%B4%95%E0%B5%BC%E0%B4%A3%E0%B5%8D%E0%B4%A3%E0%B4%B6%E0%B4%AA%E0%B4%A5%E0%B4%82_%E0%B4%95%E0%B4%A5%E0%B4%95%E0%B4%B3%E0%B4%BF_86.jpg",
+          "title": "File:കർണ്ണശപഥം കഥകളി 86.jpg",
+          "reason": "The elaborate costume and theatrical presentation evoke mystical elements.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:22:55.078Z"
+        },
+        {
+          "id": "1784409822128-6",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Temple_door_in_Leh.jpg/960px-Temple_door_in_Leh.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Temple_door_in_Leh.jpg",
+          "title": "File:Temple door in Leh.jpg",
+          "reason": "The traditional, richly decorated architecture and murals evoke a spiritual, historical ambiance typical of mystical or arcane sites.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:23:42.128Z"
+        },
+        {
+          "id": "1784410303357-1",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Mars_en_Venus%2C_RP-P-OB-27.167.jpg/960px-Mars_en_Venus%2C_RP-P-OB-27.167.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Mars_en_Venus,_RP-P-OB-27.167.jpg",
+          "title": "File:Mars en Venus, RP-P-OB-27.167.jpg",
+          "reason": "The image depicts mythological figures and scenes, which are inherently magical and mystical.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:31:43.357Z"
+        },
+        {
+          "id": "1784410413122-2",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Penang_Georgetown_Heritage_%2822666686688%29.jpg/960px-Penang_Georgetown_Heritage_%2822666686688%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Penang_Georgetown_Heritage_(22666686688).jpg",
+          "title": "File:Penang Georgetown Heritage (22666686688).jpg",
+          "reason": "The street art creates a magical illusion, making the scene feel mystical.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:33:33.122Z"
+        },
+        {
+          "id": "1784410429101-3",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Rhymes_of_Childhood_-_DPLA_-_aba7280fe0b9c0741b24b88af9541c90_%28page_86%29.jpg/960px-Rhymes_of_Childhood_-_DPLA_-_aba7280fe0b9c0741b24b88af9541c90_%28page_86%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Rhymes_of_Childhood_-_DPLA_-_aba7280fe0b9c0741b24b88af9541c90_(page_86).jpg",
+          "title": "File:Rhymes of Childhood - DPLA - aba7280fe0b9c0741b24b88af9541c90 (page 86).jpg",
+          "reason": "The poem describes 'Fairy bugs', 'tinkle of the bells', and other whimsical elements evoking magic.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:33:49.101Z"
+        },
+        {
+          "id": "1784410519450-4",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Frickendorf%2C_Br%C3%BCcke_%C3%BCber_die_Baunach_Ebern_20210307_005.jpg/960px-Frickendorf%2C_Br%C3%BCcke_%C3%BCber_die_Baunach_Ebern_20210307_005.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Frickendorf,_Br%C3%BCcke_%C3%BCber_die_Baunach_Ebern_20210307_005.jpg",
+          "title": "File:Frickendorf, Brücke über die Baunach Ebern 20210307 005.jpg",
+          "reason": "The winged figure and mythological elements suggest a mystical or arcane theme.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:35:19.450Z"
+        },
+        {
+          "id": "1784410682422-5",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Casper_%2818616148565%29.jpg/960px-Casper_%2818616148565%29.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Casper_(18616148565).jpg",
+          "title": "File:Casper (18616148565).jpg",
+          "reason": "The cave formation resembling a creature evokes a mystical, otherworldly feel.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:38:02.422Z"
+        },
+        {
+          "id": "1784410722798-6",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/%E3%80%8EJapanese_Temples_and_Their_Treasures%E3%80%8F%E3%80%8A%E5%9F%B7%E9%87%91%E5%89%9B%E7%A5%9E%E7%AB%8B%E5%83%8F%E3%80%8B8%E4%B8%96%E7%B4%80%E3%80%81%E5%A5%88%E8%89%AF%E6%99%82%E4%BB%A3%E3%80%81%E6%9D%B1%E5%A4%A7%E5%AF%BA%EF%BC%88%E6%B3%95%E8%8F%AF%E5%A0%82%E6%89%80%E5%9C%A8%EF%BC%89%E3%80%81%E5%A5%88%E8%89%AF.jpg/960px-%E3%80%8EJapanese_Temples_and_Their_Treasures%E3%80%8F%E3%80%8A%E5%9F%B7%E9%87%91%E5%89%9B%E7%A5%9E%E7%AB%8B%E5%83%8F%E3%80%8B8%E4%B8%96%E7%B4%80%E3%80%81%E5%A5%88%E8%89%AF%E6%99%82%E4%BB%A3%E3%80%81%E6%9D%B1%E5%A4%A7%E5%AF%BA%EF%BC%88%E6%B3%95%E8%8F%AF%E5%A0%82%E6%89%80%E5%9C%A8%EF%BC%89%E3%80%81%E5%A5%88%E8%89%AF.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:%E3%80%8EJapanese_Temples_and_Their_Treasures%E3%80%8F%E3%80%8A%E5%9F%B7%E9%87%91%E5%89%9B%E7%A5%9E%E7%AB%8B%E5%83%8F%E3%80%8B8%E4%B8%96%E7%B4%80%E3%80%81%E5%A5%88%E8%89%AF%E6%99%82%E4%BB%A3%E3%80%81%E6%9D%B1%E5%A4%A7%E5%AF%BA%EF%BC%88%E6%B3%95%E8%8F%AF%E5%A0%82%E6%89%80%E5%9C%A8%EF%BC%89%E3%80%81%E5%A5%88%E8%89%AF.jpg",
+          "title": "File:『Japanese Temples and Their Treasures』《執金剛神立像》8世紀、奈良時代、東大寺（法華堂所在）、奈良.jpg",
+          "reason": "The statue represents a mythical, supernatural figure from religious traditions.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:38:42.798Z"
+        },
+        {
+          "id": "1784410753644-7",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Interieur_hervormde_kerk-_muurschildering_in_nis_-_Anloo_-_20319498_-_RCE.jpg/960px-Interieur_hervormde_kerk-_muurschildering_in_nis_-_Anloo_-_20319498_-_RCE.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Interieur_hervormde_kerk-_muurschildering_in_nis_-_Anloo_-_20319498_-_RCE.jpg",
+          "title": "File:Interieur hervormde kerk- muurschildering in nis - Anloo - 20319498 - RCE.jpg",
+          "reason": "The fresco's ancient style, star motifs, and symbolic imagery evoke a mystical atmosphere.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:39:13.644Z"
+        },
+        {
+          "id": "1784410847050-8",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/3/30/Alabina_font.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Alabina_font.jpg",
+          "title": "File:Alabina font.jpg",
+          "reason": "The stylized font and name 'Alabina' suggest a mystical theme.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:40:47.050Z"
+        },
+        {
+          "id": "1784410863156-9",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Bamum_Letter_Phase-D_Leuaep_-_U%2B16917.svg/960px-Bamum_Letter_Phase-D_Leuaep_-_U%2B16917.svg.png",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Bamum_Letter_Phase-D_Leuaep_-_U%2B16917.svg",
+          "title": "File:Bamum Letter Phase-D Leuaep - U+16917.svg",
+          "reason": "The abstract, symmetrical, and ornate pattern evokes a mystical or arcane aesthetic.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-07-18T21:41:03.156Z"
         }
       ]
     }

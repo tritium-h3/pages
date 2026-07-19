@@ -1,4 +1,4 @@
-import type { SkyMask } from './sky-color.js';
+import type { SkyMask } from './sky-frame.js';
 
 export type SkyCam = {
   id: string;
