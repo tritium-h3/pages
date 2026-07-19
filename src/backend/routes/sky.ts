@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { solarPosition, solarPhase } from '../sun.js';
-import { SKY_CAMS, getCam } from '../sky-cams.js';
+import { SKY_CAMS, getCam, nearestCam } from '../sky-cams.js';
 import { getEntry } from '../sky-source.js';
 
 const router = Router();
@@ -9,6 +9,20 @@ router.get('/sky/cams', (_req: Request, res: Response) => {
   res.json(
     SKY_CAMS.map(({ id, name, credit, creditUrl }) => ({ id, name, credit, creditUrl }))
   );
+});
+
+// Resolve the closest cam to a point. The frontend calls this when it has the
+// visitor's coordinates but no cam in the URL; it then pins the returned id.
+router.get('/sky/nearest', (req: Request, res: Response) => {
+  const lat = Number(req.query.lat);
+  const lon = Number(req.query.lon);
+  const valid =
+    Number.isFinite(lat) && Number.isFinite(lon) &&
+    lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
+  if (!valid) return res.status(400).json({ error: 'lat and lon required (lat -90..90, lon -180..180)' });
+
+  const cam = nearestCam(lat, lon);
+  res.json({ id: cam.id, name: cam.name, credit: cam.credit, creditUrl: cam.creditUrl });
 });
 
 router.get('/sky', async (req: Request, res: Response) => {

@@ -28,4 +28,22 @@ describe('analyzeSky', () => {
     const unmasked = await analyzeSky(DUSK, { top: 0, bottom: 250 });
     expect(unmasked.hero.hex).not.toBe(masked.hero.hex);
   });
+
+  // Column bounds must actually crop: a left/right subset of the sky samples a
+  // different slice than the full width, so the reading must differ. (This dusk
+  // frame brightens left-to-right, so the left third and right third differ.)
+  it('applies column bounds, sampling only the requested horizontal slice', async () => {
+    const full = await analyzeSky(DUSK, { top: 0, bottom: 175 });
+    const leftThird = await analyzeSky(DUSK, { top: 0, bottom: 175, left: 0, right: 166 });
+    const rightThird = await analyzeSky(DUSK, { top: 0, bottom: 175, left: 334, right: 500 });
+    expect(leftThird.hero.hex).not.toBe(rightThird.hero.hex);
+    // And at least one of them differs from the full-width reading.
+    expect([leftThird.hero.hex, rightThird.hero.hex]).not.toEqual([full.hero.hex, full.hero.hex]);
+  });
+
+  // An out-of-frame column range fails with the domain error, not a raw sharp one.
+  it('rejects a column range that does not intersect the frame', async () => {
+    await expect(analyzeSky(DUSK, { top: 0, bottom: 175, left: 600, right: 700 }))
+      .rejects.toThrow('sky mask does not intersect the frame');
+  });
 });

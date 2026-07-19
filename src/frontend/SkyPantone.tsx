@@ -73,6 +73,29 @@ const formatAsOf = (asOf: string, isStale: boolean): string => {
   return `${clockPart} (${age})${qualifier}`;
 };
 
+// Resolve the nearest cam's id from the visitor's browser location. Resolves to
+// null on any failure — no geolocation API, permission denied, timeout, or the
+// lookup itself failing — so the caller can fall back to the default cam.
+const resolveNearestCamId = (): Promise<string | null> =>
+  new Promise((resolve) => {
+    if (!navigator.geolocation) return resolve(null);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const resp = await fetch(apiUrl(`/sky/nearest?lat=${latitude}&lon=${longitude}`));
+          if (!resp.ok) return resolve(null);
+          const cam = (await resp.json()) as { id?: string };
+          resolve(cam.id ?? null);
+        } catch {
+          resolve(null);
+        }
+      },
+      () => resolve(null), // denied, unavailable, or errored
+      { timeout: 8000, maximumAge: 10 * 60 * 1000 }
+    );
+  });
+
 export default function SkyPantone() {
   const [reading, setReading] = useState<Reading | null>(null);
   const [error, setError] = useState('');
@@ -83,19 +106,41 @@ export default function SkyPantone() {
 
   useEffect(() => {
     let cancelled = false;
-    const load = async () => {
+    let timer: ReturnType<typeof setInterval> | undefined;
+
+    // `camId` null means "let the backend pick its default"; used when we have
+    // no cam in the URL and geolocation didn't give us one.
+    const load = async (camId: string | null) => {
       try {
-        const resp = await fetch(apiUrl('/sky'));
+        const resp = await fetch(apiUrl(camId ? `/sky?cam=${encodeURIComponent(camId)}` : '/sky'));
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = (await resp.json()) as Reading;
-        if (!cancelled) { setReading(data); setError(''); setRefreshFailed(false); }
+        if (cancelled) return;
+        setReading(data);
+        setError('');
+        setRefreshFailed(false);
+        // Pin whatever cam we actually resolved into the URL, so the page is
+        // shareable and won't re-prompt for location on the next visit. Only
+        // when the URL doesn't already carry a cam.
+        if (!new URLSearchParams(window.location.search).get('cam')) {
+          window.history.replaceState({}, '', `/sky?cam=${encodeURIComponent(data.cam.id)}`);
+        }
       } catch (e) {
         if (!cancelled) { setError(e instanceof Error ? e.message : 'failed to load'); setRefreshFailed(true); }
       }
     };
-    load();
-    const timer = setInterval(load, 5 * 60 * 1000); // matches backend cache TTL
-    return () => { cancelled = true; clearInterval(timer); };
+
+    const start = async () => {
+      const urlCam = new URLSearchParams(window.location.search).get('cam');
+      // A cam in the URL (e.g. a shared link) is authoritative — never prompt.
+      const camId = urlCam ?? (await resolveNearestCamId());
+      if (cancelled) return;
+      await load(camId);
+      timer = setInterval(() => load(camId), 5 * 60 * 1000); // matches backend cache TTL
+    };
+
+    start();
+    return () => { cancelled = true; if (timer) clearInterval(timer); };
   }, []);
 
   if (error && !reading) return <div className="sky-page sky-page--error">Sky unavailable: {error}</div>;
@@ -137,11 +182,21 @@ export default function SkyPantone() {
           the browser would fetch it exactly once per mount and the "live"
           frame would silently freeze at whatever it looked like on load.
           Do not remove this even though the backend ignores it. */}
-      <img
-        className="sky-frame"
-        src={apiUrl(`/sky/frame/${reading.cam.id}?asOf=${encodeURIComponent(reading.asOf)}`)}
-        alt="Live sky camera frame"
-      />
+      {/* The frame links to its source cam. Nice UX, and some sources (e.g.
+          foto-webcam.eu) require that a displayed image click through to them. */}
+      <a
+        className="sky-frame-link"
+        href={reading.cam.creditUrl}
+        target="_blank"
+        rel="noreferrer"
+        title={`${reading.cam.name} — source`}
+      >
+        <img
+          className="sky-frame"
+          src={apiUrl(`/sky/frame/${reading.cam.id}?asOf=${encodeURIComponent(reading.asOf)}`)}
+          alt={`Live sky camera frame — ${reading.cam.name}`}
+        />
+      </a>
 
       <footer className="sky-footer">
         <span className="sky-badge">{sunLabel(reading.sun)}</span>

@@ -8,8 +8,15 @@ import sharp from 'sharp';
 import { rgbToLab, type Lab, type ColorMatch } from './color.js';
 import { nearestPantone } from './pantone.js';
 
-/** Rows only — full frame width is always used. */
-export type SkyMask = { top: number; bottom: number };
+/**
+ * The sky rectangle within a frame. `top`/`bottom` are required row bounds;
+ * `left`/`right` are optional column bounds that default to the full frame
+ * width. Columns exist so a cam with burned-in corner overlays (a timestamp, a
+ * logo) can crop them out of the sampled region — Blue Hill needs none, but most
+ * landscape cams do. All four are pixel offsets; the region is [top, bottom) x
+ * [left, right).
+ */
+export type SkyMask = { top: number; bottom: number; left?: number; right?: number };
 
 export type BandLabel = 'zenith' | 'mid' | 'horizon';
 
@@ -38,15 +45,19 @@ export async function analyzeSky(jpeg: Buffer, mask: SkyMask): Promise<SkyReadin
   const meta = await sharp(jpeg).metadata();
   const width = meta.width ?? 0;
   const height = meta.height ?? 0;
-  // Clamp both bounds, not just bottom: an out-of-frame mask should fail with a
-  // domain error, never leak sharp's internal extract() complaint.
+  // Clamp every bound to the frame, so an out-of-range mask fails with a domain
+  // error rather than leaking sharp's internal extract() complaint. Columns
+  // default to the full width when the mask omits them (e.g. Blue Hill).
   const top = Math.max(0, mask.top);
   const bottom = Math.min(mask.bottom, height);
-  const region = bottom - top;
-  if (width <= 0 || region <= 0) throw new Error('sky mask does not intersect the frame');
+  const left = Math.max(0, mask.left ?? 0);
+  const right = Math.min(mask.right ?? width, width);
+  const regionH = bottom - top;
+  const regionW = right - left;
+  if (regionW <= 0 || regionH <= 0) throw new Error('sky mask does not intersect the frame');
 
   const { data } = await sharp(jpeg)
-    .extract({ left: 0, top, width, height: region })
+    .extract({ left, top, width: regionW, height: regionH })
     .resize(SAMPLE_W, SAMPLE_H, { fit: 'fill', kernel: 'lanczos3' })
     .removeAlpha()
     .raw()
