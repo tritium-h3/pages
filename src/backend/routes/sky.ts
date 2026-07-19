@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { solarPosition } from '../sun.js';
+import { solarPosition, solarPhase } from '../sun.js';
 import { SKY_CAMS, getCam } from '../sky-cams.js';
 import { getEntry } from '../sky-source.js';
 
@@ -26,6 +26,8 @@ router.get('/sky', async (req: Request, res: Response) => {
       sun: {
         elevation: Number(sun.elevation.toFixed(1)),
         azimuth: Number(sun.azimuth.toFixed(1)),
+        // Computed from full-precision values, before the display rounding above.
+        phase: solarPhase(sun.elevation, sun.azimuth),
       },
       hero: entry.reading.hero,
       bands: entry.reading.bands,

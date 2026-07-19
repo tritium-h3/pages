@@ -9,7 +9,7 @@ type Reading = {
   cam: { id: string; name: string; credit: string; creditUrl: string };
   asOf: string;
   stale: boolean;
-  sun: { elevation: number; azimuth: number };
+  sun: { elevation: number; azimuth: number; phase: string };
   hero: Match;
   bands: Band[];
 };
@@ -22,9 +22,10 @@ const compass = (az: number): string => {
 
 const sunLabel = (sun: Reading['sun']): string => {
   const dir = compass(sun.azimuth);
-  return sun.elevation >= 0
+  const pos = sun.elevation >= 0
     ? `☉ ${sun.elevation.toFixed(0)}° above horizon, ${dir}`
     : `☉ ${Math.abs(sun.elevation).toFixed(0)}° below horizon, ${dir}`;
+  return `${sun.phase} · ${pos}`;
 };
 
 // WCAG relative luminance: parse hex, linearise sRGB channels, weight-sum them.

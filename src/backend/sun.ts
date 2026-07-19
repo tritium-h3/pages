@@ -75,3 +75,40 @@ export function solarPosition(
 
   return { elevation, azimuth };
 }
+
+/** Casual time-of-day names, from deepest night through the day and back. */
+export type SolarPhase =
+  | 'Night'
+  | 'Morning astronomical twilight'
+  | 'Early dawn'
+  | 'Dawn'
+  | 'Sunrise'
+  | 'Morning'
+  | 'Afternoon'
+  | 'Evening'
+  | 'Sunset'
+  | 'Dusk'
+  | 'Twilight'
+  | 'Evening astronomical twilight';
+
+/**
+ * A casually-named phase of day from the sun's position. Bands are the standard
+ * astronomical twilights (astronomical -18, nautical -12, civil -6, horizon 0),
+ * plus two arbitrary thresholds: the sunrise/sunset "golden hour" ends at 6, and
+ * the descending afternoon becomes evening below 15. Rising vs. setting is read
+ * from the azimuth: the eastern half of the sky (azimuth < 180) is the morning
+ * side, so solar noon (azimuth 180) is the morning->afternoon boundary. "0" is
+ * the geometric horizon (no refraction), so labels flip a few minutes off visual
+ * sunrise/sunset — immaterial at this casual resolution. Reliable for a
+ * fixed mid-latitude cam (Blue Hill); not built for polar day/night.
+ */
+export function solarPhase(elevation: number, azimuth: number): SolarPhase {
+  const rising = azimuth < 180; // eastern half of the sky = morning side
+  if (elevation < -18) return 'Night';
+  if (elevation < -12) return rising ? 'Morning astronomical twilight' : 'Evening astronomical twilight';
+  if (elevation < -6) return rising ? 'Early dawn' : 'Twilight';
+  if (elevation < 0) return rising ? 'Dawn' : 'Dusk';
+  if (elevation < 6) return rising ? 'Sunrise' : 'Sunset';
+  if (rising) return 'Morning';
+  return elevation >= 15 ? 'Afternoon' : 'Evening';
+}
