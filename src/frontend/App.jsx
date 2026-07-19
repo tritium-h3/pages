@@ -8,6 +8,7 @@ import SpriteEditor from './SpriteEditor'
 import TransitDisplay from './TransitDisplay'
 import ImageHunt from './ImageHunt'
 import SkyPantone from './SkyPantone'
+import SkyMap from './SkyMap'
 import { apiUrl } from './backendApi'
 import './App.css'
 
@@ -133,6 +134,17 @@ function App() {
     )
   }
 
+  if (pathname === '/sky/map') {
+    return (
+      <div>
+        <button className="back-btn" onClick={() => navigateTo('/')}>
+          ← Back to Menu
+        </button>
+        <SkyMap />
+      </div>
+    )
+  }
+
   return (
     <div className="app-menu">
       <div className="backend-status">
@@ -169,6 +181,9 @@ function App() {
       </button>
       <button className="menu-btn" onClick={() => navigateTo('/sky')}>
         🌇 Sky Pantone
+      </button>
+      <button className="menu-btn" onClick={() => navigateTo('/sky/map')}>
+        🗺 Sky Map
       </button>
     </div>
   )

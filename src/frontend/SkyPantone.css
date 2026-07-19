@@ -77,3 +77,4 @@
 }
 .sky-credit a { color: inherit; text-decoration-color: currentColor; }
 .sky-note { font-style: italic; opacity: 0.75; }
+.sky-maplink { color: inherit; text-decoration-color: currentColor; font-size: 0.82rem; opacity: 0.9; }

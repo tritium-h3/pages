@@ -3,6 +3,8 @@ import type { SkyMask } from './sky-frame.js';
 export type SkyCam = {
   id: string;
   name: string;
+  /** Short place label for the map hover card, e.g. "Lake Tekapo, New Zealand". */
+  location: string;
   /** Direct JPEG snapshot. Bare host — www. 301-redirects. */
   url: string;
   lat: number;
@@ -22,6 +24,7 @@ export const SKY_CAMS: SkyCam[] = [
   {
     id: 'bluehill-1',
     name: 'Blue Hill Observatory',
+    location: 'Milton, Massachusetts, USA',
     url: 'https://hazecam.net/images/main/bluehill_left.jpg',
     lat: 42.2119,
     lon: -71.1144,
@@ -36,6 +39,7 @@ export const SKY_CAMS: SkyCam[] = [
   {
     id: 'zugspitze',
     name: 'Zugspitze — north from the summit',
+    location: 'Zugspitze, Germany',
     url: 'https://www.foto-webcam.eu/webcam/zugspitze-nord/current/720.jpg',
     lat: 47.4211,
     lon: 10.9853,
@@ -50,6 +54,7 @@ export const SKY_CAMS: SkyCam[] = [
   {
     id: 'tekapo',
     name: 'Lake Tekapo — south over the village',
+    location: 'Lake Tekapo, New Zealand',
     url: 'https://tekapotourism.nz/webcam/images/south.jpg',
     lat: -44.0043,
     lon: 170.4783,

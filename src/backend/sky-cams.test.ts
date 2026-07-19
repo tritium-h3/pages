@@ -4,6 +4,7 @@ import { nearestCam, SKY_CAMS, type SkyCam } from './sky-cams.js';
 const cam = (id: string, lat: number, lon: number): SkyCam => ({
   id,
   name: id,
+  location: id,
   url: '',
   lat,
   lon,

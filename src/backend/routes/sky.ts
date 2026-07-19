@@ -1,14 +1,32 @@
 import { Router, Request, Response } from 'express';
-import { solarPosition, solarPhase } from '../sun.js';
+import { solarPosition, solarPhase, subsolarPoint } from '../sun.js';
 import { SKY_CAMS, getCam, nearestCam } from '../sky-cams.js';
 import { getEntry } from '../sky-source.js';
 
 const router = Router();
 
+// Everything the map picker needs in one payload: where the sun is (to shade the
+// day/night map) and, per cam, where it is, its current time-of-day, and its
+// attribution. No frame fetching here — pips are neutral, so this is pure sun
+// maths and cheap to re-request each minute.
 router.get('/sky/cams', (_req: Request, res: Response) => {
-  res.json(
-    SKY_CAMS.map(({ id, name, credit, creditUrl }) => ({ id, name, credit, creditUrl }))
-  );
+  const now = new Date();
+  res.json({
+    subsolar: subsolarPoint(now),
+    cams: SKY_CAMS.map((cam) => {
+      const sun = solarPosition(cam.lat, cam.lon, now);
+      return {
+        id: cam.id,
+        name: cam.name,
+        location: cam.location,
+        lat: cam.lat,
+        lon: cam.lon,
+        phase: solarPhase(sun.elevation, sun.azimuth),
+        credit: cam.credit,
+        creditUrl: cam.creditUrl,
+      };
+    }),
+  });
 });
 
 // Resolve the closest cam to a point. The frontend calls this when it has the

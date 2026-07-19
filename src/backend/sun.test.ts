@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { solarPosition, solarPhase } from './sun.js';
+import { solarPosition, solarPhase, subsolarPoint } from './sun.js';
 
 const BLUE_HILL = { lat: 42.2119, lon: -71.1144 };
 
@@ -20,6 +20,43 @@ describe('solarPosition', () => {
     const p = solarPosition(BLUE_HILL.lat, BLUE_HILL.lon, new Date('2026-07-17T04:00:00Z'));
     expect(p.elevation).toBeLessThan(-20);
     expect(p.azimuth).toBeGreaterThan(330);
+  });
+});
+
+describe('subsolarPoint', () => {
+  it('sits over the equator at an equinox', () => {
+    // Sep 2026 equinox is ~22 Sep; declination is near zero there.
+    const p = subsolarPoint(new Date('2026-09-22T12:00:00Z'));
+    expect(p.lat).toBeCloseTo(0, 0);
+  });
+
+  it('reaches the Tropic of Cancer at the June solstice', () => {
+    const p = subsolarPoint(new Date('2026-06-21T12:00:00Z'));
+    expect(p.lat).toBeCloseTo(23.4, 0); // ~+23.44°
+  });
+
+  it('dips to the Tropic of Capricorn at the December solstice', () => {
+    const p = subsolarPoint(new Date('2026-12-21T12:00:00Z'));
+    expect(p.lat).toBeCloseTo(-23.4, 0);
+  });
+
+  it('places the subsolar longitude near Greenwich at 12:00 UTC', () => {
+    // At solar noon UTC the sun is overhead near 0° longitude (± equation of time,
+    // a few degrees). Well within 5°.
+    const p = subsolarPoint(new Date('2026-03-20T12:00:00Z'));
+    expect(Math.abs(p.lon)).toBeLessThan(5);
+  });
+
+  it('marches the subsolar longitude ~15°/hour westward', () => {
+    const noon = subsolarPoint(new Date('2026-03-20T12:00:00Z'));
+    const later = subsolarPoint(new Date('2026-03-20T18:00:00Z')); // +6h
+    // 6 hours -> ~90° further west (more negative), wrapping aside.
+    expect(later.lon).toBeCloseTo(noon.lon - 90, 0);
+  });
+
+  it('sits near the antimeridian at 00:00 UTC (noon at 180°)', () => {
+    const p = subsolarPoint(new Date('2026-03-20T00:00:00Z'));
+    expect(Math.abs(p.lon)).toBeGreaterThan(175); // ~±180
   });
 });
 

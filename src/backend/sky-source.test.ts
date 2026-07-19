@@ -11,6 +11,7 @@ const DUSK = readFileSync(path.join(__dirname_, '__fixtures__', 'bluehill-2026-0
 const CAM: SkyCam = {
   id: 'test-cam',
   name: 'Test Cam',
+  location: 'Testville',
   url: 'https://example.invalid/sky.jpg',
   lat: 42.2119,
   lon: -71.1144,

@@ -5,16 +5,15 @@
 const rad = (d: number): number => (d * Math.PI) / 180;
 const deg = (r: number): number => (r * 180) / Math.PI;
 
+const utcMinutes = (date: Date): number =>
+  date.getUTCHours() * 60 + date.getUTCMinutes() + date.getUTCSeconds() / 60;
+
 /**
- * NOAA solar position algorithm. Returns degrees; elevation is negative below
- * the horizon, azimuth is clockwise from north. Geometric — no refraction
- * correction, so visual sunset reads at roughly -0.83 rather than 0.
+ * Solar declination (degrees) and equation of time (minutes) for an instant —
+ * the position-independent half of the NOAA algorithm. Shared by solarPosition
+ * (which adds an observer's lat/lon) and subsolarPoint (which doesn't need one).
  */
-export function solarPosition(
-  lat: number,
-  lon: number,
-  date: Date
-): { elevation: number; azimuth: number } {
+function solarDeclEqTime(date: Date): { declin: number; eqTime: number } {
   const jd = date.getTime() / 86400000 + 2440587.5;
   const t = (jd - 2451545.0) / 36525.0; // Julian century
 
@@ -48,9 +47,22 @@ export function solarPosition(
         1.25 * eccent * eccent * Math.sin(2 * rad(meanAnom))
     );
 
-  const utcMin =
-    date.getUTCHours() * 60 + date.getUTCMinutes() + date.getUTCSeconds() / 60;
-  const trueSolarTime = (utcMin + eqTime + 4 * lon + 1440) % 1440;
+  return { declin, eqTime };
+}
+
+/**
+ * NOAA solar position algorithm. Returns degrees; elevation is negative below
+ * the horizon, azimuth is clockwise from north. Geometric — no refraction
+ * correction, so visual sunset reads at roughly -0.83 rather than 0.
+ */
+export function solarPosition(
+  lat: number,
+  lon: number,
+  date: Date
+): { elevation: number; azimuth: number } {
+  const { declin, eqTime } = solarDeclEqTime(date);
+
+  const trueSolarTime = (utcMinutes(date) + eqTime + 4 * lon + 1440) % 1440;
   const hourAngle = trueSolarTime / 4 < 0 ? trueSolarTime / 4 + 180 : trueSolarTime / 4 - 180;
 
   const zenith = deg(
@@ -74,6 +86,18 @@ export function solarPosition(
   }
 
   return { elevation, azimuth };
+}
+
+/**
+ * The point on Earth the sun is directly overhead at `date`. Its latitude is the
+ * solar declination; its longitude is where true solar time equals solar noon
+ * (720 min). The whole day/night map is shaded from this one point.
+ */
+export function subsolarPoint(date: Date): { lat: number; lon: number } {
+  const { declin, eqTime } = solarDeclEqTime(date);
+  let lon = (720 - utcMinutes(date) - eqTime) / 4;
+  lon = (((lon + 180) % 360) + 360) % 360 - 180; // normalise to [-180, 180]
+  return { lat: declin, lon };
 }
 
 /** Casual time-of-day names, from deepest night through the day and back. */

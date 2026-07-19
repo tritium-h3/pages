@@ -131,10 +131,18 @@ export default function SkyPantone() {
     };
 
     const start = async () => {
-      const urlCam = new URLSearchParams(window.location.search).get('cam');
       // A cam in the URL (e.g. a shared link) is authoritative — never prompt.
-      const camId = urlCam ?? (await resolveNearestCamId());
-      if (cancelled) return;
+      let camId = new URLSearchParams(window.location.search).get('cam');
+      if (!camId) {
+        camId = await resolveNearestCamId();
+        if (cancelled) return;
+        if (camId === null) {
+          // Couldn't place the visitor (no permission, timeout, ...). Send them
+          // to the map to choose a sky themselves rather than guessing a default.
+          window.location.assign('/sky/map');
+          return;
+        }
+      }
       await load(camId);
       timer = setInterval(() => load(camId), 5 * 60 * 1000); // matches backend cache TTL
     };
@@ -204,6 +212,7 @@ export default function SkyPantone() {
           {reading.cam.name} · © <a href={reading.cam.creditUrl} target="_blank" rel="noreferrer">{reading.cam.credit}</a>
         </span>
         <span className="sky-note">Closest chip to what the camera saw. Cameras are not eyes.</span>
+        <a className="sky-maplink" href="/sky/map">🗺 skies around the world</a>
       </footer>
     </div>
   );
