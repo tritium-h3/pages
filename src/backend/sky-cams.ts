@@ -45,11 +45,13 @@ export const SKY_CAMS: SkyCam[] = [
     lon: 10.9853,
     credit: 'Bayerische Zugspitzbahn / foto-webcam.eu',
     creditUrl: 'https://www.foto-webcam.eu/webcam/zugspitze-nord/',
-    // 720x405 frame. Overlays (caption top-left, logo top-right) sit above y=80.
-    // Kept conservative at bottom:200: this 2962 m summit is often fogged, and the
-    // clear-day northern horizon wasn't visible when the mask was set — if a
-    // reading ever looks like rock/terrain rather than sky, recheck on a clear day.
-    skyMask: { top: 80, bottom: 200 },
+    // 720x405 frame, looking north and DOWNWARD off the summit, so the horizon
+    // sits high — at ~y95, with dark terrain and valley town-lights below it. (The
+    // first mask, {80,200}, was set during fog and unknowingly read that
+    // landscape, not sky — hero came out "Black Beauty".) The real sky is a thin
+    // strip between the caption (top-left, tails to ~y32) and the horizon. Columns
+    // exclude the "Zugspitze" logo, which fills the top-right down to ~y80.
+    skyMask: { top: 34, bottom: 88, left: 0, right: 590 },
   },
   {
     id: 'tekapo',
@@ -65,6 +67,22 @@ export const SKY_CAMS: SkyCam[] = [
     // camera all day — no direct-sun contamination. The timestamp bar is the only
     // overlay (above y=70); bottom:380 stays above the distant mountain ridge.
     skyMask: { top: 70, bottom: 380 },
+  },
+  {
+    id: 'hongkong',
+    name: 'Hong Kong Observatory — east over Kowloon',
+    location: 'Hong Kong',
+    // Official met-agency cam serving a static JPEG with a real Last-Modified
+    // (many East-Asian cams are dynamic PHP endpoints that send none — unusable).
+    url: 'https://www.hko.gov.hk/wxinfo/aws/hko_mica/hko/latest_HKO.jpg',
+    lat: 22.3019,
+    lon: 114.1742,
+    credit: 'Hong Kong Observatory',
+    creditUrl: 'https://www.hko.gov.hk/en/wxinfo/ts/webcam/HKO_photo.htm',
+    // 720x405 frame. Overlays (timestamp top-left, credit top-right) sit above
+    // y=28; the Kowloon skyline starts around y=235, so top:30/bottom:200 keeps
+    // the sample in open sky.
+    skyMask: { top: 30, bottom: 200 },
   },
 ];
 
