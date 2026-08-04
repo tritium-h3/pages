@@ -13,7 +13,7 @@ describe('analyzeSky', () => {
     const r = await analyzeSky(DUSK, MASK);
     expect(r.hero.name).toBe('Icelandic Blue');
     expect(r.bands.map((b) => b.label)).toEqual(['zenith', 'mid', 'horizon']);
-    expect(r.bands.map((b) => b.name)).toEqual(['Iris', 'Thistle', 'Eventide']);
+    expect(r.bands.map((b) => b.name)).toEqual(['Raindrops', 'Thistle', 'Eventide']);
   });
 
   it('matches every band closely (dense table)', async () => {

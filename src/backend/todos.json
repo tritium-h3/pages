@@ -20,7 +20,7 @@
   {
     "id": "1770862507083",
     "text": "declutter room",
-    "completed": false,
+    "completed": true,
     "createdAt": "2026-02-12T02:15:07.083Z"
   },
   {
@@ -62,13 +62,49 @@
   {
     "id": "1775437102688",
     "text": "pictures",
-    "completed": false,
+    "completed": true,
     "createdAt": "2026-04-06T00:58:22.688Z"
   },
   {
     "id": "1775437106278",
     "text": "living room",
-    "completed": false,
+    "completed": true,
     "createdAt": "2026-04-06T00:58:26.278Z"
+  },
+  {
+    "id": "1785758915239",
+    "text": "Lawyer",
+    "completed": false,
+    "createdAt": "2026-08-03T12:08:35.239Z"
+  },
+  {
+    "id": "1785758925070",
+    "text": "Tuition",
+    "completed": false,
+    "createdAt": "2026-08-03T12:08:45.070Z"
+  },
+  {
+    "id": "1785758936233",
+    "text": "Sheets",
+    "completed": false,
+    "createdAt": "2026-08-03T12:08:56.233Z"
+  },
+  {
+    "id": "1785758941450",
+    "text": "Adriana",
+    "completed": false,
+    "createdAt": "2026-08-03T12:09:01.450Z"
+  },
+  {
+    "id": "1785761790576",
+    "text": "Hotel",
+    "completed": false,
+    "createdAt": "2026-08-03T12:56:30.576Z"
+  },
+  {
+    "id": "1785761795698",
+    "text": "Pto",
+    "completed": false,
+    "createdAt": "2026-08-03T12:56:35.698Z"
   }
 ]

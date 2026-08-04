@@ -1752,8 +1752,8 @@
       "id": "1782957050725",
       "label": "sexy",
       "createdAt": "2026-07-02T01:50:50.725Z",
-      "updatedAt": "2026-07-18T04:39:56.040Z",
-      "attempts": 1981,
+      "updatedAt": "2026-08-02T22:04:23.685Z",
+      "attempts": 1984,
       "matches": [
         {
           "id": "1782957050728-1",
@@ -1971,8 +1971,8 @@
       "id": "1783044461530",
       "label": "symbolic and meaningful",
       "createdAt": "2026-07-03T02:07:41.529Z",
-      "updatedAt": "2026-07-10T00:44:58.327Z",
-      "attempts": 19,
+      "updatedAt": "2026-08-02T22:12:49.443Z",
+      "attempts": 25,
       "matches": [
         {
           "id": "1783044461531-1",
@@ -2073,6 +2073,26 @@
           "description": "symbolic and meaningful",
           "model": "qwen3-vl:30b",
           "foundAt": "2026-07-10T00:44:56.119Z"
+        },
+        {
+          "id": "1785708746464-1",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Franco_Ianeselli_-_Dolomiti_Pride_2023.jpg/960px-Franco_Ianeselli_-_Dolomiti_Pride_2023.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Franco_Ianeselli_-_Dolomiti_Pride_2023.jpg",
+          "title": "File:Franco Ianeselli - Dolomiti Pride 2023.jpg",
+          "reason": "The image features a man wearing the Italian tricolor sash, a symbol of national identity, amid a public gathering that suggests civic or social significance.",
+          "description": "symbolic and meaningful",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-08-02T22:12:26.464Z"
+        },
+        {
+          "id": "1785708755804-2",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Scene_Nine_from_the_Life_of_the_Reverend_Jean_de_la_Barri%C3%A8re_MET_DP224358.jpg/960px-Scene_Nine_from_the_Life_of_the_Reverend_Jean_de_la_Barri%C3%A8re_MET_DP224358.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Scene_Nine_from_the_Life_of_the_Reverend_Jean_de_la_Barri%C3%A8re_MET_DP224358.jpg",
+          "title": "File:Scene Nine from the Life of the Reverend Jean de la Barrière MET DP224358.jpg",
+          "reason": "The historical and possibly religious context of the scene suggests symbolic meaning.",
+          "description": "symbolic and meaningful",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-08-02T22:12:35.804Z"
         }
       ]
     },
@@ -2789,8 +2809,8 @@
       "id": "1784250784544",
       "label": "magical, mystical or arcane",
       "createdAt": "2026-07-17T01:13:04.544Z",
-      "updatedAt": "2026-07-18T21:41:40.584Z",
-      "attempts": 433,
+      "updatedAt": "2026-08-02T22:11:29.088Z",
+      "attempts": 491,
       "matches": [
         {
           "id": "1784250784546-1",
@@ -3031,6 +3051,26 @@
           "description": "magical, mystical or arcane",
           "model": "qwen3-vl:30b",
           "foundAt": "2026-07-18T21:41:03.156Z"
+        },
+        {
+          "id": "1785708283665-1",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/GayPride_2012_109.jpg/960px-GayPride_2012_109.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:GayPride_2012_109.jpg",
+          "title": "File:GayPride 2012 109.jpg",
+          "reason": "The elaborate costume and theatrical makeup suggest a mystical or arcane aesthetic.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-08-02T22:04:43.665Z"
+        },
+        {
+          "id": "1785708505142-2",
+          "thumbUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Islamic_Manuscript-Poems_by_Ibrahim_Ordubadi-_%D8%A7%D8%A8%D8%B1%D8%A7%D9%87%DB%8C%D9%85_%D8%A7%D8%B1%D8%AF%D9%88%D8%A8%D8%A7%D8%AF%DB%8C-%D9%85%DB%8C%D8%B1%D8%B2%D8%A7_%D8%B3%DB%8C%D8%AF_%D8%A7%D8%A8%D8%B1%D8%A7%D9%87%DB%8C%D9%85_%D8%A7%D8%B1%D8%AF%D9%88%D8%A8%D8%A7%D8%AF%DB%8C.jpg/960px-Islamic_Manuscript-Poems_by_Ibrahim_Ordubadi-_%D8%A7%D8%A8%D8%B1%D8%A7%D9%87%DB%8C%D9%85_%D8%A7%D8%B1%D8%AF%D9%88%D8%A8%D8%A7%D8%AF%DB%8C-%D9%85%DB%8C%D8%B1%D8%B2%D8%A7_%D8%B3%DB%8C%D8%AF_%D8%A7%D8%A8%D8%B1%D8%A7%D9%87%DB%8C%D9%85_%D8%A7%D8%B1%D8%AF%D9%88%D8%A8%D8%A7%D8%AF%DB%8C.jpg",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Islamic_Manuscript-Poems_by_Ibrahim_Ordubadi-_%D8%A7%D8%A8%D8%B1%D8%A7%D9%87%DB%8C%D9%85_%D8%A7%D8%B1%D8%AF%D9%88%D8%A8%D8%A7%D8%AF%DB%8C-%D9%85%DB%8C%D8%B1%D8%B2%D8%A7_%D8%B3%DB%8C%D8%AF_%D8%A7%D8%A8%D8%B1%D8%A7%D9%87%DB%8C%D9%85_%D8%A7%D8%B1%D8%AF%D9%88%D8%A8%D8%A7%D8%AF%DB%8C.jpg",
+          "title": "File:Islamic Manuscript-Poems by Ibrahim Ordubadi- ابراهیم اردوبادی-میرزا سید ابراهیم اردوبادی.jpg",
+          "reason": "The image shows an ancient manuscript with intricate script, often associated with mystical or esoteric traditions.",
+          "description": "magical, mystical or arcane",
+          "model": "qwen3-vl:30b",
+          "foundAt": "2026-08-02T22:08:25.142Z"
         }
       ]
     }

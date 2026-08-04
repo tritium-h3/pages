@@ -72,11 +72,15 @@ export async function analyzeSky(jpeg: Buffer, mask: SkyMask): Promise<SkyReadin
   // cannot drag the answer; under full overcast the median correctly IS the grey.
   const heroLab: Lab = [0, 1, 2].map((c) => median(labs.map((l) => l[c]))) as Lab;
 
-  // Bands: mean of each horizontal third. The horizon band is where smoke shows
-  // up first, which is the reason bands exist at all.
+  // Bands: mean of each horizontal slice. Zenith and horizon are thin edge bands
+  // (top and bottom quarters) because the most saturated colour concentrates at
+  // the extremes — the deepest overhead blue, and the horizon glow where smoke or
+  // sunset shows first. The mid band is wide (the middle half), covering the broad
+  // transition between them.
+  const BAND_BOUNDS = [0, 0.25, 0.75, 1]; // zenith | mid | horizon, as fractions of height
   const bands = BAND_LABELS.map((label, bi) => {
-    const y0 = Math.floor((SAMPLE_H * bi) / 3);
-    const y1 = Math.floor((SAMPLE_H * (bi + 1)) / 3);
+    const y0 = Math.floor(SAMPLE_H * BAND_BOUNDS[bi]);
+    const y1 = Math.floor(SAMPLE_H * BAND_BOUNDS[bi + 1]);
     const sub = labs.slice(y0 * SAMPLE_W, y1 * SAMPLE_W);
     const meanLab: Lab = [0, 1, 2].map(
       (c) => sub.reduce((s, l) => s + l[c], 0) / sub.length

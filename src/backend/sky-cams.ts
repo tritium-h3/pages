@@ -84,6 +84,50 @@ export const SKY_CAMS: SkyCam[] = [
     // the sample in open sky.
     skyMask: { top: 30, bottom: 200 },
   },
+  {
+    id: 'chajnantor',
+    name: 'APEX — Chajnantor Plateau, Atacama',
+    location: 'Atacama Desert, Chile',
+    // Fixed (non-PTZ) site cam at 5100 m — the driest, clearest sky on Earth, an
+    // intense high-altitude blue. NB there's a *second* APEX cam at .../10.0.6.84/
+    // that IS a movable PTZ — do not use it; this one (10.0.6.218) is fixed.
+    url: 'https://www.apex-telescope.org/camera/images/10.0.6.218/image1.jpg',
+    lat: -23.0058,
+    lon: -67.7592,
+    credit: 'APEX (MPIfR / ESO / OSO)',
+    creditUrl: 'https://www.apex-telescope.org/ns/the-project/apex-chajnantor-camera/',
+    // 1920x1080 frame. A tall region of the open plateau sky to the RIGHT of the
+    // antenna and buildings, from the deep zenith blue down to the pale sky just
+    // above the plateau horizon (~y505) — so the horizon band catches that near-
+    // horizon sky. Columns x1050-1880 stay right of the antenna; bottom:490 stays
+    // above the plateau and the solar panels below it. Sun-flare artifacts drift
+    // through this sky when the sun is out; we deliberately DON'T dodge them — they
+    // can't be avoided in general, and against this much sky the median shrugs them
+    // off (the reading is byte-identical with or without them). Cameras aren't eyes.
+    skyMask: { top: 45, bottom: 490, left: 1050, right: 1880 },
+  },
+  {
+    id: 'capetown',
+    name: 'Table Mountain over Table Bay',
+    location: 'Cape Town, South Africa',
+    // Fixed, iconic view (Table Mountain, Lion's Head, Devil's Peak across the
+    // bay). The live feed is on the German sister host kapstadt.de; the plain
+    // capetown-webcam.com/webcam.jpg is stale (frozen 2020). credit links to the
+    // brand site, url points at the host that actually updates.
+    url: 'https://www.kapstadt.de/webcam.jpg',
+    lat: -33.90,
+    lon: 18.47,
+    credit: 'Capetown-webcam.com / Kapstadt.de',
+    creditUrl: 'https://www.capetown-webcam.com/',
+    // 1280x720 frame. A TALL band in the clean column to the RIGHT of Lion's Head
+    // (the western horizon — the view faces ~south, so west is frame-right). Tall
+    // on purpose: its top catches the brilliant zenith blue, its bottom catches the
+    // warm horizon glow where the late-day sun sets, and the wide mid band spans the
+    // transition. Columns clear the Lion's Head silhouette (x>910) and the far
+    // coastal hills (x<1120); top:88 clears the title/flag watermark; bottom:320
+    // sits just above the city/bay skyline (~y335).
+    skyMask: { top: 88, bottom: 320, left: 910, right: 1120 },
+  },
 ];
 
 export const getCam = (id: string): SkyCam | undefined =>
