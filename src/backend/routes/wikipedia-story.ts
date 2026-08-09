@@ -1,52 +1,31 @@
 import { Router, Request, Response } from 'express';
 import { ollama } from '../ollama.js';
+import { fetchRandomArticle } from '../wikipedia.js';
 
 const router = Router();
 
+const MODEL = 'qwen3:14b';
+
 // Wikipedia Story endpoint
 router.get('/wikipedia-story', async (req: Request, res: Response) => {
+  // If the browser navigates away or starts a new story, stop generating —
+  // otherwise abandoned generations keep queueing inside Ollama and every
+  // subsequent request waits behind them.
+  const abort = new AbortController();
+  req.on('close', () => abort.abort());
+
+  const sse = (payload: unknown) => {
+    if (!res.writableEnded) {
+      res.write(`data: ${JSON.stringify(payload)}\n\n`);
+    }
+  };
+
   try {
-    // Fetch a random Wikipedia article
     console.log('Fetching random Wikipedia article...');
-    const wikiResponse = await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
-    
-    if (!wikiResponse.ok) {
-      throw new Error('Failed to fetch Wikipedia article');
-    }
+    const article = await fetchRandomArticle(5, abort.signal);
+    console.log(`Got Wikipedia article: "${article.title}" (${article.extract.length} chars)`);
 
-    const wikiData = await wikiResponse.json() as { title: string; extract: string };
-    const title = wikiData.title;
-    const extract = wikiData.extract;
-
-    // Fetch additional content using mobile-sections for richer context
-    console.log(`Got Wikipedia article: "${title}", fetching full content...`);
-    const sectionsResponse = await fetch(
-      `https://en.wikipedia.org/api/rest_v1/page/mobile-sections/${encodeURIComponent(title)}`
-    );
-    
-    let fullContext = extract;
-    if (sectionsResponse.ok) {
-      const sectionsData = await sectionsResponse.json() as {
-        remaining?: { sections?: Array<{ text: string }> };
-      };
-      
-      // Combine the summary with the first few sections for richer context
-      const sections = sectionsData.remaining?.sections || [];
-      const additionalText = sections
-        .slice(0, 3) // Get first 3 sections
-        .map(s => s.text)
-        .join('\n\n');
-      
-      if (additionalText) {
-        fullContext = extract + '\n\n' + additionalText;
-        // Limit total context to ~2000 characters to avoid overwhelming the prompt
-        if (fullContext.length > 2000) {
-          fullContext = fullContext.substring(0, 2000) + '...';
-        }
-      }
-    }
-
-    console.log(`Context length: ${fullContext.length} characters`);
+    if (abort.signal.aborted) return;
 
     // Set up Server-Sent Events headers for streaming
     res.writeHead(200, {
@@ -55,46 +34,58 @@ router.get('/wikipedia-story', async (req: Request, res: Response) => {
       'Connection': 'keep-alive',
     });
 
-    // Send the Wikipedia article info first (send summary for display)
-    res.write(`data: ${JSON.stringify({ type: 'wiki', title, extract })}\n\n`);
+    // Send the Wikipedia article info first, so the page can show it while the
+    // story streams in.
+    sse({
+      type: 'wiki',
+      title: article.title,
+      extract: article.extract,
+      url: article.url,
+    });
 
-    // Generate a story using Ollama with the fuller context
-    const prompt = `Based on this Wikipedia article about "${title}":
+    const prompt = `Based on this Wikipedia article about "${article.title}":
 
-${fullContext}
+${article.extract}
 
-Tell me a creative and engaging short story (about 3-4 paragraphs) inspired by this topic. Make it interesting and fun!`;
+Tell me a creative and engaging short story (about 3-4 paragraphs) inspired by this topic. Make it interesting and fun!
 
-    console.log('Generating story with Ollama...');
+Write only the story itself. Do not add a preamble, title, or commentary.`;
+
+    console.log(`Generating story with ${MODEL}...`);
 
     try {
-      // Stream the story from Ollama
-      for await (const chunk of ollama.generateStream({
-        model: 'qwen3:14b',
-        prompt: prompt,
-        keep_alive: '60m',
-        options: {
-          temperature: 0.8,
-        }
-      })) {
-        // Send each chunk as a Server-Sent Event
-        res.write(`data: ${JSON.stringify({ type: 'story', chunk })}\n\n`);
+      for await (const chunk of ollama.generateStream(
+        {
+          model: MODEL,
+          prompt,
+          keep_alive: '60m',
+          options: { temperature: 0.8 },
+        },
+        abort.signal
+      )) {
+        sse({ type: 'story', chunk });
       }
 
-      // Send completion message
-      res.write(`data: ${JSON.stringify({ type: 'done' })}\n\n`);
+      sse({ type: 'done' });
       res.end();
     } catch (ollamaError) {
+      if (abort.signal.aborted) {
+        console.log('Client disconnected; generation cancelled.');
+        return;
+      }
       console.error('Ollama error:', ollamaError);
-      res.write(`data: ${JSON.stringify({ type: 'error', message: 'Failed to generate story from Ollama' })}\n\n`);
+      sse({ type: 'error', message: 'Failed to generate story from Ollama' });
       res.end();
     }
   } catch (error) {
+    if (abort.signal.aborted) return;
     console.error('Error in wikipedia-story endpoint:', error);
+    const message =
+      error instanceof Error ? error.message : 'Failed to generate Wikipedia story';
     if (!res.headersSent) {
-      res.status(500).json({ error: 'Failed to generate Wikipedia story' });
+      res.status(500).json({ error: message });
     } else {
-      res.write(`data: ${JSON.stringify({ type: 'error', message: 'An error occurred' })}\n\n`);
+      sse({ type: 'error', message });
       res.end();
     }
   }
