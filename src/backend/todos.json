@@ -74,25 +74,25 @@
   {
     "id": "1785758915239",
     "text": "Lawyer",
-    "completed": false,
+    "completed": true,
     "createdAt": "2026-08-03T12:08:35.239Z"
   },
   {
     "id": "1785758925070",
     "text": "Tuition",
-    "completed": false,
+    "completed": true,
     "createdAt": "2026-08-03T12:08:45.070Z"
   },
   {
     "id": "1785758936233",
     "text": "Sheets",
-    "completed": false,
+    "completed": true,
     "createdAt": "2026-08-03T12:08:56.233Z"
   },
   {
     "id": "1785758941450",
     "text": "Adriana",
-    "completed": false,
+    "completed": true,
     "createdAt": "2026-08-03T12:09:01.450Z"
   },
   {

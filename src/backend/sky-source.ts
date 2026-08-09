@@ -1,10 +1,9 @@
 import { analyzeSky, type SkyReading } from './sky-frame.js';
 import type { SkyCam } from './sky-cams.js';
+import { fetchFrame } from './frame-sources.js';
 
-const USER_AGENT = 'pages-sky/1.0 (https://samarkand.hopto.org)';
 // Source publishes every ~15 min; never poll faster than this.
 const CACHE_TTL_MS = 5 * 60 * 1000;
-const FETCH_TIMEOUT_MS = 15_000;
 
 export type CacheEntry = {
   fetchedAt: number;
@@ -26,44 +25,25 @@ export function __clearCache(): void {
 async function refresh(cam: SkyCam): Promise<CacheEntry> {
   const prev = cache.get(cam.id);
 
-  const headers: Record<string, string> = { 'User-Agent': USER_AGENT };
-  // Conditional request: don't re-download a frame that hasn't changed.
-  if (prev?.etag) headers['If-None-Match'] = prev.etag;
-  if (prev?.lastModified) headers['If-Modified-Since'] = prev.lastModified;
+  // How the bytes are obtained (static URL, latest-on-a-page, ...) is the frame
+  // source's job; here we only cache and analyse the result.
+  const frame = await fetchFrame(cam, prev);
 
-  const resp = await fetch(cam.url, {
-    headers,
-    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-  });
-
-  if (resp.status === 304 && prev) {
+  if (!frame.changed) {
+    // Source confirmed nothing changed (304). Reuse the last good reading.
+    if (!prev) throw new Error(`cam ${cam.id}: source reported not-modified but nothing is cached`);
     const touched = { ...prev, fetchedAt: Date.now() };
     cache.set(cam.id, touched);
     return touched;
   }
-  if (!resp.ok) throw new Error(`cam fetch failed: ${resp.status}`);
 
-  const jpeg = Buffer.from(await resp.arrayBuffer());
-  const lastModified = resp.headers.get('last-modified') ?? undefined;
-  // A page whose entire point is "the sky right now" must never state a
-  // timestamp that isn't the photo's own. If the source doesn't tell us when
-  // the frame was taken (or tells us something we can't parse), we'd rather
-  // fail this refresh — getEntry() will fall back to the last known-good
-  // reading (marked stale) instead of us guessing with our fetch time.
-  if (!lastModified) {
-    throw new Error('cam response has no Last-Modified; refusing to fake asOf');
-  }
-  const asOfDate = new Date(lastModified);
-  if (Number.isNaN(asOfDate.getTime())) {
-    throw new Error(`cam response has unparseable Last-Modified "${lastModified}"; refusing to fake asOf`);
-  }
   const entry: CacheEntry = {
     fetchedAt: Date.now(),
-    asOf: asOfDate.toISOString(),
-    jpeg,
-    etag: resp.headers.get('etag') ?? undefined,
-    lastModified,
-    reading: await analyzeSky(jpeg, cam.skyMask),
+    asOf: frame.asOf,
+    jpeg: frame.jpeg,
+    etag: frame.etag,
+    lastModified: frame.lastModified,
+    reading: await analyzeSky(frame.jpeg, cam.skyMask),
   };
   cache.set(cam.id, entry);
   return entry;

@@ -1,12 +1,35 @@
 import type { SkyMask } from './sky-frame.js';
 
+/**
+ * How to obtain a cam's current frame. Absent = `static` (fetch `url` directly),
+ * which is what every cam uses unless it can't. Add a new `kind` here and a
+ * matching handler in frame-sources.ts to teach the fetch layer a new pattern
+ * (e.g. a future gif/video frame grab) — nothing else needs to change.
+ */
+export type FrameSourceConfig =
+  | { kind: 'static' }
+  | {
+      // Institutional cams (e.g. the Icelandic Met Office) that publish frames at
+      // timestamped URLs with no stable "latest" alias. We read the listing page
+      // and take the newest matching image URL.
+      kind: 'latestFromPage';
+      /** The page that lists the available frames. */
+      pageUrl: string;
+      /** Origin to resolve the (relative) image paths against. */
+      imageBase: string;
+      /** Regex (as a string) matching this cam's frame paths; newest sorts last. */
+      pattern: string;
+    };
+
 export type SkyCam = {
   id: string;
   name: string;
   /** Short place label for the map hover card, e.g. "Lake Tekapo, New Zealand". */
   location: string;
-  /** Direct JPEG snapshot. Bare host — www. 301-redirects. */
-  url: string;
+  /** Direct JPEG snapshot for `static` sources. Omitted when `source` resolves it. */
+  url?: string;
+  /** How to fetch the current frame. Absent = static, using `url`. */
+  source?: FrameSourceConfig;
   lat: number;
   lon: number;
   credit: string;
@@ -127,6 +150,30 @@ export const SKY_CAMS: SkyCam[] = [
     // coastal hills (x<1120); top:88 clears the title/flag watermark; bottom:320
     // sits just above the city/bay skyline (~y335).
     skyMask: { top: 88, bottom: 320, left: 910, right: 1120 },
+  },
+  {
+    id: 'hofn',
+    name: 'Höfn — Vatnajökull glacier & fjord',
+    location: 'Höfn í Hornafirði, Iceland',
+    // Icelandic Met Office cam by Vatnajökull — a moody Nordic skyscape (a glacier
+    // tongue is visible on the far shore). No static "latest" URL: frames live at
+    // timestamped paths, so this uses the latestFromPage source to read the newest
+    // off the listing page. (`url` is intentionally omitted — the source resolves it.)
+    source: {
+      kind: 'latestFromPage',
+      pageUrl: 'https://en.vedur.is/weather/observations/webcams/hofn/',
+      imageBase: 'https://www.vedur.is',
+      pattern: '/photos/camN_hofn/\\d{8}_\\d{4}\\.jpg',
+    },
+    lat: 64.2539,
+    lon: -15.2082,
+    credit: 'Veðurstofa Íslands (Icelandic Met Office)',
+    creditUrl: 'https://en.vedur.is/weather/observations/webcams/hofn/',
+    // 704x528 frame. Overlays (logo top-left ~y18) and a weather mast (right, from
+    // x~555) are the obstructions; the glacier and mountains sit on the horizon at
+    // ~y240. top:28/bottom:228 with right:540 keeps the sample in the open storm sky
+    // above the mountains and left of the mast.
+    skyMask: { top: 28, bottom: 228, left: 0, right: 540 },
   },
 ];
 
