@@ -758,7 +758,7 @@ Plates without artwork must still look deliberate and differ from each other.
 
 ```ts
 import { describe, it, expect } from 'vitest';
-import { hashId, placeholderStyle } from './placeholder.js';
+import { hashId, primaryHue, placeholderStyle } from './placeholder.js';
 
 describe('hashId', () => {
   it('is deterministic', () => {
@@ -783,19 +783,39 @@ describe('placeholderStyle', () => {
   const ids = ['sky', 'todo', 'colony', 'weather', 'transit', 'sprites', 'wikistory', 'image-hunt', 'llm-duo-chat'];
 
   it('produces a css gradient background', () => {
-    expect(placeholderStyle('sky').background).toMatch(/^linear-gradient\(/);
+    expect(placeholderStyle('sky', 0).background).toMatch(/^linear-gradient\(/);
   });
 
-  it('is stable for the same id', () => {
-    expect(placeholderStyle('sky')).toEqual(placeholderStyle('sky'));
+  it('is stable for the same id and index', () => {
+    expect(placeholderStyle('sky', 3)).toEqual(placeholderStyle('sky', 3));
   });
 
   it('gives every real experiment id a distinct background', () => {
-    const backgrounds = ids.map(id => placeholderStyle(id).background);
+    const backgrounds = ids.map((id, i) => placeholderStyle(id, i).background);
     expect(new Set(backgrounds).size).toBe(ids.length);
+  });
+
+  it('keeps every pair of cards at least 15 degrees apart in hue', () => {
+    const hues = ids.map((_, i) => primaryHue(i));
+    for (let a = 0; a < hues.length; a++) {
+      for (let b = a + 1; b < hues.length; b++) {
+        const raw = Math.abs(hues[a] - hues[b]);
+        const circular = Math.min(raw, 360 - raw);
+        expect(circular).toBeGreaterThanOrEqual(15);
+      }
+    }
+  });
+
+  it('separates hues regardless of how many cards there are', () => {
+    for (const count of [3, 6, 12, 20]) {
+      const hues = Array.from({ length: count }, (_, i) => primaryHue(i));
+      expect(new Set(hues).size).toBe(count);
+    }
   });
 });
 ```
+
+String inequality is not visual distinctness: two gradients differing only in angle read as the same colour. The hue-separation test is the one that actually protects the gallery.
 
 - [ ] **Step 2: Run test to verify it fails**
 
@@ -817,11 +837,24 @@ export function hashId(id: string): number {
   return hash >>> 0;
 }
 
-/** A stable two-stop gradient derived from the id, used when a manifest has no
- *  `art`. Kept dark enough for the plate's caption to stay readable. */
-export function placeholderStyle(id: string): { background: string } {
+/** Golden angle. Successive multiples land as far from every previous value as
+ *  possible, so hues stay separated for any number of cards — which hashing
+ *  the id does not do: nine ids clustered three into one yellow-green band. */
+const GOLDEN_ANGLE = 137.508;
+
+/** The card's dominant hue, from its position in the registry rather than its
+ *  id. Exported so the test can assert separation directly. */
+export function primaryHue(index: number): number {
+  return Math.round((index * GOLDEN_ANGLE) % 360);
+}
+
+/** A stable two-stop gradient for a card with no `art`. Position sets the hue
+ *  so the gallery reads as distinct plates; the id hash sets the secondary
+ *  stop and the angle, so each card still looks individual. Both lightness
+ *  values stay dark enough for the caption to remain readable. */
+export function placeholderStyle(id: string, index: number): { background: string } {
   const hash = hashId(id);
-  const hue = hash % 360;
+  const hue = primaryHue(index);
   const hueShift = 30 + ((hash >>> 9) % 90);
   const angle = 100 + ((hash >>> 17) % 80);
   return {
@@ -832,6 +865,10 @@ export function placeholderStyle(id: string): { background: string } {
   };
 }
 ```
+
+Hue comes from position, not the id, so adding an experiment reshuffles later
+cards' colours. That is the right trade: a permanently well-spread gallery beats
+colour identity for placeholders that real artwork replaces one by one anyway.
 
 - [ ] **Step 4: Run test to verify it passes**
 
@@ -919,13 +956,16 @@ import styles from './Plate.module.css';
 
 interface PlateProps {
   entry: RegistryEntry;
+  /** position in REGISTRY — sets the placeholder hue, so it must be the
+   *  gallery-wide index, not the index within a section */
+  index: number;
   onNavigate: (path: string) => void;
 }
 
-export function Plate({ entry, onNavigate }: PlateProps) {
+export function Plate({ entry, index, onNavigate }: PlateProps) {
   const art = entry.art
     ? { backgroundImage: `url(${entry.art})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-    : placeholderStyle(entry.id);
+    : placeholderStyle(entry.id, index);
 
   const handleClick = (event: MouseEvent) => {
     if (entry.external) return;          // let the browser follow the href
@@ -966,7 +1006,9 @@ export function Plate({ entry, onNavigate }: PlateProps) {
   transition: transform 120ms ease, border-color 120ms ease;
 }
 .plate:hover { transform: translateY(-2px); border-color: var(--border-strong); }
-.art { height: 96px; }
+/* Artwork is authored at 1024x512. A ratio rather than a fixed height, so the
+   art scales with the card instead of letterboxing at narrow widths. */
+.art { aspect-ratio: 2 / 1; }
 .caption { padding: var(--space-3); }
 .title {
   display: block;
@@ -1005,7 +1047,12 @@ export function Gallery({ onNavigate }: { onNavigate: (path: string) => void }) 
             <p className={styles.sectionBlurb}>{section.blurb}</p>
             <div className={styles.grid}>
               {entries.map(entry => (
-                <Plate key={entry.id} entry={entry} onNavigate={onNavigate} />
+                <Plate
+                  key={entry.id}
+                  entry={entry}
+                  index={REGISTRY.indexOf(entry)}
+                  onNavigate={onNavigate}
+                />
               ))}
             </div>
           </section>
