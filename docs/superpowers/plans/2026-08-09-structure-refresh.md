@@ -32,10 +32,10 @@
 | --- | --- |
 | `tsconfig.app.json`, `tsconfig.server.json` | frontend/backend type checking, split by glob |
 | `src/platform/config.ts` | hostnames, ports, CORS origins, external URLs |
-| `src/platform/storage.ts` | atomic JSON persistence in `data/` |
+| `src/platform/server/storage.ts` | atomic JSON persistence in `data/` |
 | `src/platform/manifest.ts` | `ExperimentManifest` type, `SECTIONS` |
 | `src/platform/backendApi.ts` | `apiUrl(id, path)`, `wsUrl(path)` |
-| `src/platform/ollama.ts` | moved unchanged from `src/backend/ollama.ts` |
+| `src/platform/server/ollama.ts` | moved unchanged from `src/backend/ollama.ts` |
 | `src/platform/ui/tokens.css` | design tokens as custom properties |
 | `src/platform/ui/placeholder.ts` | deterministic plate art from an id |
 | `src/platform/ui/Plate.tsx`, `Gallery.tsx`, `Colophon.tsx`, `Shell.tsx` | gallery and page chrome |
@@ -81,9 +81,12 @@ Today there is no root `tsconfig.json` and Vite never type-checks, so every `.ts
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["src/frontend/**", "src/backend/**", "src/**/server/**"]
+  "exclude": ["src/frontend/**", "src/backend/**", "src/**/server/**", "src/server.ts"]
 }
 ```
+
+`src/**/server/**` matches a `server/` *directory*, so `src/server.ts` needs excluding by
+name — otherwise the Express entry point gets type-checked against the DOM.
 
 - [ ] **Step 2: Create `tsconfig.server.json`**
 
@@ -104,13 +107,23 @@ Today there is no root `tsconfig.json` and Vite never type-checks, so every `.ts
   },
   "include": [
     "src/server.ts",
-    "src/platform/**/*.ts",
+    "src/platform/config.ts",
+    "src/platform/server/**/*.ts",
     "src/experiments/**/server/**/*.ts",
     "src/experiments/**/types.ts"
-  ],
-  "exclude": ["src/platform/ui/**"]
+  ]
 }
 ```
+
+**Platform splits the same way slices do.** Backend-only platform code lives in
+`src/platform/server/` — that directory is already excluded from the app config by the
+`src/**/server/**` pattern, and included here. Frontend-only platform code
+(`backendApi.ts`, `ui/`) stays outside it and is checked only by the app config.
+`config.ts` is the one genuinely shared module — pure data, no DOM and no Node APIs — so
+both configs name it.
+
+Without this split, `src/platform/backendApi.ts` (Task 9) would be type-checked against
+`lib: ES2022` with no DOM, and its `window.location` reference would fail to compile.
 
 - [ ] **Step 3: Broaden vitest discovery**
 
@@ -294,7 +307,7 @@ git commit -m "feat(platform): add config module with generated CORS origins"
 Three route files hand-roll read-JSON/write-JSON, and each can truncate its file if the process dies mid-write.
 
 **Files:**
-- Create: `src/platform/storage.ts`, `src/platform/storage.test.ts`
+- Create: `src/platform/server/storage.ts`, `src/platform/server/storage.test.ts`
 
 **Interfaces:**
 - Consumes: nothing
@@ -302,7 +315,7 @@ Three route files hand-roll read-JSON/write-JSON, and each can truncate its file
 
 - [ ] **Step 1: Write the failing test**
 
-`src/platform/storage.test.ts`:
+`src/platform/server/storage.test.ts`:
 
 ```ts
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
@@ -365,10 +378,10 @@ describe('createJsonStore', () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `npx vitest run src/platform/storage.test.ts`
+Run: `npx vitest run src/platform/server/storage.test.ts`
 Expected: FAIL — cannot resolve `./storage.js`.
 
-- [ ] **Step 3: Implement `src/platform/storage.ts`**
+- [ ] **Step 3: Implement `src/platform/server/storage.ts`**
 
 The temp filename includes the pid *and* a counter, otherwise concurrent writes from one process collide on the same temp path and the final rename can publish a half-written file.
 
@@ -378,9 +391,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 /** Resolved from this module's location, not process.cwd(), so the systemd
- *  unit's WorkingDirectory is not load-bearing. */
+ *  unit's WorkingDirectory is not load-bearing.
+ *  src/platform/server/ -> up three -> repo root. */
 export const DATA_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
+  '..',
   '..',
   '..',
   'data',
@@ -421,13 +436,13 @@ export function createJsonStore<T>(name: string, fallback: T, dir: string = DATA
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `npx vitest run src/platform/storage.test.ts`
+Run: `npx vitest run src/platform/server/storage.test.ts`
 Expected: PASS, 6 tests.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/platform/storage.ts src/platform/storage.test.ts
+git add src/platform/server/storage.ts src/platform/server/storage.test.ts
 git commit -m "feat(platform): add atomic JSON store"
 ```
 
@@ -1209,9 +1224,9 @@ Replaces `src/backend/index.ts` with a host that mounts slices at `/api/<id>`, i
 
 **Interfaces:**
 - Consumes: `corsOrigins`, `PORTS`, `ensureDataDir`
-- Produces: `src/platform/slice.ts` exporting `SliceServer = { router: Router; init?: () => Promise<void>; attach?: (server: http.Server) => void }` — the contract every slice's `server/index.ts` implements
+- Produces: `src/platform/server/slice.ts` exporting `SliceServer = { router: Router; init?: () => Promise<void>; attach?: (server: http.Server) => void }` — the contract every slice's `server/index.ts` implements
 
-- [ ] **Step 1: Create `src/platform/slice.ts`**
+- [ ] **Step 1: Create `src/platform/server/slice.ts`**
 
 The contract lives in `platform/`, not in `server.ts`. `server.ts` runs `start()` at
 module load, so having slices import from it — even type-only — creates a cycle for no
@@ -1239,8 +1254,8 @@ import cors from 'cors';
 import http from 'http';
 
 import { corsOrigins, PORTS } from './platform/config.js';
-import { ensureDataDir } from './platform/storage.js';
-import type { SliceServer } from './platform/slice.js';
+import { ensureDataDir } from './platform/server/storage.js';
+import type { SliceServer } from './platform/server/slice.js';
 
 // Legacy routers — moved into slices by Tasks 9-17, one per task.
 import todosRouter, { initTodoStorage } from './backend/routes/todos.js';
@@ -1412,7 +1427,7 @@ Expected: health returns `{"status":"ok",...}`; todos returns a JSON array. Conf
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/server.ts src/platform/slice.ts src/registry.test.ts package.json
+git add src/server.ts src/platform/server/slice.ts src/registry.test.ts package.json
 git rm src/backend/index.ts
 git commit -m "feat(server): add slice-mounting host with init isolation, fix error handler arity"
 ```
@@ -1549,8 +1564,8 @@ Replace the file's storage block and route paths. The routes become slice-relati
 
 ```ts
 import { Router, Request, Response } from 'express';
-import { createJsonStore } from '../../../platform/storage.js';
-import type { SliceServer } from '../../../platform/slice.js';
+import { createJsonStore } from '../../../platform/server/storage.js';
+import type { SliceServer } from '../../../platform/server/slice.js';
 
 export interface Todo {
   id: string;
@@ -1856,7 +1871,7 @@ router.get('/board', async (_req: Request, res: Response) => {
 Replace `export default router;` with:
 
 ```ts
-import type { SliceServer } from '../../../platform/slice.js';
+import type { SliceServer } from '../../../platform/server/slice.js';
 
 const slice: SliceServer = { router };
 export default slice;
@@ -1962,10 +1977,10 @@ export const manifest: ExperimentManifest = {
 
 - [ ] **Step 3: Convert the router**
 
-In `server/index.ts`: the route `/wikipedia-story` becomes `/`; the `ollama` import path changes from `../ollama.js` to `../../../platform/ollama.js`; the `wikipedia.js` import becomes `./wikipedia.js`. Replace the default export:
+In `server/index.ts`: the route `/wikipedia-story` becomes `/`; the `ollama` import path changes from `../ollama.js` to `../../../platform/server/ollama.js`; the `wikipedia.js` import becomes `./wikipedia.js`. Replace the default export:
 
 ```ts
-import type { SliceServer } from '../../../platform/slice.js';
+import type { SliceServer } from '../../../platform/server/slice.js';
 
 const slice: SliceServer = { router };
 export default slice;
@@ -1976,11 +1991,11 @@ export default slice;
 This is the first slice to need it.
 
 ```bash
-git mv src/backend/ollama.ts src/platform/ollama.ts
-git mv src/backend/ollama.test.ts src/platform/ollama.test.ts
+git mv src/backend/ollama.ts src/platform/server/ollama.ts
+git mv src/backend/ollama.test.ts src/platform/server/ollama.test.ts
 ```
 
-Update the remaining legacy importers still under `src/backend/routes/` (`llm-duo-chat.ts`, `image-hunt.ts`) to `../../platform/ollama.js` so the server keeps building.
+Update the remaining legacy importers still under `src/backend/routes/` (`llm-duo-chat.ts`, `image-hunt.ts`) to `../../platform/server/ollama.js` so the server keeps building.
 
 - [ ] **Step 5: Update the page**
 
@@ -2021,7 +2036,7 @@ mount('wikistory', wikistorySlice);
 
 - [ ] **Step 7: Update CLAUDE.md**
 
-Remove `wikipedia-story` from the mounted-routes list and `/wikistory` from *Current pages*. Update the *Ollama library* heading and its import example — the path is now `src/platform/ollama.ts`, imported as `../../platform/ollama.js` from a slice server.
+Remove `wikipedia-story` from the mounted-routes list and `/wikistory` from *Current pages*. Update the *Ollama library* heading and its import example — the path is now `src/platform/server/ollama.ts`, imported as `../../../platform/server/ollama.js` from a slice server.
 
 - [ ] **Step 8: Verify**
 
@@ -2035,7 +2050,7 @@ Expected: the `wikipedia` tests still pass from their new location. In the brows
 - [ ] **Step 9: Commit**
 
 ```bash
-git add -A src/experiments/wikistory src/platform/ollama.ts src/platform/ollama.test.ts src/backend/routes src/registry.ts src/server.ts CLAUDE.md
+git add -A src/experiments/wikistory src/platform/server/ollama.ts src/platform/server/ollama.test.ts src/backend/routes src/registry.ts src/server.ts CLAUDE.md
 git commit -m "refactor(wikistory): migrate to slice, move ollama into platform"
 ```
 
@@ -2089,7 +2104,7 @@ Delete the `SESSIONS_FILE` constant, the `path`/`fileURLToPath` imports and the 
 `readAll`/`writeAll`, replacing them with:
 
 ```ts
-import { createJsonStore } from '../../../platform/storage.js';
+import { createJsonStore } from '../../../platform/server/storage.js';
 
 const store = createJsonStore<SessionsFile>('image-hunt-sessions', { sessions: [] });
 
@@ -2121,10 +2136,10 @@ Route paths lose their `/image-hunt` prefix:
 | `/image-hunt/sessions/:id` | `/sessions/:id` (GET, PATCH, DELETE) |
 | `/image-hunt` | `/` |
 
-Update the `ollama` import to `../../../platform/ollama.js` and the sessions import to `./sessions.js`. Drop the now-deleted `initSessionStorage` from that import. Replace the default export:
+Update the `ollama` import to `../../../platform/server/ollama.js` and the sessions import to `./sessions.js`. Drop the now-deleted `initSessionStorage` from that import. Replace the default export:
 
 ```ts
-import type { SliceServer } from '../../../platform/slice.js';
+import type { SliceServer } from '../../../platform/server/slice.js';
 
 const slice: SliceServer = { router };
 export default slice;
@@ -2238,10 +2253,10 @@ The route changes from `/llmduochat` to `/llm-duo-chat`.
 
 - [ ] **Step 3: Convert the router**
 
-`/llm-duo-chat/status` becomes `/status`. The ollama import becomes `../../../platform/ollama.js`. Rename the exported `initLLMDuoChatWebSocket` to fit the contract:
+`/llm-duo-chat/status` becomes `/status`. The ollama import becomes `../../../platform/server/ollama.js`. Rename the exported `initLLMDuoChatWebSocket` to fit the contract:
 
 ```ts
-import type { SliceServer } from '../../../platform/slice.js';
+import type { SliceServer } from '../../../platform/server/slice.js';
 
 const slice: SliceServer = {
   router,
@@ -2399,7 +2414,7 @@ import { loadSpriteManifest, getSpriteUrl, loadSpriteGroups, resolveSpriteGroup 
 `/sprite-groups` becomes `/groups` for both GET and POST. The JSON file path changes to `path.join(__dirname, '..', 'sprite-groups.json')`. Replace the default export:
 
 ```ts
-import type { SliceServer } from '../../../platform/slice.js';
+import type { SliceServer } from '../../../platform/server/slice.js';
 
 const slice: SliceServer = { router };
 export default slice;
@@ -2527,7 +2542,7 @@ Inside `server/`, the modules now sit beside each other, so `../sun.js` style im
 Replace the default export:
 
 ```ts
-import type { SliceServer } from '../../../platform/slice.js';
+import type { SliceServer } from '../../../platform/server/slice.js';
 
 const slice: SliceServer = { router };
 export default slice;
