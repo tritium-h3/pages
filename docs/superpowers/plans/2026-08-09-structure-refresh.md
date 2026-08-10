@@ -1155,7 +1155,24 @@ export function Shell({ chrome, experimentCount, onNavigate, children }: ShellPr
 }
 ```
 
-- [ ] **Step 6: Create `src/App.tsx`**
+- [ ] **Step 6: Create `src/jsx-modules.d.ts`**
+
+`tsconfig.app.json` sets `allowJs: false`, so importing a `.jsx` file is a compile
+error — and two places need to: `App.tsx` imports the legacy `App.jsx` below, and
+Task 17 registers Colony's `page.jsx`, which stays untyped permanently. One shim covers
+both, and unlike `allowJs: true` it does not drag every `.jsx` file into type checking.
+
+```ts
+/** Legacy and deliberately-untyped .jsx modules. Colony's page stays .jsx for
+ *  the foreseeable future, so this file is permanent, not transitional. */
+declare module '*.jsx' {
+  import type { ComponentType } from 'react';
+  const Component: ComponentType<Record<string, unknown>>;
+  export default Component;
+}
+```
+
+- [ ] **Step 7: Create `src/App.tsx`**
 
 `LegacyApp` keeps every unmigrated page reachable. It is deleted in Task 22.
 
@@ -1167,7 +1184,6 @@ import { REGISTRY } from './registry.js';
 import { matchRoute } from './router.js';
 import { Gallery } from './platform/ui/Gallery.js';
 import { Shell } from './platform/ui/Shell.js';
-// eslint-disable-next-line
 import LegacyApp from './frontend/App.jsx';
 import './platform/ui/tokens.css';
 
@@ -1219,7 +1235,7 @@ export default function App() {
 }
 ```
 
-- [ ] **Step 7: Create `src/main.tsx`, delete `src/frontend/main.jsx`, update `index.html`**
+- [ ] **Step 8: Create `src/main.tsx`, delete `src/frontend/main.jsx`, update `index.html`**
 
 ```tsx
 import { StrictMode } from 'react';
@@ -1241,7 +1257,7 @@ In `index.html`, change the module script's `src` from `/src/frontend/main.jsx` 
 import './frontend/index.css';
 ```
 
-- [ ] **Step 8: Verify in the browser**
+- [ ] **Step 9: Verify in the browser**
 
 ```bash
 npm run typecheck
@@ -1250,7 +1266,7 @@ npm run dev:restart
 
 Visit `https://torment-nexus.local:5173/` — the gallery renders with two Game Ideas plates (Roguelike, Cult Game), each with distinct placeholder art and an ↗ mark. Visit `https://torment-nexus.local:5173/todo` — the legacy Todo page still loads via the fallback.
 
-- [ ] **Step 9: Commit**
+- [ ] **Step 10: Commit**
 
 ```bash
 git add src/platform/ui src/App.tsx src/main.tsx index.html
