@@ -8,11 +8,24 @@ export function hashId(id: string): number {
   return hash >>> 0;
 }
 
-/** A stable two-stop gradient derived from the id, used when a manifest has no
- *  `art`. Kept dark enough for the plate's caption to stay readable. */
-export function placeholderStyle(id: string): { background: string } {
+/** Golden angle. Successive multiples land as far from every previous value as
+ *  possible, so hues stay separated for any number of cards — which hashing
+ *  the id does not do: nine ids clustered three into one yellow-green band. */
+const GOLDEN_ANGLE = 137.508;
+
+/** The card's dominant hue, from its position in the registry rather than its
+ *  id. Exported so the test can assert separation directly. */
+export function primaryHue(index: number): number {
+  return Math.round((index * GOLDEN_ANGLE) % 360);
+}
+
+/** A stable two-stop gradient for a card with no `art`. Position sets the hue
+ *  so the gallery reads as distinct plates; the id hash sets the secondary
+ *  stop and the angle, so each card still looks individual. Both lightness
+ *  values stay dark enough for the caption to remain readable. */
+export function placeholderStyle(id: string, index: number): { background: string } {
   const hash = hashId(id);
-  const hue = hash % 360;
+  const hue = primaryHue(index);
   const hueShift = 30 + ((hash >>> 9) % 90);
   const angle = 100 + ((hash >>> 17) % 80);
   return {
