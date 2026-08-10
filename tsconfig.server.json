@@ -14,9 +14,9 @@
   },
   "include": [
     "src/server.ts",
-    "src/platform/**/*.ts",
+    "src/platform/config.ts",
+    "src/platform/server/**/*.ts",
     "src/experiments/**/server/**/*.ts",
     "src/experiments/**/types.ts"
-  ],
-  "exclude": ["src/platform/ui/**"]
+  ]
 }
