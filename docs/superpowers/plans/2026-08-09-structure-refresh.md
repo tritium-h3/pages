@@ -2834,11 +2834,32 @@ import { manifest as colonyManifest } from './experiments/colony/manifest.js';
 
 `tsconfig.app.json` sets `allowJs: false`, so `page.jsx` is not type-checked. That is intended — Colony stays untyped for now.
 
-- [ ] **Step 5: Update CLAUDE.md**
+- [ ] **Step 5: Repair the build**
 
-Remove `/colony` from *Current pages*. In the *ColonyGame integration* section, update the file path and note the import now comes from `experiments/sprites/client.ts`. The fallback chain and the `null`-tile rendering rule keep their wording.
+Task 16 emptied `src/backend/` of TypeScript, leaving only an orphaned
+`src/backend/tsconfig.json`, so `npm run build` now fails with *"No inputs were found"*.
+This cannot wait for Task 22, because Task 21 runs `npm run build` as its verification.
 
-- [ ] **Step 6: Verify**
+```bash
+git rm src/backend/tsconfig.json
+```
+
+In `package.json`:
+
+```json
+"build": "npm run build:sprites && vite build && tsc --noEmit -p tsconfig.server.json",
+```
+
+Run `npm run build` and confirm it succeeds. This is also the first full production build
+of the restructure — dev-mode resolution has been exercised throughout, but rollup's
+resolver has not. Report anything it turns up, particularly around the `.js` import
+specifiers and the `.jsx` module shim.
+
+- [ ] **Step 6: Update CLAUDE.md**
+
+Remove `/colony` from *Current pages*. In the *ColonyGame integration* section, update the file path and note the import now comes from `experiments/sprites/client.ts`. Also update the build description: it now type-checks with `--noEmit` and emits no backend output.
+
+- [ ] **Step 7: Verify**
 
 ```bash
 npm run typecheck && npm test
@@ -2847,7 +2868,7 @@ npm run dev:restart
 
 In the browser, `/colony` renders the map, buildings draw from their sprite groups (not solid colour rectangles — that fallback means the group lookup broke), placement works, and the colophon sits below the canvas.
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 # Stage the source directories too — a bare `git add -A src/experiments/...`
@@ -3214,15 +3235,12 @@ and `.listen(PORTS.httpRedirect, '0.0.0.0')` in the redirect plugin.
 
 **Do not alter the `configure` hook or its comment** — it prevents zombie SSE scan loops from flooding Ollama.
 
-- [ ] **Step 5: Stop emitting an unrunnable backend build**
+- [ ] **Step 5: (done in Task 17)**
 
-In `package.json`:
-
-```json
-"build": "npm run build:sprites && vite build && tsc --noEmit -p tsconfig.server.json",
-```
-
-Delete `src/backend/tsconfig.json` if `git rm -r src/backend` did not already remove it.
+The build script switch to `--noEmit` and the removal of `src/backend/tsconfig.json`
+were pulled forward into Task 17, because Task 16 emptied `src/backend/` and broke
+`npm run build` before Task 21 needed it. Nothing to do here; confirm `npm run build`
+still succeeds as part of Step 8.
 
 - [ ] **Step 6: Rewrite CLAUDE.md's remaining stale sections**
 
