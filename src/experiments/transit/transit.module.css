@@ -20,7 +20,7 @@
 }
 
 /* ── Base Layout ────────────────────────────────────────────────────────────── */
-.td-outer {
+.tdOuter {
   position: fixed;
   inset: 0;
   background: #1a1608;
@@ -35,7 +35,7 @@
 }
 
 /* ── Scanline overlay ───────────────────────────────────────────────────────── */
-.td-scanlines {
+.tdScanlines {
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -61,7 +61,7 @@
 }
 
 /* ── Header ─────────────────────────────────────────────────────────────────── */
-.td-header {
+.tdHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -71,20 +71,20 @@
   flex-shrink: 0;
 }
 
-.td-header-left {
+.tdHeaderLeft {
   display: flex;
   align-items: baseline;
   gap: 1.2rem;
 }
 
-.td-station-name {
+.tdStationName {
   font-size: clamp(1.4rem, 2.8vw, 2.2rem);
   letter-spacing: 0.18em;
   color: var(--td-amber-bright);
   text-shadow: 0 0 18px rgba(255, 180, 40, 0.35);
 }
 
-.td-line-label {
+.tdLineLabel {
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -93,7 +93,7 @@
   color: var(--td-amber-dim);
 }
 
-.td-ol-dot {
+.tdOlDot {
   display: inline-block;
   width: 9px;
   height: 9px;
@@ -102,25 +102,25 @@
   box-shadow: 0 0 6px rgba(237, 139, 0, 0.6);
 }
 
-.td-header-right {
+.tdHeaderRight {
   text-align: right;
 }
 
-.td-clock {
+.tdClock {
   font-size: clamp(1.5rem, 3vw, 2.3rem);
   letter-spacing: 0.06em;
   color: var(--td-amber-bright);
   text-shadow: 0 0 14px rgba(255, 180, 40, 0.3);
 }
 
-.td-date {
+.tdDate {
   font-size: 0.85em;
   letter-spacing: 0.14em;
   color: var(--td-amber-dim);
 }
 
 /* ── Alert Banner ───────────────────────────────────────────────────────────── */
-.td-alerts-bar {
+.tdAlertsBar {
   flex-shrink: 0;
   background: #1f1505;
   border-bottom: 1px solid #4d2800;
@@ -130,7 +130,7 @@
   gap: 0.18rem;
 }
 
-.td-alert-row {
+.tdAlertRow {
   display: flex;
   align-items: baseline;
   gap: 0.6rem;
@@ -139,7 +139,7 @@
   line-height: 1.4;
 }
 
-.td-alert-effect {
+.tdAlertEffect {
   flex-shrink: 0;
   font-size: 0.8em;
   letter-spacing: 0.12em;
@@ -150,13 +150,13 @@
   border-radius: 2px;
 }
 
-.td-alert-text {
+.tdAlertText {
   color: rgba(232, 160, 32, 0.65);
   line-height: 1.35;
 }
 
 /* In departure panels when no trains due to disruption */
-.td-no-service-effect {
+.tdNoServiceEffect {
   display: block;
   font-size: 0.8em;
   letter-spacing: 0.1em;
@@ -164,7 +164,7 @@
   margin-bottom: 0.25rem;
 }
 
-.td-no-service-text {
+.tdNoServiceText {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
@@ -176,7 +176,7 @@
 }
 
 /* ── Body (route card grid container) ──────────────────────────────────────── */
-.td-body {
+.tdBody {
   flex: 1;
   overflow-y: auto;
   padding: 0.55rem 0.65rem 0;
@@ -184,7 +184,7 @@
 }
 
 /* ── OL direct cards — full-width 2-up row at top ──────────────────────────── */
-.rc-ol-row {
+.rcOlRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.45rem;
@@ -192,7 +192,7 @@
 }
 
 /* ── Route card grid ────────────────────────────────────────────────────────── */
-.rc-grid {
+.rcGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.45rem;
@@ -200,7 +200,7 @@
 }
 
 /* ── Base card ──────────────────────────────────────────────────────────────── */
-.rc-card {
+.rcCard {
   background: var(--td-surface);
   border: 1px solid var(--td-border);
   border-radius: var(--td-radius);
@@ -211,18 +211,18 @@
   transition: border-color 0.3s;
 }
 
-.rc-card:hover {
+.rcCard:hover {
   border-color: rgba(232, 160, 32, 0.25);
 }
 
 /* ── Card header: [badge] [names] [optional board-clock] ────────────────────── */
-.rc-header {
+.rcHeader {
   display: flex;
   align-items: center;
   gap: 0.55rem;
 }
 
-.rc-badge {
+.rcBadge {
   flex-shrink: 0;
   display: inline-block;
   font-size: 0.78em;
@@ -234,7 +234,7 @@
   white-space: nowrap;
 }
 
-.rc-names {
+.rcNames {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -242,7 +242,7 @@
   gap: 0.05em;
 }
 
-.rc-route-name {
+.rcRouteName {
   font-size: 1em;
   letter-spacing: 0.09em;
   color: var(--td-amber-bright);
@@ -251,7 +251,7 @@
   text-overflow: ellipsis;
 }
 
-.rc-direction {
+.rcDirection {
   font-size: 0.76em;
   letter-spacing: 0.05em;
   color: var(--td-amber-dim);
@@ -261,7 +261,7 @@
 }
 
 /* "Board in Xm" — prominent clock on connecting card header right side */
-.rc-board-clock {
+.rcBoardClock {
   flex-shrink: 0;
   font-size: clamp(1.5rem, 2.4vw, 2rem);
   line-height: 1;
@@ -269,28 +269,33 @@
   color: var(--td-amber);
 }
 
-.rc-board-clock.rc-dep-brd,
-.rc-board-clock.rc-dep-imminent {
+.rcBoardClock.rcDepBrd,
+.rcBoardClock.rcDepImminent {
   color: var(--td-white);
   animation: td-blink 0.9s step-end infinite;
 }
 
-.rc-board-clock.rc-dep-soon {
+.rcBoardClock.rcDepSoon {
   color: var(--td-amber-soon);
 }
 
-.rc-direct .rc-deps {
+/* No rules of its own — exists only as a marker class so DirectCard and
+   ConnectingCard both carry a variant class alongside .rcCard. */
+.rcConnecting {
+}
+
+.rcDirect .rcDeps {
   margin-left: auto;
   flex-shrink: 0;
 }
 
-/* rc-names should not steal all space in direct cards — deps sits beside it */
-.rc-direct .rc-names {
+/* rcNames should not steal all space in direct cards — deps sits beside it */
+.rcDirect .rcNames {
   flex: 0 1 auto;
 }
 
 /* ── Direct card: large departure time pills ────────────────────────────────── */
-.rc-deps {
+.rcDeps {
   display: flex;
   align-items: center;
   gap: 0.55rem;
@@ -298,25 +303,25 @@
   padding-left: 0.05rem;
 }
 
-.rc-dep-pill {
+.rcDepPill {
   font-size: clamp(1.3rem, 2.1vw, 1.75rem);
   line-height: 1;
   font-variant-numeric: tabular-nums;
   color: var(--td-amber);
 }
 
-.rc-dep-pill.rc-dep-brd,
-.rc-dep-pill.rc-dep-imminent {
+.rcDepPill.rcDepBrd,
+.rcDepPill.rcDepImminent {
   color: var(--td-white);
   animation: td-blink 0.9s step-end infinite;
 }
 
-.rc-dep-pill.rc-dep-soon {
+.rcDepPill.rcDepSoon {
   color: var(--td-amber-soon);
 }
 
 /* Dot separator between pills */
-.rc-dep-pill + .rc-dep-pill::before {
+.rcDepPill + .rcDepPill::before {
   content: '·';
   color: var(--td-amber-dim);
   margin-right: 0.5rem;
@@ -324,7 +329,7 @@
   vertical-align: middle;
 }
 
-.rc-no-service {
+.rcNoService {
   font-size: 0.82em;
   letter-spacing: 0.1em;
   color: var(--td-amber-dim);
@@ -332,13 +337,13 @@
 }
 
 /* ── Connecting card: journey chain rows ────────────────────────────────────── */
-.rc-journeys {
+.rcJourneys {
   display: flex;
   flex-direction: column;
   gap: 0.28rem;
 }
 
-.rc-journey {
+.rcJourney {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
@@ -347,23 +352,23 @@
 }
 
 /* Backup option — clearly secondary */
-.rc-journey-alt {
+.rcJourneyAlt {
   opacity: 0.4;
 }
 
 /* Schedule-estimated journey — dimmer amber with italic tilde prefix */
-.rc-journey-estimated {
+.rcJourneyEstimated {
   opacity: 0.7;
   font-style: italic;
   color: var(--td-amber-dim);
 }
 
-.rc-journey-estimated .rc-seg-board strong,
-.rc-journey-estimated .rc-board-clock {
+.rcJourneyEstimated .rcSegBoard strong,
+.rcJourneyEstimated .rcBoardClock {
   color: var(--td-amber-dim);
 }
 
-.rc-arrow {
+.rcArrow {
   font-size: 0.8em;
   color: var(--td-amber-dim);
   opacity: 0.5;
@@ -371,41 +376,41 @@
 }
 
 /* Base segment style */
-.rc-seg {
+.rcSeg {
   font-size: 0.84em;
   letter-spacing: 0.03em;
   white-space: nowrap;
 }
 
 /* "OL ▲ Nm" */
-.rc-seg-ol {
+.rcSegOl {
   color: rgba(237, 139, 0, 0.65);
 }
-.rc-seg-ol strong {
+.rcSegOl strong {
   color: var(--td-ol-orange);
 }
 
 /* Transfer stop name */
-.rc-seg-transfer {
+.rcSegTransfer {
   color: var(--td-amber-dim);
 }
 
 /* "wait Xm" */
-.rc-seg-wait {
+.rcSegWait {
   color: rgba(120, 185, 225, 0.6);
 }
 
 /* "board Ym" — the key answer, brightest text */
-.rc-seg-board {
+.rcSegBoard {
   color: var(--td-amber-dim);
 }
-.rc-seg-board strong {
+.rcSegBoard strong {
   color: var(--td-amber);
   font-size: 1.06em;
 }
 
 /* ── Skeleton loading card ──────────────────────────────────────────────────── */
-.rc-skeleton {
+.rcSkeleton {
   min-height: 5rem;
   opacity: 0.3;
   background: repeating-linear-gradient(
@@ -424,7 +429,7 @@
 }
 
 /* ── Error overlay ──────────────────────────────────────────────────────────── */
-.td-error {
+.tdError {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -435,13 +440,13 @@
   text-align: center;
 }
 
-.td-error-title {
+.tdErrorTitle {
   font-size: 1.1rem;
   letter-spacing: 0.14em;
   color: #cc4400;
 }
 
-.td-error-msg {
+.tdErrorMsg {
   font-size: 0.85em;
   color: rgba(220, 100, 32, 0.7);
   max-width: 50ch;
@@ -450,7 +455,7 @@
 
 /* ── Footer ─────────────────────────────────────────────────────────────────── */
 
-.td-footer {
+.tdFooter {
   display: flex;
   align-items: center;
   gap: 1.5rem;
@@ -463,16 +468,20 @@
   color: var(--td-amber-dim);
 }
 
-.td-update-ok {
+/* No rules of its own — base class alongside the ok/stale state class. */
+.tdUpdate {
+}
+
+.tdUpdateOk {
   color: var(--td-amber-dim);
 }
 
-.td-update-stale {
+.tdUpdateStale {
   color: #cc4400;
   animation: td-blink 2s step-end infinite;
 }
 
-.td-footer-err {
+.tdFooterErr {
   color: rgba(220, 80, 32, 0.7);
   white-space: nowrap;
   overflow: hidden;
@@ -480,7 +489,7 @@
   max-width: 40vw;
 }
 
-.td-attr {
+.tdAttr {
   margin-left: auto;
   opacity: 0.4;
 }

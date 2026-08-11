@@ -3,7 +3,6 @@ import ColonyGame from './ColonyGame'
 import WikiStory from './WikiStory'
 import LLMDuoChat from './LLMDuoChat'
 import SpriteEditor from './SpriteEditor'
-import TransitDisplay from './TransitDisplay'
 import ImageHunt from './ImageHunt'
 import SkyPantone from './SkyPantone'
 import SkyMap from './SkyMap'
@@ -84,10 +83,6 @@ function App() {
     return <SpriteEditor />
   }
 
-  if (pathname === '/transit') {
-    return <TransitDisplay />
-  }
-
   if (pathname === '/imagehunt') {
     return (
       <div>
@@ -142,9 +137,6 @@ function App() {
       </button>
       <button className="menu-btn" onClick={() => navigateTo('/sprite-editor')}>
         🖼 Sprite Group Editor
-      </button>
-      <button className="menu-btn" onClick={() => navigateTo('/transit')}>
-        🚇 Transit Display
       </button>
       <button className="menu-btn" onClick={() => navigateTo('/imagehunt')}>
         🔍 Image Hunt

@@ -8,9 +8,9 @@ import { ensureDataDir } from './platform/server/storage.js';
 import type { SliceServer } from './platform/server/slice.js';
 
 import todoSlice from './experiments/todo/server/index.js';
+import transitSlice from './experiments/transit/server/index.js';
 
 // Legacy routers — moved into slices by Tasks 9-17, one per task.
-import mbtaRouter from './backend/routes/mbta.js';
 import llmDuoChatRouter, { initLLMDuoChatWebSocket } from './backend/routes/llm-duo-chat.js';
 import wikipediaStoryRouter from './backend/routes/wikipedia-story.js';
 import spriteGroupsRouter from './backend/routes/sprite-groups.js';
@@ -57,12 +57,12 @@ function mount(id: string, slice: SliceServer): void {
 }
 
 mount('todo', todoSlice);
+mount('transit', transitSlice);
 
 // --- Legacy flat mounts. Each disappears as its slice migrates. ---
 app.use('/api', llmDuoChatRouter);
 app.use('/api', wikipediaStoryRouter);
 app.use('/api', spriteGroupsRouter);
-app.use('/api', mbtaRouter);
 app.use('/api', imageHuntRouter);
 app.use('/api', skyRouter);
 

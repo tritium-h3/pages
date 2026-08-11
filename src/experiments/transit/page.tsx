@@ -1,42 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import './TransitDisplay.css';
-
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-interface JourneyOption {
-  olDepartsInMins: number;
-  olDirection: 'N' | 'S';
-  transferStop: string;
-  arriveTransferInMins: number;
-  waitMins: number;
-  connectDepartsInMins: number;
-  isEstimated?: boolean;
-}
-
-interface RouteCard {
-  id: string;
-  routeName: string;
-  direction: string;
-  shortCode: string;
-  lineColor: string;
-  lineTextColor: string;
-  isDirect: boolean;
-  directDeps: Array<{ mins: number; headsign: string | null }>;
-  journeys: JourneyOption[];
-}
-
-interface ServiceAlert {
-  id: string;
-  effect: string;
-  severity: number;
-  header: string;
-}
-
-interface TransitBoardData {
-  routes: RouteCard[];
-  alerts: ServiceAlert[];
-  timestamp: string;
-}
+import styles from './transit.module.css';
+import { apiUrl } from '../../platform/backendApi.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
+import type { RouteCard, TransitBoardData } from './types.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -59,8 +25,8 @@ function effectLabel(effect: string): string {
 }
 
 function depClass(mins: number): string {
-  if (mins <= 8) return 'rc-dep-imminent'; // 3–8 min: blink — leave now window
-  if (mins <= 12) return 'rc-dep-soon';
+  if (mins <= 8) return styles.rcDepImminent; // 3–8 min: blink — leave now window
+  if (mins <= 12) return styles.rcDepSoon;
   return '';
 }
 
@@ -68,20 +34,20 @@ function depClass(mins: number): string {
 
 function DirectCard({ card }: { card: RouteCard }) {
   return (
-    <div className="rc-card rc-direct">
-      <div className="rc-header">
-        <span className="rc-badge" style={{ background: card.lineColor, color: card.lineTextColor }}>
+    <div className={`${styles.rcCard} ${styles.rcDirect}`}>
+      <div className={styles.rcHeader}>
+        <span className={styles.rcBadge} style={{ background: card.lineColor, color: card.lineTextColor }}>
           {card.shortCode}
         </span>
-        <div className="rc-names">
-          <span className="rc-route-name">{card.routeName}</span>
-          <span className="rc-direction">{card.direction}</span>
+        <div className={styles.rcNames}>
+          <span className={styles.rcRouteName}>{card.routeName}</span>
+          <span className={styles.rcDirection}>{card.direction}</span>
         </div>
-        <div className="rc-deps">
+        <div className={styles.rcDeps}>
           {card.directDeps.length === 0
-            ? <span className="rc-no-service">NO SERVICE</span>
+            ? <span className={styles.rcNoService}>NO SERVICE</span>
             : card.directDeps.map((d, i) => (
-                <span key={i} className={`rc-dep-pill ${i === 0 ? depClass(d.mins) : (d.mins <= 12 ? 'rc-dep-soon' : '')}`}>
+                <span key={i} className={`${styles.rcDepPill} ${i === 0 ? depClass(d.mins) : (d.mins <= 12 ? styles.rcDepSoon : '')}`}>
                   {d.mins}m
                 </span>
               ))
@@ -95,37 +61,37 @@ function DirectCard({ card }: { card: RouteCard }) {
 function ConnectingCard({ card }: { card: RouteCard }) {
   const first = card.journeys[0];
   return (
-    <div className="rc-card rc-connecting">
-      <div className="rc-header">
-        <span className="rc-badge" style={{ background: card.lineColor, color: card.lineTextColor }}>
+    <div className={`${styles.rcCard} ${styles.rcConnecting}`}>
+      <div className={styles.rcHeader}>
+        <span className={styles.rcBadge} style={{ background: card.lineColor, color: card.lineTextColor }}>
           {card.shortCode}
         </span>
-        <div className="rc-names">
-          <span className="rc-route-name">{card.routeName}</span>
-          <span className="rc-direction">{card.direction}</span>
+        <div className={styles.rcNames}>
+          <span className={styles.rcRouteName}>{card.routeName}</span>
+          <span className={styles.rcDirection}>{card.direction}</span>
         </div>
         {first && (
-          <span className={`rc-board-clock ${depClass(first.connectDepartsInMins)}`}>
+          <span className={`${styles.rcBoardClock} ${depClass(first.connectDepartsInMins)}`}>
             {first.isEstimated && '~'}{first.connectDepartsInMins}m
           </span>
         )}
       </div>
-      <div className="rc-journeys">
+      <div className={styles.rcJourneys}>
         {card.journeys.map((j, i) => (
-          <div key={i} className={`rc-journey ${i > 0 ? 'rc-journey-alt' : ''} ${j.isEstimated ? 'rc-journey-estimated' : ''}`}>
-            <span className="rc-seg rc-seg-ol">
+          <div key={i} className={`${styles.rcJourney} ${i > 0 ? styles.rcJourneyAlt : ''} ${j.isEstimated ? styles.rcJourneyEstimated : ''}`}>
+            <span className={`${styles.rcSeg} ${styles.rcSegOl}`}>
               OL&nbsp;{j.olDirection === 'N' ? '▲' : '▼'}&nbsp;<strong>{j.olDepartsInMins}m</strong>
             </span>
-            <span className="rc-arrow">→</span>
-            <span className="rc-seg rc-seg-transfer">{j.transferStop}</span>
+            <span className={styles.rcArrow}>→</span>
+            <span className={`${styles.rcSeg} ${styles.rcSegTransfer}`}>{j.transferStop}</span>
             {j.waitMins > 0 && (
               <>
-                <span className="rc-arrow">→</span>
-                <span className="rc-seg rc-seg-wait">wait&nbsp;{j.isEstimated ? '~' : ''}{j.waitMins}m</span>
+                <span className={styles.rcArrow}>→</span>
+                <span className={`${styles.rcSeg} ${styles.rcSegWait}`}>wait&nbsp;{j.isEstimated ? '~' : ''}{j.waitMins}m</span>
               </>
             )}
-            <span className="rc-arrow">→</span>
-            <span className="rc-seg rc-seg-board">board&nbsp;<strong>{j.isEstimated ? '~' : ''}{j.connectDepartsInMins}m</strong></span>
+            <span className={styles.rcArrow}>→</span>
+            <span className={`${styles.rcSeg} ${styles.rcSegBoard}`}>board&nbsp;<strong>{j.isEstimated ? '~' : ''}{j.connectDepartsInMins}m</strong></span>
           </div>
         ))}
       </div>
@@ -135,7 +101,7 @@ function ConnectingCard({ card }: { card: RouteCard }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export default function TransitDisplay() {
+export default function TransitPage(_props: ExperimentPageProps) {
   const [data, setData]                 = useState<TransitBoardData | null>(null);
   const [error, setError]               = useState<string | null>(null);
   const [staleSeconds, setStaleSeconds] = useState(0);
@@ -155,7 +121,7 @@ export default function TransitDisplay() {
   useEffect(() => {
     const doFetch = async () => {
       try {
-        const res = await fetch('/api/mbta/transit-board');
+        const res = await fetch(apiUrl('transit', '/board'));
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json: TransitBoardData = await res.json();
         setData(json);
@@ -183,69 +149,69 @@ export default function TransitDisplay() {
   const majorAlerts = data?.alerts.filter(a => a.severity >= 5) ?? [];
 
   return (
-    <div className="td-outer">
+    <div className={styles.tdOuter}>
 
       {/* ── Header ── */}
-      <header className="td-header">
-        <div className="td-header-left">
-          <span className="td-station-name">GREEN STREET</span>
-          <span className="td-line-label">
-            <span className="td-ol-dot" />
+      <header className={styles.tdHeader}>
+        <div className={styles.tdHeaderLeft}>
+          <span className={styles.tdStationName}>GREEN STREET</span>
+          <span className={styles.tdLineLabel}>
+            <span className={styles.tdOlDot} />
             ORANGE LINE
           </span>
         </div>
-        <div className="td-header-right">
-          <div className="td-clock">{timeStr}</div>
-          <div className="td-date">{dateStr}</div>
+        <div className={styles.tdHeaderRight}>
+          <div className={styles.tdClock}>{timeStr}</div>
+          <div className={styles.tdDate}>{dateStr}</div>
         </div>
       </header>
 
       {/* ── Alert Banner ── */}
       {majorAlerts.length > 0 && (
-        <div className="td-alerts-bar">
+        <div className={styles.tdAlertsBar}>
           {majorAlerts.map(alert => (
-            <div key={alert.id} className="td-alert-row">
-              <span className="td-alert-effect">{effectLabel(alert.effect)}</span>
-              <span className="td-alert-text">{alert.header}</span>
+            <div key={alert.id} className={styles.tdAlertRow}>
+              <span className={styles.tdAlertEffect}>{effectLabel(alert.effect)}</span>
+              <span className={styles.tdAlertText}>{alert.header}</span>
             </div>
           ))}
         </div>
       )}
 
       {/* ── Body ── */}
-      <main className="td-body">
+      <main className={styles.tdBody}>
         {noData && (
-          <div className="rc-grid">
+          <div className={styles.rcGrid}>
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rc-card rc-skeleton" />
+              <div key={i} className={`${styles.rcCard} ${styles.rcSkeleton}`} />
             ))}
           </div>
         )}
 
         {error && (
-          <div className="td-error">
-            <span className="td-error-title">⚠ COULD NOT LOAD DATA</span>
-            <span className="td-error-msg">{error}</span>
+          <div className={styles.tdError}>
+            <span className={styles.tdErrorTitle}>⚠ COULD NOT LOAD DATA</span>
+            <span className={styles.tdErrorMsg}>{error}</span>
           </div>
         )}
 
         {data && (
           <>
             {/* OL direct cards always at top, full-width 2-up row */}
-            <div className="rc-ol-row">
+            <div className={styles.rcOlRow}>
               {data.routes.filter(c => c.isDirect).map(card =>
                 <DirectCard key={card.id} card={card} />
               )}
             </div>
             {/* All connecting cards below */}
-            <div className="rc-grid">
+            <div className={styles.rcGrid}>
               {data.routes.filter(c => !c.isDirect).map(card =>
                 <ConnectingCard key={card.id} card={card} />,
               )}
               {data.routes.filter(c => !c.isDirect).length === 0 && (
-                <div className="td-error">
-                  <span className="td-error-title">NO SERVICE DATA</span>
-                  <span className="td-error-msg">
+                <div className={styles.tdError}>
+                  <span className={styles.tdErrorTitle}>NO SERVICE DATA</span>
+                  <span className={styles.tdErrorMsg}>
                     {majorAlerts[0]?.header ?? 'No predictions available at this time.'}
                   </span>
                 </div>
@@ -256,15 +222,15 @@ export default function TransitDisplay() {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="td-footer">
-        <span className={`td-update ${isStale ? 'td-update-stale' : 'td-update-ok'}`}>
+      <footer className={styles.tdFooter}>
+        <span className={`${styles.tdUpdate} ${isStale ? styles.tdUpdateStale : styles.tdUpdateOk}`}>
           {isStale ? `⚠ STALE — ${staleSeconds}s` : `● LIVE — ${staleSeconds}s ago`}
         </span>
-        <span className="td-attr">MBTA V3 API</span>
+        <span className={styles.tdAttr}>MBTA V3 API</span>
       </footer>
 
       {/* Scanline overlay */}
-      <div className="td-scanlines" aria-hidden="true" />
+      <div className={styles.tdScanlines} aria-hidden="true" />
     </div>
   );
 }
