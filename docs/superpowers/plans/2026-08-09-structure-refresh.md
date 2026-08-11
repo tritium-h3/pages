@@ -1390,16 +1390,37 @@ app.use('/api', skyRouter);
 
 // Error handler. Express identifies these by an arity of four — the previous
 // version took three parameters and so was registered as ordinary middleware
-// that never fired.
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+// that never fired. `_next` is unused but load-bearing: remove it and this
+// silently stops being an error handler again.
+interface HttpError extends Error {
+  status?: number;
+  statusCode?: number;
+}
+
+app.use((err: HttpError, _req: Request, res: Response, next: NextFunction) => {
   console.error(err);
-  res.status(500).json({ error: 'Internal server error' });
+  // A streaming route (SSE, ollama) may fail after headers are out; writing a
+  // second status would throw ERR_HTTP_HEADERS_SENT.
+  if (res.headersSent) {
+    next(err);
+    return;
+  }
+  // body-parser raises 400 on malformed JSON — the one error currently routed
+  // here. Reporting it as 500 would misattribute a client mistake to the server.
+  const status = err.status ?? err.statusCode ?? 500;
+  res.status(status).json({
+    error: status < 500 ? err.message : 'Internal server error',
+  });
 });
 
 const server = http.createServer(app);
 
-async function start(): Promise<void> {
-  await ensureDataDir();
+async function initAll(): Promise<void> {
+  try {
+    await ensureDataDir();
+  } catch (error) {
+    console.error('[host] could not create data dir; storage-backed slices will fail:', error);
+  }
 
   for (const { id, slice } of slices) {
     if (!slice.init) continue;
@@ -1426,7 +1447,27 @@ async function start(): Promise<void> {
     initTodoStorage().catch(e => console.error('[legacy todos] init failed:', e)),
     initSessionStorage().catch(e => console.error('[legacy image-hunt] init failed:', e)),
   ]);
-  initLLMDuoChatWebSocket(server);
+  try {
+    initLLMDuoChatWebSocket(server);
+  } catch (error) {
+    console.error('[legacy llm-duo-chat] websocket init failed:', error);
+  }
+}
+
+/** `listen` must be reached no matter what initialisation did. pages.service
+ *  sets Restart=always with RestartSec=3, so any throw before listen becomes a
+ *  silent three-second restart loop that takes every experiment offline —
+ *  the exact failure the per-slice isolation above exists to prevent. */
+async function start(): Promise<void> {
+  try {
+    await initAll();
+  } catch (error) {
+    console.error('[host] startup init failed; serving anyway:', error);
+  }
+
+  server.on('error', (error: NodeJS.ErrnoException) => {
+    console.error(`[host] http server error (${error.code ?? 'unknown'}):`, error.message);
+  });
 
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`Backend server running on http://0.0.0.0:${PORT}`);
@@ -1436,7 +1477,10 @@ async function start(): Promise<void> {
   });
 }
 
-start();
+start().catch(error => {
+  console.error('[host] unrecoverable startup failure:', error);
+  process.exitCode = 1;
+});
 
 export { mount };
 ```
@@ -1480,7 +1524,9 @@ describe('registry and server mount list agree', () => {
   });
 
   it('registers every mounted id', () => {
-    const mounted = [...serverSource.matchAll(/mount\('([a-z0-9-]+)'/g)].map(m => m[1]);
+    // Quote-agnostic: a mount("id", …) would make a single-quote regex match
+    // nothing, and this test would pass by finding no mounts at all.
+    const mounted = [...serverSource.matchAll(/mount\(\s*['"`]([a-z0-9-]+)/g)].map(m => m[1]);
     const registered = new Set(REGISTRY.filter(e => e.hasServer).map(e => e.id));
     for (const id of mounted) expect(registered.has(id)).toBe(true);
   });
