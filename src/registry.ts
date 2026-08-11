@@ -2,6 +2,7 @@ import type { ComponentType } from 'react';
 import type { ExperimentManifest, ExperimentPageProps } from './platform/manifest.js';
 import { EXTERNAL_URLS } from './platform/config.js';
 import { manifest as todoManifest } from './experiments/todo/manifest.js';
+import { manifest as weatherManifest } from './experiments/weather/manifest.js';
 
 export interface RegistryEntry extends ExperimentManifest {
   /** absent for external entries, which are links rather than routes */
@@ -10,6 +11,7 @@ export interface RegistryEntry extends ExperimentManifest {
 
 export const REGISTRY: RegistryEntry[] = [
   { ...todoManifest, load: () => import('./experiments/todo/page.js') },
+  { ...weatherManifest, load: () => import('./experiments/weather/page.js') },
   {
     id: 'roguelike',
     title: 'Roguelike',

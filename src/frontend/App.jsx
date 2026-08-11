@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import ColonyGame from './ColonyGame'
-import WeatherApp from './WeatherApp'
 import WikiStory from './WikiStory'
 import LLMDuoChat from './LLMDuoChat'
 import SpriteEditor from './SpriteEditor'
@@ -47,17 +46,6 @@ function App() {
 
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
-
-  if (pathname === '/weather') {
-    return (
-      <div>
-        <button className="back-btn" onClick={() => navigateTo('/')}>
-          ← Back to Menu
-        </button>
-        <WeatherApp />
-      </div>
-    )
-  }
 
   if (pathname === '/colony') {
     return (
@@ -143,9 +131,6 @@ function App() {
         </span>
       </div>
       <h1>Select an App</h1>
-      <button className="menu-btn" onClick={() => navigateTo('/weather')}>
-        Weather App
-      </button>
       <button className="menu-btn" onClick={() => navigateTo('/colony')}>
         Colony Builder Game
       </button>

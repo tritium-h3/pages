@@ -9,7 +9,7 @@ Frontend (`src/frontend/`) and backend (`src/backend/`) run concurrently in dev.
 ### Frontend (`src/frontend/`)
 - React 19, styled with Tailwind CSS 4, icons from `lucide-react`.
 - **Routing is hand-rolled in `App.jsx`** — no router library. `App` keeps `pathname` in state, updates it via `window.history.pushState` + a `popstate` listener, and renders one page component per path. To add a page: create the component, import it in `App.jsx`, add a `pathname === '/x'` branch, and add a menu button.
-- Current pages: `/weather`, `/colony` (Colony Builder game), `/wikistory`, `/todo`, `/llmduochat`, `/sprite-editor`, `/transit`.
+- Current pages: `/colony` (Colony Builder game), `/wikistory`, `/todo`, `/llmduochat`, `/sprite-editor`, `/transit`.
 - Entry: `main.jsx` → `App.jsx`. Mixed `.jsx`/`.tsx` — newer pages tend to be `.tsx`.
 - **Reaching the backend:** migrated slices use the helpers in `src/platform/backendApi.ts` — `apiUrl(id, path)` builds `/api/<id>/...`, `healthUrl()` is the one route outside a slice namespace, `wsUrl(path)` builds a same-origin WebSocket URL. Unmigrated pages still use the older `src/frontend/backendApi.ts` (`apiUrl(path)`, single argument) until they migrate. Both go through the Vite dev server's same-origin `/api`/`/ws` proxy — neither hardcodes a host or port. Don't hardcode API URLs.
 
