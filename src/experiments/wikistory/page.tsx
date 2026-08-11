@@ -5,6 +5,7 @@ import type { Components } from 'react-markdown';
 import { apiUrl } from '../../platform/backendApi.js';
 import type { ExperimentPageProps } from '../../platform/manifest.js';
 import type { WikiStoryEvent } from './types.js';
+import styles from './wikistory.module.css';
 
 interface WikiInfo {
   title: string;
@@ -13,33 +14,20 @@ interface WikiInfo {
 }
 
 // The model writes markdown — mostly **bold** and *emphasis* with blank-line
-// paragraph breaks, occasionally a heading or list. Tailwind's preflight strips
-// default margins and list markers, and @tailwindcss/typography isn't installed
-// here, so each element carries its own styling.
+// paragraph breaks, occasionally a heading or list. Every element renders bare
+// (no className hooks) and is styled off the `.story` wrapper in
+// wikistory.module.css; this map only remaps heading levels so the model's
+// headings read as sub-sections of "AI Generated Story" rather than new
+// page-level headings, and adds target="_blank" to links.
 const storyMarkdown: Components = {
-  p: ({ children }) => <p className="mb-4 leading-relaxed last:mb-0">{children}</p>,
-  strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
-  em: ({ children }) => <em className="italic">{children}</em>,
-  h1: ({ children }) => <h3 className="text-xl font-bold text-gray-800 mt-6 mb-2 first:mt-0">{children}</h3>,
-  h2: ({ children }) => <h3 className="text-xl font-bold text-gray-800 mt-6 mb-2 first:mt-0">{children}</h3>,
-  h3: ({ children }) => <h4 className="text-lg font-bold text-gray-800 mt-5 mb-2 first:mt-0">{children}</h4>,
-  ul: ({ children }) => <ul className="list-disc pl-6 mb-4 space-y-1">{children}</ul>,
-  ol: ({ children }) => <ol className="list-decimal pl-6 mb-4 space-y-1">{children}</ol>,
-  li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-  blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-purple-300 pl-4 italic text-gray-600 mb-4">
-      {children}
-    </blockquote>
-  ),
-  code: ({ children }) => (
-    <code className="bg-gray-100 rounded px-1 py-0.5 text-base font-mono">{children}</code>
-  ),
+  h1: ({ children }) => <h3>{children}</h3>,
+  h2: ({ children }) => <h3>{children}</h3>,
+  h3: ({ children }) => <h4>{children}</h4>,
   a: ({ href, children }) => (
-    <a href={href} target="_blank" rel="noreferrer" className="text-purple-700 hover:underline">
+    <a href={href} target="_blank" rel="noreferrer">
       {children}
     </a>
   ),
-  hr: () => <hr className="my-6 border-gray-200" />,
 };
 
 export default function WikiStoryPage(_props: ExperimentPageProps) {
@@ -150,82 +138,78 @@ export default function WikiStoryPage(_props: ExperimentPageProps) {
   }, [generateStory]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <BookOpen className="w-12 h-12 text-purple-600" />
-            <h1 className="text-5xl font-bold text-gray-800">WikiStory</h1>
-            <Sparkles className="w-12 h-12 text-blue-600" />
+    <div className={styles.page}>
+      <div className={styles.header}>
+        <div className={styles.titleRow}>
+          <BookOpen className={styles.titleIcon} />
+          <h1 className={styles.title}>WikiStory</h1>
+          <Sparkles className={styles.titleIcon} />
+        </div>
+        <p className={styles.subtitle}>
+          Random Wikipedia articles transformed into creative stories by AI
+        </p>
+      </div>
+
+      <div className={styles.controls}>
+        <button
+          onClick={generateStory}
+          disabled={isLoading}
+          className={styles.generateButton}
+        >
+          <RefreshCw className={`${styles.buttonIcon} ${isLoading ? styles.spin : ''}`} />
+          {isLoading ? 'Generating...' : 'Generate New Story'}
+        </button>
+      </div>
+
+      {error && (
+        <div className={styles.errorBanner}>
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
+      {wikiInfo && (
+        <div className={styles.wikiCard}>
+          <h2 className={styles.wikiTitle}>
+            <BookOpen className={styles.headingIcon} />
+            Wikipedia Article:{' '}
+            {wikiInfo.url ? (
+              <a
+                href={wikiInfo.url}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.wikiLink}
+              >
+                {wikiInfo.title}
+              </a>
+            ) : (
+              wikiInfo.title
+            )}
+          </h2>
+          <p className={styles.wikiExtract}>{wikiInfo.extract}</p>
+        </div>
+      )}
+
+      {story && (
+        <div className={styles.storyCard}>
+          <h2 className={styles.storyTitle}>
+            <Sparkles className={styles.headingIcon} />
+            AI Generated Story
+          </h2>
+          <div className={styles.story}>
+            <Markdown components={storyMarkdown}>{story}</Markdown>
+            {isLoading && <span className={styles.cursor} />}
           </div>
-          <p className="text-gray-600 text-lg">
-            Random Wikipedia articles transformed into creative stories by AI
+        </div>
+      )}
+
+      {!wikiInfo && !story && isLoading && (
+        <div className={styles.loadingState}>
+          <p className={styles.loadingText}>
+            <RefreshCw className={`${styles.icon} ${styles.spin}`} />
+            Loading your first story...
           </p>
         </div>
-
-        <div className="text-center mb-8">
-          <button
-            onClick={generateStory}
-            disabled={isLoading}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
-          >
-            <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
-            {isLoading ? 'Generating...' : 'Generate New Story'}
-          </button>
-        </div>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-            <strong>Error:</strong> {error}
-          </div>
-        )}
-
-        {wikiInfo && (
-          <div className="bg-white rounded-lg shadow-xl p-6 mb-6 border-l-4 border-purple-500">
-            <h2 className="text-2xl font-bold text-gray-800 mb-3 flex items-center gap-2">
-              <BookOpen className="w-6 h-6 text-purple-600" />
-              Wikipedia Article:{' '}
-              {wikiInfo.url ? (
-                <a
-                  href={wikiInfo.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-purple-700 hover:underline"
-                >
-                  {wikiInfo.title}
-                </a>
-              ) : (
-                wikiInfo.title
-              )}
-            </h2>
-            <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{wikiInfo.extract}</p>
-          </div>
-        )}
-
-        {story && (
-          <div className="bg-white rounded-lg shadow-xl p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-blue-600" />
-              AI Generated Story
-            </h2>
-            <div className="text-lg text-gray-700">
-              <Markdown components={storyMarkdown}>{story}</Markdown>
-              {isLoading && (
-                <span className="inline-block w-2 h-5 bg-blue-600 animate-pulse align-text-bottom" />
-              )}
-            </div>
-          </div>
-        )}
-
-        {!wikiInfo && !story && isLoading && (
-          <div className="text-center text-gray-400 mt-12">
-            <p className="text-xl flex items-center justify-center gap-2">
-              <RefreshCw className="w-6 h-6 animate-spin" />
-              Loading your first story...
-            </p>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }

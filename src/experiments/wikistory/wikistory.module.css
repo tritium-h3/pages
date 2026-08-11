@@ -1,0 +1,316 @@
+/* WikiStory — a random Wikipedia article retold by a local model. The
+   markdown block is the centerpiece: react-markdown emits bare elements, so
+   everything from headings down to inline code is styled through the
+   `.story` wrapper rather than via classes on generated nodes. */
+
+.page {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  /* Keeps the dark shell background filling the viewport on a short story
+     (e.g. while the wiki lookup is still loading) instead of the browser's
+     own background showing below a page that hasn't grown tall yet. */
+  min-height: 100vh;
+}
+
+/* ── Header ────────────────────────────────────────────────────── */
+.header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.titleIcon {
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  color: var(--section-llm-toys);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--step-3);
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: var(--step-1);
+  color: var(--text-muted);
+}
+
+/* ── Controls ──────────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-6);
+}
+
+.generateButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: var(--text-strong);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius-card);
+  font-family: var(--font);
+  font-size: var(--step-1);
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 120ms ease;
+}
+
+.generateButton:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.generateButton:disabled {
+  background: var(--border-strong);
+  color: var(--text-faint);
+  cursor: not-allowed;
+}
+
+.buttonIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* ── Error banner ──────────────────────────────────────────────── */
+.errorBanner {
+  margin-bottom: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-danger-wash);
+  border: 1px solid color-mix(in srgb, var(--color-danger-dim) 40%, transparent);
+  border-radius: var(--radius-card);
+  color: var(--color-danger);
+  font-size: var(--step-0);
+}
+
+/* ── Wikipedia source card ────────────────────────────────────────
+   Section accent (--section-llm-toys) marks the left edge, matching how
+   LLM Duo Chat — the other page in this section — marks its own cards. */
+.wikiCard {
+  margin-bottom: var(--space-5);
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--section-llm-toys);
+  border-radius: var(--radius-plate);
+}
+
+.wikiTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  font-size: var(--step-2);
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.headingIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: var(--section-llm-toys);
+}
+
+.wikiLink {
+  color: var(--section-llm-toys);
+  text-decoration: none;
+}
+
+.wikiLink:hover {
+  text-decoration: underline;
+}
+
+.wikiExtract {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+/* ── Story card ────────────────────────────────────────────────── */
+.storyCard {
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-plate);
+}
+
+.storyTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+  font-size: var(--step-2);
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+/* Blinking caret shown at the end of the story while it is still streaming. */
+.cursor {
+  display: inline-block;
+  width: 0.5rem;
+  height: 1.25rem;
+  background: var(--section-llm-toys);
+  vertical-align: text-bottom;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+/* ── Markdown output ───────────────────────────────────────────────
+   react-markdown renders bare h3/h4/p/ul/ol/li/em/strong/blockquote/code/a —
+   no classes to hook, so every element is styled here off the `.story`
+   wrapper. (h1 and h2 are both remapped to <h3>, and h3 to <h4>, in the
+   `storyMarkdown` components map — the model's headings should read as
+   sub-sections of "AI Generated Story", not new page-level headings.) */
+.story {
+  font-size: var(--step-1);
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.story > *:first-child {
+  margin-top: 0;
+}
+
+.story h3,
+.story h4 {
+  margin: var(--space-5) 0 var(--space-2);
+  color: var(--text-strong);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.story h3 {
+  font-size: var(--step-2);
+}
+
+.story h4 {
+  font-size: var(--step-1);
+}
+
+.story p {
+  margin: 0 0 var(--space-3);
+}
+
+.story p:last-child {
+  margin-bottom: 0;
+}
+
+.story ul,
+.story ol {
+  margin: 0 0 var(--space-3);
+  padding-left: var(--space-5);
+}
+
+/* Tailwind's preflight (still active until Task 21 removes Tailwind) sets
+   list-style: none globally; restore native markers explicitly so this
+   isn't silently dependent on that reset going away. */
+.story ul {
+  list-style: disc;
+}
+
+.story ol {
+  list-style: decimal;
+}
+
+.story li {
+  margin-bottom: var(--space-1);
+}
+
+.story li:last-child {
+  margin-bottom: 0;
+}
+
+.story em {
+  font-style: italic;
+}
+
+.story strong {
+  color: var(--text-strong);
+  font-weight: 600;
+}
+
+.story blockquote {
+  margin: 0 0 var(--space-3);
+  padding-left: var(--space-3);
+  border-left: 3px solid var(--section-llm-toys);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.story blockquote:last-child {
+  margin-bottom: 0;
+}
+
+/* Opaque tint of the section accent over the story card's own background —
+   the "known solid background" color-mix form, not the alpha-over-transparent
+   one used above for .errorBanner's border. */
+.story code {
+  padding: 1px 5px;
+  background: color-mix(in srgb, var(--section-llm-toys) 14%, var(--surface));
+  border-radius: 3px;
+  color: var(--text-strong);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+.story a {
+  color: var(--section-llm-toys);
+  text-decoration: none;
+}
+
+.story a:hover {
+  text-decoration: underline;
+}
+
+.story hr {
+  margin: var(--space-5) 0;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Loading state (before the wiki lookup or first story chunk lands) ── */
+.loadingState {
+  margin-top: var(--space-6);
+  text-align: center;
+  color: var(--text-faint);
+}
+
+.loadingText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-size: var(--step-2);
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
