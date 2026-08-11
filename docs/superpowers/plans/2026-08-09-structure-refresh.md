@@ -969,6 +969,10 @@ export function Plate({ entry, index, onNavigate }: PlateProps) {
 
   const handleClick = (event: MouseEvent) => {
     if (entry.external) return;          // let the browser follow the href
+    // Leave modified clicks to the browser, so cmd/ctrl/shift-click still opens
+    // an experiment in a new tab or window like any other link.
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (event.button !== 0) return;
     event.preventDefault();
     onNavigate(entry.route);
   };
@@ -1140,7 +1144,18 @@ interface ShellProps {
 export function Shell({ chrome, experimentCount, onNavigate, children }: ShellProps) {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onNavigate('/');
+      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      // Sprite Tool and Image Hunt already bind Escape to cancel a selection or
+      // a rename. Without these guards the same keystroke would also navigate
+      // home, throwing away whatever the page was in the middle of.
+      const target = event.target as HTMLElement | null;
+      if (target && (target.isContentEditable ||
+          target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT')) {
+        return;
+      }
+      onNavigate('/');
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
