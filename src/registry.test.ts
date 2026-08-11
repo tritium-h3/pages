@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { REGISTRY } from './registry.js';
@@ -54,8 +54,6 @@ describe('registry integrity', () => {
   });
 });
 
-import { readFileSync } from 'fs';
-
 describe('registry and server mount list agree', () => {
   const serverSource = readFileSync(
     path.join(path.dirname(fileURLToPath(import.meta.url)), 'server.ts'),
@@ -69,7 +67,7 @@ describe('registry and server mount list agree', () => {
   });
 
   it('registers every mounted id', () => {
-    const mounted = [...serverSource.matchAll(/mount\('([a-z0-9-]+)'/g)].map(m => m[1]);
+    const mounted = [...serverSource.matchAll(/mount\(\s*['"`]([a-z0-9-]+)/g)].map(m => m[1]);
     const registered = new Set(REGISTRY.filter(e => e.hasServer).map(e => e.id));
     for (const id of mounted) expect(registered.has(id)).toBe(true);
   });

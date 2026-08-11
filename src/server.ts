@@ -32,6 +32,10 @@ app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+app.get('/api', (_req: Request, res: Response) => {
+  res.json({ message: 'Backend API is running' });
+});
+
 /** Slices registered for mounting, keyed by manifest id. */
 const slices: Array<{ id: string; slice: SliceServer }> = [];
 
@@ -60,18 +64,37 @@ app.use('/api', mbtaRouter);
 app.use('/api', imageHuntRouter);
 app.use('/api', skyRouter);
 
+interface HttpError extends Error {
+  status?: number;
+  statusCode?: number;
+}
+
 // Error handler. Express identifies these by an arity of four — the previous
 // version took three parameters and so was registered as ordinary middleware
 // that never fired.
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+app.use((err: HttpError, _req: Request, res: Response, next: NextFunction) => {
   console.error(err);
-  res.status(500).json({ error: 'Internal server error' });
+  if (res.headersSent) {
+    // Response already started (e.g. mid-stream on an SSE route) — res.status()
+    // would throw ERR_HTTP_HEADERS_SENT. Hand off to Express's default handler,
+    // which just terminates the connection.
+    next(err);
+    return;
+  }
+  const status = err.status ?? err.statusCode ?? 500;
+  res.status(status).json({
+    error: status < 500 ? err.message : 'Internal server error',
+  });
 });
 
 const server = http.createServer(app);
 
-async function start(): Promise<void> {
-  await ensureDataDir();
+async function initAll(): Promise<void> {
+  try {
+    await ensureDataDir();
+  } catch (error) {
+    console.error('[host] could not create data dir; storage-backed slices will fail:', error);
+  }
 
   for (const { id, slice } of slices) {
     if (!slice.init) continue;
@@ -98,7 +121,27 @@ async function start(): Promise<void> {
     initTodoStorage().catch(e => console.error('[legacy todos] init failed:', e)),
     initSessionStorage().catch(e => console.error('[legacy image-hunt] init failed:', e)),
   ]);
-  initLLMDuoChatWebSocket(server);
+  try {
+    initLLMDuoChatWebSocket(server);
+  } catch (error) {
+    console.error('[legacy llm-duo-chat] websocket init failed:', error);
+  }
+}
+
+/** `listen` must be reached no matter what initialisation did. pages.service
+ *  sets Restart=always with RestartSec=3, so any throw before listen becomes a
+ *  silent three-second restart loop that takes every experiment offline —
+ *  the exact failure the per-slice isolation above exists to prevent. */
+async function start(): Promise<void> {
+  try {
+    await initAll();
+  } catch (error) {
+    console.error('[host] startup init failed; serving anyway:', error);
+  }
+
+  server.on('error', (error: NodeJS.ErrnoException) => {
+    console.error(`[host] http server error (${error.code ?? 'unknown'}):`, error.message);
+  });
 
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`Backend server running on http://0.0.0.0:${PORT}`);
@@ -108,6 +151,9 @@ async function start(): Promise<void> {
   });
 }
 
-start();
+start().catch(error => {
+  console.error('[host] unrecoverable startup failure:', error);
+  process.exitCode = 1;
+});
 
 export { mount };
