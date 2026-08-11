@@ -9,7 +9,7 @@ Frontend (`src/frontend/`) and backend (`src/backend/`) run concurrently in dev.
 ### Frontend (`src/frontend/`)
 - React 19, styled with Tailwind CSS 4, icons from `lucide-react`.
 - **Routing is hand-rolled in `App.jsx`** — no router library. `App` keeps `pathname` in state, updates it via `window.history.pushState` + a `popstate` listener, and renders one page component per path. To add a page: create the component, import it in `App.jsx`, add a `pathname === '/x'` branch, and add a menu button.
-- Current pages: `/colony` (Colony Builder game), `/todo`.
+- Current pages: `/todo`.
 - Entry: `main.jsx` → `App.jsx`. Mixed `.jsx`/`.tsx` — newer pages tend to be `.tsx`.
 - **Reaching the backend:** migrated slices use the helpers in `src/platform/backendApi.ts` — `apiUrl(id, path)` builds `/api/<id>/...`, `healthUrl()` is the one route outside a slice namespace, `wsUrl(path)` builds a same-origin WebSocket URL. Unmigrated pages still use the older `src/frontend/backendApi.ts` (`apiUrl(path)`, single argument) until they migrate. Both go through the Vite dev server's same-origin `/api`/`/ws` proxy — neither hardcodes a host or port. Don't hardcode API URLs.
 
@@ -64,7 +64,7 @@ This avoids stale process state.
 
 ### Scripts
 - `npm run dev` / `npm start` — Vite + backend via `concurrently`.
-- `npm run build` — `build:sprites` → `vite build` → backend `tsc`.
+- `npm run build` — `build:sprites` → `vite build` → `tsc --noEmit -p tsconfig.server.json` (type-checks the backend; emits nothing runnable — the backend is always run via `tsx`).
 - `npm run build:sprites` — regenerate the sprite manifest (see below).
 - `npm run lint` — ESLint. `npm run preview` — preview prod build.
 
@@ -95,7 +95,7 @@ Coordinates are sheet-relative and stable across manifest rebuilds.
 - Types `SpriteGroup`, `SpriteGroupsFile` live in `src/experiments/sprites/types.ts` and are re-exported from `client.ts`.
 - `loadSpriteGroups()` — fetches `GET /api/sprites/groups`.
 - `resolveSpriteGroup(group, manifest)` — returns a `(string | null)[][]` tile-URL grid (rows × cols) for `drawImage` loops; `null` = intentionally empty/transparent tile.
-- This is the one slice another slice's frontend imports from directly: Colony (`src/frontend/ColonyGame.jsx`, not yet migrated) imports `client.js` for its sprite lookups. Only `client.ts`/`types.ts` are meant to be imported cross-slice — never a slice's `page` or anything under its `server/`.
+- This is the one slice another slice's frontend imports from directly: Colony (`src/experiments/colony/page.jsx`) imports `../sprites/client.js` for its sprite lookups. Only `client.ts`/`types.ts` are meant to be imported cross-slice — never a slice's `page` or anything under its `server/`.
 
 ### ColonyGame integration
 Each `BUILDING_TYPES` entry has a `spriteGroup` field naming its group. On mount, `loadSpriteGroups()` and `loadSpriteManifest()` run in parallel; per type the loader resolves `type.spriteGroup`, falling back to hardcoded `BUILDING_SPRITE_LAYOUT`, then to solid-color rects. Footprint sizes derive from the resolved grid at runtime — no hardcoded footprint constant.

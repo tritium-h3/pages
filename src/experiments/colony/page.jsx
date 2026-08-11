@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { loadSpriteManifest, loadSpriteGroups, resolveSpriteGroup } from '../experiments/sprites/client.js';
-import './ColonyGame.css';
+import { loadSpriteManifest, loadSpriteGroups, resolveSpriteGroup } from '../sprites/client.js';
+import styles from './colony.module.css';
 
 const GRID_SIZE = 40;
 const CELL_SIZE = 20;
@@ -530,21 +530,21 @@ export default function ColonyGame() {
   }, [buildings, selectedBuildingType, hoverCell, groundSpriteUrls, buildingSpriteTilesByType, spriteImages, paths, mode, pathPreviewCells, pathSpriteTilesByName]);
 
   return (
-    <div className="colony-game">
+    <div className={styles.colonyGame}>
       <h1>Space Colony Builder</h1>
-      
-      <div className="colony-controls">
-        <div className="colony-build-panel">
+
+      <div className={styles.colonyControls}>
+        <div className={styles.colonyBuildPanel}>
           <h3>Mode:</h3>
           <button
             onClick={() => setMode('build')}
-            className={`colony-build-btn${mode === 'build' ? ' selected' : ''}`}
+            className={`${styles.colonyBuildBtn}${mode === 'build' ? ` ${styles.selected}` : ''}`}
           >
             🏗 Build
           </button>
           <button
             onClick={() => { setMode('path'); setPathDragStart(null); setPathPreviewCells([]); }}
-            className={`colony-build-btn${mode === 'path' ? ' selected' : ''}`}
+            className={`${styles.colonyBuildBtn}${mode === 'path' ? ` ${styles.selected}` : ''}`}
           >
             🛤 Path
           </button>
@@ -556,7 +556,7 @@ export default function ColonyGame() {
                 <button
                   key={key}
                   onClick={() => setSelectedBuildingType(key)}
-                  className={`colony-build-btn${selectedBuildingType === key ? ' selected' : ''}`}
+                  className={`${styles.colonyBuildBtn}${selectedBuildingType === key ? ` ${styles.selected}` : ''}`}
                 >
                   {type.name}
                 </button>
@@ -565,13 +565,13 @@ export default function ColonyGame() {
           )}
         </div>
 
-        <div className="colony-info-panel">
+        <div className={styles.colonyInfoPanel}>
           <h3>Placed Buildings:</h3>
-          <div className="colony-info-box">
+          <div className={styles.colonyInfoBox}>
             <div>Total: {buildings.length}</div>
           </div>
 
-          <div className="colony-instructions">
+          <div className={styles.colonyInstructions}>
             <p><strong>Instructions:</strong></p>
             {mode === 'build' ? (
               <>
@@ -589,7 +589,7 @@ export default function ColonyGame() {
           </div>
         </div>
       </div>
-      
+
       <canvas
         ref={canvasRef}
         width={GRID_SIZE * CELL_SIZE}
@@ -599,7 +599,7 @@ export default function ColonyGame() {
         onMouseUp={handleCanvasMouseUp}
         onMouseMove={handleCanvasMouseMove}
         onMouseLeave={handleCanvasMouseLeave}
-        className="colony-canvas"
+        className={styles.colonyCanvas}
         style={{ cursor: mode === 'path' ? 'crosshair' : 'default' }}
       />
     </div>

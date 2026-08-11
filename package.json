@@ -8,7 +8,7 @@
     "dev:status": "node ./scripts/dev-status.mjs",
     "dev:restart": "systemctl --user restart pages",
     "build:sprites": "node ./scripts/build-sprites.mjs",
-    "build": "npm run build:sprites && vite build && tsc -p src/backend/tsconfig.json",
+    "build": "npm run build:sprites && vite build && tsc --noEmit -p tsconfig.server.json",
     "start": "concurrently \"vite\" \"tsx watch ./src/server.ts\"",
     "lint": "eslint .",
     "preview": "vite preview",

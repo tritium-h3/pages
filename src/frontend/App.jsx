@@ -1,17 +1,9 @@
 import { useState, useEffect } from 'react'
-import ColonyGame from './ColonyGame'
 import { apiUrl } from './backendApi'
 import './App.css'
 
 function App() {
-  const [pathname, setPathname] = useState(window.location.pathname)
   const [backendHealth, setBackendHealth] = useState({ status: 'checking', timestamp: null })
-
-  const navigateTo = (path) => {
-    if (window.location.pathname === path) return
-    window.history.pushState({}, '', path)
-    setPathname(path)
-  }
 
   useEffect(() => {
     const checkBackendHealth = async () => {
@@ -33,37 +25,16 @@ function App() {
     return () => clearInterval(interval)
   }, [])
 
-  useEffect(() => {
-    const handlePopState = () => setPathname(window.location.pathname)
-    window.addEventListener('popstate', handlePopState)
-
-    return () => window.removeEventListener('popstate', handlePopState)
-  }, [])
-
-  if (pathname === '/colony') {
-    return (
-      <div>
-        <button className="back-btn" onClick={() => navigateTo('/')}>
-          ← Back to Menu
-        </button>
-        <ColonyGame />
-      </div>
-    )
-  }
-
   return (
     <div className="app-menu">
       <div className="backend-status">
         <div className={`status-dot status-dot--${backendHealth.status}`}></div>
         <span>
-          Backend: {backendHealth.status === 'online' ? 'Online' : 
+          Backend: {backendHealth.status === 'online' ? 'Online' :
                     backendHealth.status === 'offline' ? 'Offline' : 'Checking...'}
         </span>
       </div>
       <h1>Select an App</h1>
-      <button className="menu-btn" onClick={() => navigateTo('/colony')}>
-        Colony Builder Game
-      </button>
     </div>
   )
 }

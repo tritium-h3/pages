@@ -1,29 +1,29 @@
 /* ColonyGame styles */
 
-.colony-game {
+.colonyGame {
   padding: 20px;
   font-family: Arial, sans-serif;
   min-height: 100vh;
   background: linear-gradient(135deg, #e8edf5 0%, #dce6f0 100%);
 }
 
-.colony-game h1 {
+.colonyGame h1 {
   margin-bottom: 10px;
 }
 
-.colony-controls {
+.colonyControls {
   margin-bottom: 20px;
   display: flex;
   gap: 20px;
   align-items: flex-start;
 }
 
-.colony-build-panel h3,
-.colony-info-panel h3 {
+.colonyBuildPanel h3,
+.colonyInfoPanel h3 {
   margin-top: 0;
 }
 
-.colony-build-btn {
+.colonyBuildBtn {
   display: block;
   margin: 5px 0;
   padding: 8px 16px;
@@ -34,36 +34,36 @@
   font-weight: normal;
 }
 
-.colony-build-btn.selected {
+.colonyBuildBtn.selected {
   background-color: #4caf50;
   font-weight: bold;
 }
 
-.colony-info-box {
+.colonyInfoBox {
   background-color: #f0f0f0;
   padding: 10px;
   border-radius: 4px;
 }
 
-.colony-layout-info {
+.colonyLayoutInfo {
   margin-top: 12px;
   background-color: #f0f0f0;
   padding: 10px;
   border-radius: 4px;
 }
 
-.colony-layout-info-title {
+.colonyLayoutInfoTitle {
   font-weight: bold;
   margin-bottom: 6px;
 }
 
-.colony-instructions {
+.colonyInstructions {
   margin-top: 20px;
   font-size: 14px;
   color: #666;
 }
 
-.colony-canvas {
+.colonyCanvas {
   border: 2px solid #000;
   cursor: crosshair;
   background-color: #1a1a1a;
