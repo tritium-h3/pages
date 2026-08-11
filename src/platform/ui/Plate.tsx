@@ -18,6 +18,10 @@ export function Plate({ entry, index, onNavigate }: PlateProps) {
 
   const handleClick = (event: MouseEvent) => {
     if (entry.external) return;          // let the browser follow the href
+    // Leave modified clicks to the browser, so cmd/ctrl/shift-click still opens
+    // an experiment in a new tab or window like any other link.
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (event.button !== 0) return;
     event.preventDefault();
     onNavigate(entry.route);
   };

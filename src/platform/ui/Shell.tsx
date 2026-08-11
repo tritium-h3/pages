@@ -13,7 +13,18 @@ interface ShellProps {
 export function Shell({ chrome, experimentCount, onNavigate, children }: ShellProps) {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onNavigate('/');
+      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      // Sprite Tool and Image Hunt already bind Escape to cancel a selection or
+      // a rename. Without these guards the same keystroke would also navigate
+      // home, throwing away whatever the page was in the middle of.
+      const target = event.target as HTMLElement | null;
+      if (target && (target.isContentEditable ||
+          target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT')) {
+        return;
+      }
+      onNavigate('/');
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
