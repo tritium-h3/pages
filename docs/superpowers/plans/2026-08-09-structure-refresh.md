@@ -1855,7 +1855,9 @@ rm -f src/backend/todos.json
 - [ ] **Step 10: Commit**
 
 ```bash
-git add -A src/experiments/todo src/platform/backendApi.ts src/platform/backendApi.test.ts src/registry.ts src/server.ts CLAUDE.md
+# Stage the source directories too — a bare `git add -A src/experiments/...`
+# leaves the old files' deletions unstaged and commits a COPY, not a move.
+git add -A src/experiments/todo src/platform/backendApi.ts src/platform/backendApi.test.ts src/registry.ts src/server.ts CLAUDE.md src/frontend src/backend
 git commit -m "refactor(todo): migrate to slice, namespace api, switch to atomic store"
 ```
 
@@ -1950,7 +1952,9 @@ In the browser: `/` shows a Weather plate under Tools; the page renders with its
 - [ ] **Step 7: Commit**
 
 ```bash
-git add -A src/experiments/weather src/registry.ts CLAUDE.md
+# Stage the source directories too — a bare `git add -A src/experiments/...`
+# leaves the old files' deletions unstaged and commits a COPY, not a move.
+git add -A src/experiments/weather src/registry.ts CLAUDE.md src/frontend src/backend
 git commit -m "refactor(weather): migrate to slice with CSS module"
 ```
 
@@ -2068,7 +2072,9 @@ Expected: JSON arrivals data. In the browser, `/transit` renders the board with 
 - [ ] **Step 8: Commit**
 
 ```bash
-git add -A src/experiments/transit src/registry.ts src/server.ts CLAUDE.md
+# Stage the source directories too — a bare `git add -A src/experiments/...`
+# leaves the old files' deletions unstaged and commits a COPY, not a move.
+git add -A src/experiments/transit src/registry.ts src/server.ts CLAUDE.md src/frontend src/backend
 git commit -m "refactor(transit): migrate to slice, stop hardcoding the api path"
 ```
 
@@ -2182,7 +2188,9 @@ Expected: the `wikipedia` tests still pass from their new location. In the brows
 - [ ] **Step 9: Commit**
 
 ```bash
-git add -A src/experiments/wikistory src/platform/server/ollama.ts src/platform/server/ollama.test.ts src/backend/routes src/registry.ts src/server.ts CLAUDE.md
+# Stage the source directories too — a bare `git add -A src/experiments/...`
+# leaves the old files' deletions unstaged and commits a COPY, not a move.
+git add -A src/experiments/wikistory src/platform/server/ollama.ts src/platform/server/ollama.test.ts src/backend/routes src/registry.ts src/server.ts CLAUDE.md src/frontend src/backend
 git commit -m "refactor(wikistory): migrate to slice, move ollama into platform"
 ```
 
@@ -2342,7 +2350,9 @@ rm -f src/backend/image-hunt-sessions.json
 - [ ] **Step 9: Commit**
 
 ```bash
-git add -A src/experiments/image-hunt src/registry.ts src/server.ts CLAUDE.md
+# Stage the source directories too — a bare `git add -A src/experiments/...`
+# leaves the old files' deletions unstaged and commits a COPY, not a move.
+git add -A src/experiments/image-hunt src/registry.ts src/server.ts CLAUDE.md src/frontend src/backend
 git commit -m "refactor(image-hunt): migrate to slice with declared init"
 ```
 
@@ -2447,7 +2457,9 @@ In the browser, `/llm-duo-chat` must open a WebSocket and run a conversation bet
 - [ ] **Step 8: Commit**
 
 ```bash
-git add -A src/experiments/llm-duo-chat src/registry.ts src/server.ts CLAUDE.md
+# Stage the source directories too — a bare `git add -A src/experiments/...`
+# leaves the old files' deletions unstaged and commits a COPY, not a move.
+git add -A src/experiments/llm-duo-chat src/registry.ts src/server.ts CLAUDE.md src/frontend src/backend
 git commit -m "refactor(llm-duo-chat): migrate to slice using the attach hook"
 ```
 
@@ -2608,7 +2620,9 @@ In the browser, `/sprites` loads the editor, the three sheet tabs work, drag-sel
 - [ ] **Step 10: Commit**
 
 ```bash
-git add -A src/experiments/sprites src/registry.ts src/server.ts CLAUDE.md README.md
+# Stage the source directories too — a bare `git add -A src/experiments/...`
+# leaves the old files' deletions unstaged and commits a COPY, not a move.
+git add -A src/experiments/sprites src/registry.ts src/server.ts CLAUDE.md README.md src/frontend src/backend
 git commit -m "refactor(sprites): promote sprite editor to its own slice at /sprites"
 ```
 
@@ -2753,7 +2767,9 @@ Expected: all sky tests pass from their new location — this is the largest tes
 - [ ] **Step 9: Commit**
 
 ```bash
-git add -A src/experiments/sky src/registry.ts src/server.ts CLAUDE.md
+# Stage the source directories too — a bare `git add -A src/experiments/...`
+# leaves the old files' deletions unstaged and commits a COPY, not a move.
+git add -A src/experiments/sky src/registry.ts src/server.ts CLAUDE.md src/frontend src/backend
 git commit -m "refactor(sky): migrate to slice with /sky/map as a sub-route"
 ```
 
@@ -2834,7 +2850,9 @@ In the browser, `/colony` renders the map, buildings draw from their sprite grou
 - [ ] **Step 7: Commit**
 
 ```bash
-git add -A src/experiments/colony src/registry.ts CLAUDE.md
+# Stage the source directories too — a bare `git add -A src/experiments/...`
+# leaves the old files' deletions unstaged and commits a COPY, not a move.
+git add -A src/experiments/colony src/registry.ts CLAUDE.md src/frontend src/backend
 git commit -m "refactor(colony): migrate to slice, import sprites via client surface"
 ```
 
