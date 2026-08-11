@@ -3,32 +3,11 @@ import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import type { SliceServer } from '../../../platform/server/slice.js';
+import type { SpriteGroupsFile } from '../types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// ---------------------------------------------------------------------------
-// Types (mirrored in src/frontend/sprites.ts — keep in sync)
-// ---------------------------------------------------------------------------
-
-export type SpriteGroup = {
-  /** Semantic name used by game logic, e.g. "MINE" or "GREENHOUSE" */
-  name: string;
-  /** Sprite sheet name, e.g. "colony-db32-buildings-ready" */
-  sheet: string;
-  /** Top-left row of the region (0-indexed, sheet-relative) */
-  startRow: number;
-  /** Top-left column of the region (0-indexed, sheet-relative) */
-  startCol: number;
-  /** Width of the region in tiles */
-  widthTiles: number;
-  /** Height of the region in tiles */
-  heightTiles: number;
-};
-
-export type SpriteGroupsFile = {
-  groups: SpriteGroup[];
-};
 
 // ---------------------------------------------------------------------------
 // Storage
@@ -55,11 +34,11 @@ async function writeGroups(data: SpriteGroupsFile): Promise<void> {
 const router = Router();
 
 /**
- * GET /api/sprite-groups
+ * GET /api/sprites/groups
  * Returns all saved sprite group definitions.
  * Games call this at startup to resolve sprite layouts without hardcoding.
  */
-router.get('/sprite-groups', async (req: Request, res: Response) => {
+router.get('/groups', async (req: Request, res: Response) => {
   try {
     const data = await readGroups();
     res.json(data);
@@ -70,11 +49,11 @@ router.get('/sprite-groups', async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/sprite-groups
+ * POST /api/sprites/groups
  * Overwrites the saved sprite group definitions.
  * Body: { groups: SpriteGroup[] }
  */
-router.post('/sprite-groups', async (req: Request, res: Response) => {
+router.post('/groups', async (req: Request, res: Response) => {
   try {
     const body = req.body as SpriteGroupsFile;
     if (!body || !Array.isArray(body.groups)) {
@@ -89,4 +68,5 @@ router.post('/sprite-groups', async (req: Request, res: Response) => {
   }
 });
 
-export default router;
+const slice: SliceServer = { router };
+export default slice;

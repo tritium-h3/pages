@@ -9,18 +9,18 @@ Frontend (`src/frontend/`) and backend (`src/backend/`) run concurrently in dev.
 ### Frontend (`src/frontend/`)
 - React 19, styled with Tailwind CSS 4, icons from `lucide-react`.
 - **Routing is hand-rolled in `App.jsx`** — no router library. `App` keeps `pathname` in state, updates it via `window.history.pushState` + a `popstate` listener, and renders one page component per path. To add a page: create the component, import it in `App.jsx`, add a `pathname === '/x'` branch, and add a menu button.
-- Current pages: `/colony` (Colony Builder game), `/todo`, `/sprite-editor`.
+- Current pages: `/colony` (Colony Builder game), `/todo`.
 - Entry: `main.jsx` → `App.jsx`. Mixed `.jsx`/`.tsx` — newer pages tend to be `.tsx`.
 - **Reaching the backend:** migrated slices use the helpers in `src/platform/backendApi.ts` — `apiUrl(id, path)` builds `/api/<id>/...`, `healthUrl()` is the one route outside a slice namespace, `wsUrl(path)` builds a same-origin WebSocket URL. Unmigrated pages still use the older `src/frontend/backendApi.ts` (`apiUrl(path)`, single argument) until they migrate. Both go through the Vite dev server's same-origin `/api`/`/ws` proxy — neither hardcodes a host or port. Don't hardcode API URLs.
 
 ### Backend (`src/backend/`)
 TypeScript/Express server (`index.ts`), used for:
 1. **Ollama integration** — wraps the Ollama server so its raw interface isn't exposed.
-2. **Long-term storage** — anything needing persistence. Migrated slices persist via `createJsonStore` into gitignored `data/` (e.g. `data/todos.json`); unmigrated routes still use ad hoc files (e.g. `sprite-groups.json`).
+2. **Long-term storage** — anything needing persistence. Migrated slices persist runtime state via `createJsonStore` into gitignored `data/` (e.g. `data/todos.json`). A slice that owns hand-authored, version-controlled content instead keeps it inside its own directory rather than `data/` — e.g. `src/experiments/sprites/sprite-groups.json`.
 3. **Cross-user coordination** — features coordinating multiple users (e.g. WebSocket LLM Duo Chat).
 
 - Listens on **port 5174** (`PORT` env override). Single `http.Server` shares Express + WebSocket.
-- Routes live in `src/backend/routes/` and are mounted under `/api` in `index.ts`: `sky`, `sprite-groups`. Health: `GET /api/health`. Migrated slices (e.g. `todo`, `transit`, `wikistory`, `image-hunt`, `llm-duo-chat`) mount instead at `/api/<id>` via `mount(id, slice)` in `src/server.ts` — see `src/experiments/<id>/server/index.ts`.
+- Routes live in `src/backend/routes/` and are mounted under `/api` in `index.ts`: `sky`. Health: `GET /api/health`. Migrated slices (e.g. `todo`, `transit`, `wikistory`, `image-hunt`, `llm-duo-chat`, `sprites`) mount instead at `/api/<id>` via `mount(id, slice)` in `src/server.ts` — see `src/experiments/<id>/server/index.ts`.
 - Adding a legacy route: create `routes/<name>.ts` exporting a router, import and `app.use('/api', <name>Router)` in `index.ts`. If it needs init (storage, WebSocket), export an init fn and call it before/after `server.listen`. A migrated **slice** instead declares its own `init?: () => Promise<void>` and/or `attach?: (server: http.Server) => void` directly on the `SliceServer` object it exports (see `src/platform/server/slice.ts`) — the host's `mount(id, slice)` calls `init` automatically, and a generic loop in `src/server.ts` calls every slice's `attach` with the shared `http.Server` once init has run, so there's no separate wiring per slice. `llm-duo-chat` is the one slice that uses `attach`, to upgrade WebSocket connections on that shared server (see `src/experiments/llm-duo-chat/server/index.ts`). Most slices need neither: `createJsonStore` already returns its fallback when the backing file is missing, which is why `image-hunt`'s old `initSessionStorage` disappeared entirely on migration.
 - CORS origins are an explicit allowlist in `index.ts` (localhost, `samarkand.hopto.org`, `torment-nexus.local`). New hostnames must be added there.
 - Run with `tsx watch` in dev; built with `tsc -p src/backend/tsconfig.json`. Note ESM `.js` import specifiers in TS source (e.g. `from './routes/sky.js'`).
@@ -81,25 +81,26 @@ This avoids stale process state.
 ## Sprite Groups system
 Named multi-tile rectangular regions within a sprite sheet, so games look up layouts without hardcoding row/column coords.
 
-### Schema (`src/backend/sprite-groups.json`)
+### Schema (`src/experiments/sprites/sprite-groups.json`)
 ```json
 { "groups": [ { "name": "BUILDING_GREY_5", "sheet": "colony-db32-buildings-ready",
   "startRow": 0, "startCol": 0, "widthTiles": 4, "heightTiles": 4 } ] }
 ```
 Coordinates are sheet-relative and stable across manifest rebuilds.
 
-### Backend API (`src/backend/routes/sprite-groups.ts`)
-- `GET /api/sprite-groups` — full `{ groups }` file; called by games on startup.
-- `POST /api/sprite-groups` — overwrites the file; called only by the Sprite Group Editor.
+### Backend API (`src/experiments/sprites/server/index.ts`)
+- `GET /api/sprites/groups` — full `{ groups }` file; called by games on startup.
+- `POST /api/sprites/groups` — overwrites the file; called only by the Sprite Tool.
 
-### Frontend helpers (`src/frontend/sprites.ts`)
-- Types `SpriteGroup`, `SpriteGroupsFile` (mirrored in the backend route).
-- `loadSpriteGroups()` — fetches `GET /api/sprite-groups`.
+### Frontend helpers (`src/experiments/sprites/client.ts`)
+- Types `SpriteGroup`, `SpriteGroupsFile` live in `src/experiments/sprites/types.ts` and are re-exported from `client.ts`.
+- `loadSpriteGroups()` — fetches `GET /api/sprites/groups`.
 - `resolveSpriteGroup(group, manifest)` — returns a `(string | null)[][]` tile-URL grid (rows × cols) for `drawImage` loops; `null` = intentionally empty/transparent tile.
+- This is the one slice another slice's frontend imports from directly: Colony (`src/frontend/ColonyGame.jsx`, not yet migrated) imports `client.js` for its sprite lookups. Only `client.ts`/`types.ts` are meant to be imported cross-slice — never a slice's `page` or anything under its `server/`.
 
 ### ColonyGame integration
 Each `BUILDING_TYPES` entry has a `spriteGroup` field naming its group. On mount, `loadSpriteGroups()` and `loadSpriteManifest()` run in parallel; per type the loader resolves `type.spriteGroup`, falling back to hardcoded `BUILDING_SPRITE_LAYOUT`, then to solid-color rects. Footprint sizes derive from the resolved grid at runtime — no hardcoded footprint constant.
 **Rendering rule:** skip `null` tile URLs entirely (transparent); draw a fallback color rect only when a URL is non-null but its image hasn't loaded yet.
 
-### Sprite Group Editor (`/sprite-editor`, `src/frontend/SpriteEditor.tsx`)
-Visual group-definition page: three sheet tabs (Other/Grounds/Buildings, keys `1`/`2`/`3`), click-drag to select a rectangle, name it to add it, Save posts all groups to `POST /api/sprite-groups`. Zoom `+`/`-`; `Esc` cancels, `Enter` confirms name; tiles load progressively via `requestAnimationFrame`-debounced redraws.
+### Sprite Tool (`/sprites`, `src/experiments/sprites/page.tsx`)
+Visual group-definition page: three sheet tabs (Other/Grounds/Buildings, keys `1`/`2`/`3`), click-drag to select a rectangle, name it to add it, Save posts all groups to `POST /api/sprites/groups`. Zoom `+`/`-`; `Esc` cancels, `Enter` confirms name; tiles load progressively via `requestAnimationFrame`-debounced redraws.

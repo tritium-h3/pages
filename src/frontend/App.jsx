@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import ColonyGame from './ColonyGame'
-import SpriteEditor from './SpriteEditor'
 import SkyPantone from './SkyPantone'
 import SkyMap from './SkyMap'
 import { apiUrl } from './backendApi'
@@ -54,10 +53,6 @@ function App() {
     )
   }
 
-  if (pathname === '/sprite-editor') {
-    return <SpriteEditor />
-  }
-
   if (pathname === '/sky') {
     return (
       <div>
@@ -92,9 +87,6 @@ function App() {
       <h1>Select an App</h1>
       <button className="menu-btn" onClick={() => navigateTo('/colony')}>
         Colony Builder Game
-      </button>
-      <button className="menu-btn" onClick={() => navigateTo('/sprite-editor')}>
-        🖼 Sprite Group Editor
       </button>
       <button className="menu-btn" onClick={() => navigateTo('/sky')}>
         🌇 Sky Pantone

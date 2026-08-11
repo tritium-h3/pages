@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { loadSpriteManifest, loadSpriteGroups, resolveSpriteGroup } from './sprites';
+import { loadSpriteManifest, loadSpriteGroups, resolveSpriteGroup } from '../experiments/sprites/client.js';
 import './ColonyGame.css';
 
 const GRID_SIZE = 40;

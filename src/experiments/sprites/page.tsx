@@ -5,8 +5,9 @@ import {
   SpriteManifest,
   SpriteGroup,
   SpriteGroupsFile,
-} from './sprites';
-import { apiUrl } from './backendApi';
+} from './client.js';
+import { apiUrl } from '../../platform/backendApi.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -58,7 +59,7 @@ function selectionToGroup(
 // Component
 // ---------------------------------------------------------------------------
 
-export default function SpriteEditor() {
+export default function SpriteToolPage(_props: ExperimentPageProps) {
   const [manifest, setManifest] = useState<SpriteManifest | null>(null);
   const [groups, setGroups] = useState<SpriteGroup[]>([]);
   const [activeSheetIndex, setActiveSheetIndex] = useState(0);
@@ -340,7 +341,7 @@ export default function SpriteEditor() {
 
   const saveGroups = async () => {
     try {
-      const res = await fetch(apiUrl('/sprite-groups'), {
+      const res = await fetch(apiUrl('sprites', '/groups'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ groups }),

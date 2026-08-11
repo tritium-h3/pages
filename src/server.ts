@@ -12,9 +12,9 @@ import transitSlice from './experiments/transit/server/index.js';
 import wikistorySlice from './experiments/wikistory/server/index.js';
 import imageHuntSlice from './experiments/image-hunt/server/index.js';
 import llmDuoChatSlice from './experiments/llm-duo-chat/server/index.js';
+import spritesSlice from './experiments/sprites/server/index.js';
 
 // Legacy routers — moved into slices by Tasks 9-17, one per task.
-import spriteGroupsRouter from './backend/routes/sprite-groups.js';
 import skyRouter from './backend/routes/sky.js';
 
 const app: Express = express();
@@ -60,9 +60,9 @@ mount('transit', transitSlice);
 mount('wikistory', wikistorySlice);
 mount('image-hunt', imageHuntSlice);
 mount('llm-duo-chat', llmDuoChatSlice);
+mount('sprites', spritesSlice);
 
 // --- Legacy flat mounts. Each disappears as its slice migrates. ---
-app.use('/api', spriteGroupsRouter);
 app.use('/api', skyRouter);
 
 interface HttpError extends Error {

@@ -61,7 +61,7 @@ To assign custom labels, create `assets/sprite-labels.json` using `assets/sprite
 
 ### Frontend usage
 
-Use `src/frontend/sprites.ts`:
+Use `src/experiments/sprites/client.ts`:
 
 ```ts
 import {
@@ -69,13 +69,13 @@ import {
   getSpriteUrl,
   loadSpriteGroups,
   resolveSpriteGroup,
-} from './sprites';
+} from '../experiments/sprites/client.js';
 
 // Load manifest (tile URLs, TMX data, etc.)
 const manifest = await loadSpriteManifest();
 const tileUrl = getSpriteUrl(manifest, 'colony-db32-grounds-ready:0,0');
 
-// Load sprite group definitions saved via the Sprite Group Editor
+// Load sprite group definitions saved via the Sprite Tool
 const { groups } = await loadSpriteGroups();
 const group = groups.find(g => g.name === 'BUILDING_GREY_5');
 
@@ -84,9 +84,9 @@ const tileGrid = resolveSpriteGroup(group, manifest);
 // tileGrid[row][col] is a URL string or null
 ```
 
-### Defining multi-tile sprites (Sprite Group Editor)
+### Defining multi-tile sprites (Sprite Tool)
 
-Navigate to `/sprite-editor` to visually map rectangular regions of a sprite sheet to named groups. Groups are saved to `src/backend/sprite-groups.json` via `POST /api/sprite-groups` and served to games at startup via `GET /api/sprite-groups`.
+Navigate to `/sprites` to visually map rectangular regions of a sprite sheet to named groups. Groups are saved to `src/experiments/sprites/sprite-groups.json` via `POST /api/sprites/groups` and served to games at startup via `GET /api/sprites/groups`.
 
 Group schema:
 

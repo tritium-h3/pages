@@ -1,3 +1,8 @@
+import { apiUrl } from '../../platform/backendApi.js';
+
+export type { SpriteGroup, SpriteGroupsFile } from './types.js';
+import type { SpriteGroup, SpriteGroupsFile } from './types.js';
+
 export type SpriteManifest = {
   generatedAt: string;
   sheets: Array<{
@@ -75,33 +80,12 @@ export function getSpriteUrl(manifest: SpriteManifest, id: string): string | nul
 // Games load these at runtime to replace hardcoded sprite layout constants.
 // ---------------------------------------------------------------------------
 
-export type SpriteGroup = {
-  /** Semantic name used by game logic, e.g. "MINE" or "GREENHOUSE" */
-  name: string;
-  /** Sprite sheet name, e.g. "colony-db32-buildings-ready" */
-  sheet: string;
-  /** Top-left row of the region (0-indexed, sheet-relative) */
-  startRow: number;
-  /** Top-left column of the region (0-indexed, sheet-relative) */
-  startCol: number;
-  /** Width of the region in tiles */
-  widthTiles: number;
-  /** Height of the region in tiles */
-  heightTiles: number;
-};
-
-export type SpriteGroupsFile = {
-  groups: SpriteGroup[];
-};
-
 /**
  * Load the persisted sprite group definitions from the backend.
  * Returns { groups: [] } if the backend has none saved yet.
  */
 export async function loadSpriteGroups(): Promise<SpriteGroupsFile> {
-  // Import lazily to avoid circular deps; backendApi is frontend-only
-  const { apiUrl } = await import('./backendApi');
-  const response = await fetch(apiUrl('/sprite-groups'));
+  const response = await fetch(apiUrl('sprites', '/groups'));
   if (!response.ok) {
     throw new Error(`Failed to load sprite groups: ${response.status}`);
   }
