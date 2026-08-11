@@ -3,6 +3,7 @@ import Markdown from 'react-markdown';
 import { apiUrl, wsUrl } from '../../platform/backendApi.js';
 import type { ExperimentPageProps } from '../../platform/manifest.js';
 import type { Character, LLMDuoChatServerMessage } from './types.js';
+import styles from './llm-duo-chat.module.css';
 
 interface Message {
   speaker: string;
@@ -177,109 +178,99 @@ export default function LLMDuoChatPage(_props: ExperimentPageProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl p-6 mb-6">
-          <h1 className="text-4xl font-bold text-center mb-2 text-purple-600">
-            🎭 LLM Duo Chat Theatre 🎭
-          </h1>
-          <p className="text-center text-gray-600 mb-6">
-            Watch two AI characters improvise a conversation!
-          </p>
+    <div className={styles.page}>
+      <div className={styles.headerCard}>
+        <h1 className={styles.title}>
+          🎭 LLM Duo Chat Theatre 🎭
+        </h1>
+        <p className={styles.subtitle}>
+          Watch two AI characters improvise a conversation!
+        </p>
 
-          {activeConversations > 1 && (
-            <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded mb-4 text-center">
-              ⚠️ Warning: {activeConversations} conversations running simultaneously! This may slow down responses.
-            </div>
-          )}
-
-          {activeConversations === 1 && isLoading && (
-            <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-2 rounded mb-4 text-center text-sm">
-              💬 1 active conversation
-            </div>
-          )}
-
-          {character1 && character2 && (
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-4 rounded-lg border-2 border-pink-300">
-                <h3 className="font-bold text-lg text-pink-700">{character1.name}</h3>
-                <p className="text-sm text-pink-600">{character1.personality}</p>
-              </div>
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border-2 border-blue-300">
-                <h3 className="font-bold text-lg text-blue-700">{character2.name}</h3>
-                <p className="text-sm text-blue-600">{character2.personality}</p>
-              </div>
-            </div>
-          )}
-
-          {situation && (
-            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg border-2 border-orange-300 mb-6">
-              <h3 className="font-bold text-orange-700 mb-2">💫 The Situation:</h3>
-              <p className="text-orange-900">{situation}</p>
-            </div>
-          )}
-
-          <div className="flex justify-center mb-4">
-            <button
-              onClick={() => startNewConversation(true)}
-              disabled={isLoading}
-              className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md"
-            >
-              {isLoading ? '🎬 Chat in Progress...' : '🎲 New Random Chat'}
-            </button>
+        {activeConversations > 1 && (
+          <div className={styles.warningBanner}>
+            ⚠️ Warning: {activeConversations} conversations running simultaneously! This may slow down responses.
           </div>
+        )}
 
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              ❌ {error}
+        {activeConversations === 1 && isLoading && (
+          <div className={styles.statusBanner}>
+            💬 1 active conversation
+          </div>
+        )}
+
+        {character1 && character2 && (
+          <div className={styles.characterGrid}>
+            <div className={`${styles.characterCard} ${styles.characterA}`}>
+              <h3 className={styles.characterName}>{character1.name}</h3>
+              <p className={styles.characterPersonality}>{character1.personality}</p>
             </div>
-          )}
+            <div className={`${styles.characterCard} ${styles.characterB}`}>
+              <h3 className={styles.characterName}>{character2.name}</h3>
+              <p className={styles.characterPersonality}>{character2.personality}</p>
+            </div>
+          </div>
+        )}
+
+        {situation && (
+          <div className={styles.situation}>
+            <h3 className={styles.situationTitle}>💫 The Situation:</h3>
+            <p className={styles.situationText}>{situation}</p>
+          </div>
+        )}
+
+        <div className={styles.controls}>
+          <button
+            onClick={() => startNewConversation(true)}
+            disabled={isLoading}
+            className={styles.startButton}
+          >
+            {isLoading ? '🎬 Chat in Progress...' : '🎲 New Random Chat'}
+          </button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-xl p-6 min-h-[500px] max-h-[600px] overflow-y-auto">
-          {messages.length === 0 && !isLoading && (
-            <div className="text-center text-gray-400 py-20">
-              Click "New Random Chat" to start a conversation!
-            </div>
-          )}
+        {error && (
+          <div className={styles.errorBanner}>
+            ❌ {error}
+          </div>
+        )}
+      </div>
 
-          {messages.map((message, index) => {
-            const isChar1 = message.speaker === character1?.name;
-            return (
-              <div
-                key={index}
-                className={`mb-4 ${isChar1 ? 'text-left' : 'text-right'}`}
-              >
-                <div
-                  className={`inline-block max-w-[80%] p-4 rounded-lg ${
-                    isChar1
-                      ? 'bg-pink-100 text-pink-900 rounded-tl-none'
-                      : 'bg-blue-100 text-blue-900 rounded-tr-none'
-                  }`}
-                >
-                  <div className="font-bold text-sm mb-1">
-                    {message.speaker}
-                    {currentSpeaker === message.speaker && (
-                      <span className="ml-2 animate-pulse">✨</span>
-                    )}
-                  </div>
-                  <div className="prose prose-sm max-w-none">
-                    <Markdown>{message.text}</Markdown>
-                  </div>
-                </div>
+      <div className={styles.transcript}>
+        {messages.length === 0 && !isLoading && (
+          <div className={styles.emptyState}>
+            Click "New Random Chat" to start a conversation!
+          </div>
+        )}
+
+        {messages.map((message, index) => {
+          const isChar1 = message.speaker === character1?.name;
+          return (
+            <div
+              key={index}
+              className={`${styles.turn} ${isChar1 ? styles.turnA : styles.turnB}`}
+            >
+              <div className={styles.speaker}>
+                {message.speaker}
+                {currentSpeaker === message.speaker && (
+                  <span className={styles.typingIndicator}>✨</span>
+                )}
               </div>
-            );
-          })}
-
-          {isLoading && messages.length === 0 && (
-            <div className="text-center text-gray-500 py-20">
-              <div className="animate-pulse text-2xl mb-2">🎭</div>
-              <div>Initializing conversation...</div>
+              <div className={styles.body}>
+                <Markdown>{message.text}</Markdown>
+              </div>
             </div>
-          )}
+          );
+        })}
 
-          <div ref={messagesEndRef} />
-        </div>
+        {isLoading && messages.length === 0 && (
+          <div className={styles.loadingState}>
+            <div className={styles.loadingIcon}>🎭</div>
+            <div>Initializing conversation...</div>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
       </div>
     </div>
   );

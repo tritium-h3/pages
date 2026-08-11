@@ -1,0 +1,247 @@
+/* LLM Duo Chat — two local models improvising a scene; the transcript is the
+   whole point, so speaker A/B must stay distinguishable at a glance across a
+   long, streaming conversation. */
+
+.page {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+
+/* ── Header card (title, character intro, controls) ──────────── */
+.headerCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-plate);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--step-3);
+  font-weight: 700;
+  color: var(--section-llm-toys);
+  text-align: center;
+}
+
+.subtitle {
+  margin: 0 0 var(--space-5);
+  font-size: var(--step-1);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ── Status banners (neutral — these are informational, not
+   success/danger states, so they lean on surface/border tokens rather
+   than borrowing a semantic colour that doesn't fit) ─────────────── */
+.warningBanner {
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-strong);
+  font-size: var(--step-0);
+  text-align: center;
+}
+
+.statusBanner {
+  margin-bottom: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--step-0);
+  color: var(--text-faint);
+  text-align: center;
+}
+
+/* ── Character intro cards ────────────────────────────────────── */
+.characterGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.characterCard {
+  padding: var(--space-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius-card);
+}
+
+.characterA { border-left-color: var(--section-llm-toys); }
+.characterB { border-left-color: var(--section-tools); }
+
+.characterName {
+  margin: 0;
+  font-size: var(--step-2);
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.characterA .characterName { color: var(--section-llm-toys); }
+.characterB .characterName { color: var(--section-tools); }
+
+.characterPersonality {
+  margin: var(--space-1) 0 0;
+  font-size: var(--step-0);
+  color: var(--text-muted);
+}
+
+/* ── Situation card ────────────────────────────────────────────── */
+.situation {
+  margin-bottom: var(--space-5);
+  padding: var(--space-4);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.situationTitle {
+  margin: 0 0 var(--space-2);
+  font-size: var(--step-1);
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.situationText {
+  margin: 0;
+  color: var(--text);
+}
+
+/* ── Controls ──────────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.startButton {
+  padding: var(--space-3) var(--space-5);
+  background: var(--text-strong);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius-card);
+  font-family: var(--font);
+  font-size: var(--step-1);
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 120ms ease;
+}
+
+.startButton:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.startButton:disabled {
+  background: var(--border-strong);
+  color: var(--text-faint);
+  cursor: not-allowed;
+}
+
+.errorBanner {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-danger-wash);
+  border: 1px solid color-mix(in srgb, var(--color-danger-dim) 40%, transparent);
+  border-radius: var(--radius-card);
+  color: var(--color-danger);
+  font-size: var(--step-0);
+}
+
+/* ── Transcript ────────────────────────────────────────────────── */
+.transcript {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-plate);
+  padding: var(--space-5);
+  min-height: 500px;
+  max-height: 600px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.emptyState,
+.loadingState {
+  padding: var(--space-6) 0;
+  text-align: center;
+  color: var(--text-faint);
+}
+
+.loadingIcon {
+  margin-bottom: var(--space-2);
+  font-size: var(--step-3);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+/* ── Turns ─────────────────────────────────────────────────────── */
+.turn {
+  border-left: 3px solid var(--border-strong);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-raised);
+  border-radius: 0 var(--radius-card) var(--radius-card) 0;
+}
+
+.turnA {
+  border-left-color: var(--section-llm-toys);
+  background: color-mix(in srgb, var(--section-llm-toys) 6%, var(--surface-raised));
+}
+
+.turnB {
+  border-left-color: var(--section-tools);
+  background: color-mix(in srgb, var(--section-tools) 6%, var(--surface-raised));
+}
+
+.speaker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: var(--space-1);
+  font-size: var(--step-0);
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.turnA .speaker { color: var(--section-llm-toys); }
+.turnB .speaker { color: var(--section-tools); }
+
+.typingIndicator {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.body {
+  font-size: var(--step-1);
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.body p {
+  margin: 0 0 var(--space-2);
+}
+
+.body p:last-child {
+  margin-bottom: 0;
+}
+
+.body strong {
+  color: var(--text-strong);
+}
+
+.body ul,
+.body ol {
+  margin: var(--space-2) 0;
+  padding-left: var(--space-4);
+}
+
+.body code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
