@@ -25,10 +25,10 @@
 .error {
   margin-bottom: var(--space-4);
   padding: var(--space-3) var(--space-4);
-  background: rgba(220, 38, 38, 0.12);
-  border: 1px solid rgba(220, 38, 38, 0.4);
+  background: var(--color-danger-wash);
+  border: 1px solid color-mix(in srgb, var(--color-danger-dim) 40%, transparent);
   border-radius: var(--radius-card);
-  color: #f3a9a9;
+  color: var(--color-danger);
   font-size: var(--step-0);
 }
 
@@ -124,8 +124,8 @@
 }
 
 .itemDone {
-  background: rgba(34, 197, 94, 0.06);
-  border-color: rgba(34, 197, 94, 0.25);
+  background: color-mix(in srgb, var(--color-success) 6%, transparent);
+  border-color: color-mix(in srgb, var(--color-success) 25%, transparent);
 }
 
 .checkbox {
@@ -133,8 +133,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: var(--space-5);
+  height: var(--space-5);
   background: transparent;
   border: 2px solid var(--border-strong);
   border-radius: 6px;
@@ -147,13 +147,13 @@
 }
 
 .checkboxDone {
-  background: #22c55e;
-  border-color: #22c55e;
+  background: var(--color-success);
+  border-color: var(--color-success);
 }
 
 .checkboxDone:hover {
-  border-color: #16a34a;
-  background: #16a34a;
+  border-color: var(--color-success-dim);
+  background: var(--color-success-dim);
 }
 
 .checkIcon {
@@ -191,8 +191,8 @@
 }
 
 .deleteButton:hover {
-  color: #f87171;
-  background: rgba(220, 38, 38, 0.12);
+  color: var(--color-danger);
+  background: var(--color-danger-wash);
 }
 
 /* ── Empty state ───────────────────────────────────────────── */
