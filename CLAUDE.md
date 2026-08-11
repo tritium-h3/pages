@@ -8,8 +8,8 @@ Frontend (`src/frontend/`) and backend (`src/backend/`) run concurrently in dev.
 
 ### Frontend (`src/frontend/`)
 - React 19, styled with Tailwind CSS 4, icons from `lucide-react`.
-- **Routing is hand-rolled in `App.jsx`** — no router library. `App` keeps `pathname` in state, updates it via `window.history.pushState` + a `popstate` listener, and renders one page component per path. To add a page: create the component, import it in `App.jsx`, add a `pathname === '/x'` branch, and add a menu button.
-- Current pages: `/todo`.
+- **Routing is registry-driven** — `src/registry.ts` lists every experiment's `manifest` (id, title, route, section, chrome) plus a lazy `load()` for its `page`; `src/App.tsx` keeps `pathname` in state (via `window.history.pushState` + a `popstate` listener), matches it against `REGISTRY`, and renders the matched page inside `Shell`, or `Gallery` at `/`. To add a page: create `src/experiments/<id>/manifest.ts` and `page.tsx`/`page.jsx`, import the manifest in `registry.ts`, and add a `{ ...manifest, load: () => import('./experiments/<id>/page.js') }` entry — no menu button or `pathname === '/x'` branch to hand-write. `src/frontend/App.jsx` is a legacy fallback `src/App.tsx` renders only for an unmatched route; since Colony (the last slice still using it) migrated to the registry, it no longer routes anywhere itself and is slated for deletion in Task 22.
+- Current pages: all experiments are registry-driven now — see `src/registry.ts` for the full list.
 - Entry: `main.jsx` → `App.jsx`. Mixed `.jsx`/`.tsx` — newer pages tend to be `.tsx`.
 - **Reaching the backend:** migrated slices use the helpers in `src/platform/backendApi.ts` — `apiUrl(id, path)` builds `/api/<id>/...`, `healthUrl()` is the one route outside a slice namespace, `wsUrl(path)` builds a same-origin WebSocket URL. Unmigrated pages still use the older `src/frontend/backendApi.ts` (`apiUrl(path)`, single argument) until they migrate. Both go through the Vite dev server's same-origin `/api`/`/ws` proxy — neither hardcodes a host or port. Don't hardcode API URLs.
 
