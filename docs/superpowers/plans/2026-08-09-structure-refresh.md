@@ -420,7 +420,10 @@ export function createJsonStore<T>(name: string, fallback: T, dir: string = DATA
       try {
         return JSON.parse(await fs.readFile(file, 'utf-8')) as T;
       } catch {
-        return fallback;
+        // A fresh copy every time. Callers mutate what read() returns
+        // (`todos.push(...)`), so handing out the same object would let one
+        // failed read plus one write permanently poison the fallback.
+        return structuredClone(fallback);
       }
     },
 
@@ -561,6 +564,14 @@ export interface Section {
   blurb: string;
 }
 
+/** Props every experiment page receives. Lives here rather than in
+ *  `registry.ts` so that nine slice pages do not each import the composition
+ *  root just to name their own props type. */
+export interface ExperimentPageProps {
+  /** path segments below the experiment's route; [] at its root */
+  subpath: string[];
+}
+
 export const SECTIONS: Section[] = [
   { id: 'tools', title: 'Tools', blurb: 'Things I actually use' },
   { id: 'llm-toys', title: 'LLM Toys', blurb: 'Everything that talks back' },
@@ -574,13 +585,8 @@ Slices are added to this array by later tasks. It starts with the two externals,
 
 ```ts
 import type { ComponentType } from 'react';
-import type { ExperimentManifest } from './platform/manifest.js';
+import type { ExperimentManifest, ExperimentPageProps } from './platform/manifest.js';
 import { EXTERNAL_URLS } from './platform/config.js';
-
-export interface ExperimentPageProps {
-  /** path segments below the experiment's route; [] at its root */
-  subpath: string[];
-}
 
 export interface RegistryEntry extends ExperimentManifest {
   /** absent for external entries, which are links rather than routes */
@@ -1565,7 +1571,9 @@ Every slice task follows the same shape. These are **moves, not rewrites** — e
 **The per-slice checklist, applied by each task below:**
 
 1. `git mv` the files into `src/experiments/<id>/`, backend code into `server/`
-2. Write `manifest.ts`
+2. Write `manifest.ts`, and a `types.ts` for any shape crossing the wire — if the
+   page and the server each declare their own copy of a response type, they will
+   drift. `types.ts` is checked by both tsconfigs, so one definition serves both.
 3. Add the entry to `REGISTRY` in `src/registry.ts`
 4. Convert the router to slice-relative paths and export it as a `SliceServer`
 5. Replace the legacy `app.use('/api', ...)` line in `src/server.ts` with `mount('<id>', slice)`
@@ -1778,7 +1786,7 @@ Change the import and the four fetch calls:
 
 ```tsx
 import { apiUrl } from '../../platform/backendApi.js';
-import type { ExperimentPageProps } from '../../registry.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
 ```
 
 | Line | Was | Becomes |
@@ -1892,7 +1900,7 @@ The file is now a CSS Module, so class names must be referenced through the impo
 
 ```tsx
 import styles from './weather.module.css';
-import type { ExperimentPageProps } from '../../registry.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
 ```
 
 Then convert every `className="foo bar"` in the file to `className={`${styles.foo} ${styles.bar}`}`. The file also carries seven Tailwind utility classes, and Weather is not one of the three pages Tasks 18–20 cover, so they come out here. Translate each into a token-based rule — a `flex items-center gap-2` attribute, for instance, becomes:
@@ -2006,7 +2014,7 @@ export default slice;
 ```tsx
 import styles from './transit.module.css';
 import { apiUrl } from '../../platform/backendApi.js';
-import type { ExperimentPageProps } from '../../registry.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
 ```
 
 Line 158 becomes:
@@ -2125,7 +2133,7 @@ Update the remaining legacy importers still under `src/backend/routes/` (`llm-du
 
 ```tsx
 import { apiUrl } from '../../platform/backendApi.js';
-import type { ExperimentPageProps } from '../../registry.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
 ```
 
 Line 72 becomes:
@@ -2274,7 +2282,7 @@ export default slice;
 ```tsx
 import styles from './image-hunt.module.css';
 import { apiUrl } from '../../platform/backendApi.js';
-import type { ExperimentPageProps } from '../../registry.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
 ```
 
 | Line | Becomes |
@@ -2395,7 +2403,7 @@ Keep `initLLMDuoChatWebSocket` itself unchanged, including its WebSocket path `/
 
 ```tsx
 import { apiUrl, wsUrl } from '../../platform/backendApi.js';
-import type { ExperimentPageProps } from '../../registry.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
 ```
 
 Line 168 becomes `fetch(apiUrl('llm-duo-chat', '/status'))`. Line 71 is unchanged — `wsUrl('/ws/llm-duo-chat')` keeps its path. Rename the export to `export default function LLMDuoChatPage(_props: ExperimentPageProps)`. Leave the Tailwind classes for Task 19.
@@ -2548,7 +2556,7 @@ export default slice;
 
 ```tsx
 import { apiUrl } from '../../platform/backendApi.js';
-import type { ExperimentPageProps } from '../../registry.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
 ```
 
 Line 343 becomes `fetch(apiUrl('sprites', '/groups'), {`. Rename the export to `export default function SpriteToolPage(_props: ExperimentPageProps)`. `SpriteEditor` uses inline styles, so there is no stylesheet to convert.
@@ -2679,7 +2687,7 @@ export default slice;
 ```tsx
 import styles from './sky.module.css';
 import { apiUrl } from '../../platform/backendApi.js';
-import type { ExperimentPageProps } from '../../registry.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
 import SkyMap from './SkyMap.js';
 
 export default function SkyPage({ subpath }: ExperimentPageProps) {
