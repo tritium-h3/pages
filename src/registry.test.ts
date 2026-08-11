@@ -53,3 +53,24 @@ describe('registry integrity', () => {
     }
   });
 });
+
+import { readFileSync } from 'fs';
+
+describe('registry and server mount list agree', () => {
+  const serverSource = readFileSync(
+    path.join(path.dirname(fileURLToPath(import.meta.url)), 'server.ts'),
+    'utf-8',
+  );
+
+  it('mounts every entry that declares a server', () => {
+    for (const entry of REGISTRY.filter(e => e.hasServer)) {
+      expect(serverSource).toContain(`mount('${entry.id}'`);
+    }
+  });
+
+  it('registers every mounted id', () => {
+    const mounted = [...serverSource.matchAll(/mount\('([a-z0-9-]+)'/g)].map(m => m[1]);
+    const registered = new Set(REGISTRY.filter(e => e.hasServer).map(e => e.id));
+    for (const id of mounted) expect(registered.has(id)).toBe(true);
+  });
+});
