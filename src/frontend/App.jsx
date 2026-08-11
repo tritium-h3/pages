@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import ColonyGame from './ColonyGame'
-import WikiStory from './WikiStory'
 import LLMDuoChat from './LLMDuoChat'
 import SpriteEditor from './SpriteEditor'
 import ImageHunt from './ImageHunt'
@@ -53,17 +52,6 @@ function App() {
           ← Back to Menu
         </button>
         <ColonyGame />
-      </div>
-    )
-  }
-
-  if (pathname === '/wikistory') {
-    return (
-      <div>
-        <button className="back-btn--wikistory" onClick={() => navigateTo('/')}>
-          ← Back to Menu
-        </button>
-        <WikiStory />
       </div>
     )
   }
@@ -128,9 +116,6 @@ function App() {
       <h1>Select an App</h1>
       <button className="menu-btn" onClick={() => navigateTo('/colony')}>
         Colony Builder Game
-      </button>
-      <button className="menu-btn" onClick={() => navigateTo('/wikistory')}>
-        WikiStory Generator
       </button>
       <button className="menu-btn menu-btn--purple" onClick={() => navigateTo('/llmduochat')}>
         🎭 LLM Duo Chat

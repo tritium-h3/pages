@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { WebSocket, WebSocketServer } from 'ws';
 import http from 'http';
-import { ollama } from '../ollama.js';
+import { ollama } from '../../platform/server/ollama.js';
 
 // Mad Libs word lists
 const adjectives = [

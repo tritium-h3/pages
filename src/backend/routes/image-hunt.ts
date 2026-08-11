@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { ollama } from '../ollama.js';
+import { ollama } from '../../platform/server/ollama.js';
 import * as sessions from '../image-hunt-sessions.js';
 
 const router = Router();

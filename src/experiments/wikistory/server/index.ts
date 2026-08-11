@@ -1,20 +1,22 @@
 import { Router, Request, Response } from 'express';
-import { ollama } from '../ollama.js';
-import { fetchRandomArticle } from '../wikipedia.js';
+import type { SliceServer } from '../../../platform/server/slice.js';
+import { ollama } from '../../../platform/server/ollama.js';
+import { fetchRandomArticle } from './wikipedia.js';
+import type { WikiStoryEvent } from '../types.js';
 
 const router = Router();
 
 const MODEL = 'qwen3:14b';
 
 // Wikipedia Story endpoint
-router.get('/wikipedia-story', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   // If the browser navigates away or starts a new story, stop generating —
   // otherwise abandoned generations keep queueing inside Ollama and every
   // subsequent request waits behind them.
   const abort = new AbortController();
   req.on('close', () => abort.abort());
 
-  const sse = (payload: unknown) => {
+  const sse = (payload: WikiStoryEvent) => {
     if (!res.writableEnded) {
       res.write(`data: ${JSON.stringify(payload)}\n\n`);
     }
@@ -91,4 +93,5 @@ Write only the story itself. Do not add a preamble, title, or commentary.`;
   }
 });
 
-export default router;
+const slice: SliceServer = { router };
+export default slice;

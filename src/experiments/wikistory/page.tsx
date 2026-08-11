@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { BookOpen, Sparkles, RefreshCw } from 'lucide-react';
 import Markdown from 'react-markdown';
 import type { Components } from 'react-markdown';
-import { apiUrl } from './backendApi';
+import { apiUrl } from '../../platform/backendApi.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
+import type { WikiStoryEvent } from './types.js';
 
 interface WikiInfo {
   title: string;
@@ -40,7 +42,7 @@ const storyMarkdown: Components = {
   hr: () => <hr className="my-6 border-gray-200" />,
 };
 
-export default function WikiStory() {
+export default function WikiStoryPage(_props: ExperimentPageProps) {
   const [wikiInfo, setWikiInfo] = useState<WikiInfo | null>(null);
   const [story, setStory] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -69,7 +71,7 @@ export default function WikiStory() {
     setStory('');
 
     try {
-      const response = await fetch(apiUrl('/wikipedia-story'), {
+      const response = await fetch(apiUrl('wikistory', '/'), {
         signal: controller.signal,
       });
 
@@ -102,7 +104,7 @@ export default function WikiStory() {
           if (!line.startsWith('data: ')) continue;
           if (!isCurrent()) return;
 
-          let data: { type: string; [key: string]: unknown };
+          let data: WikiStoryEvent;
           try {
             data = JSON.parse(line.slice(6));
           } catch {
@@ -113,14 +115,14 @@ export default function WikiStory() {
 
           if (data.type === 'wiki') {
             setWikiInfo({
-              title: data.title as string,
-              extract: data.extract as string,
-              url: data.url as string | undefined,
+              title: data.title,
+              extract: data.extract,
+              url: data.url,
             });
           } else if (data.type === 'story') {
-            setStory(prev => prev + (data.chunk as string));
+            setStory(prev => prev + data.chunk);
           } else if (data.type === 'error') {
-            setError(data.message as string);
+            setError(data.message);
           }
         }
       }
