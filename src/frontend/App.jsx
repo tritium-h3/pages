@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import ColonyGame from './ColonyGame'
-import LLMDuoChat from './LLMDuoChat'
 import SpriteEditor from './SpriteEditor'
 import SkyPantone from './SkyPantone'
 import SkyMap from './SkyMap'
@@ -55,17 +54,6 @@ function App() {
     )
   }
 
-  if (pathname === '/llmduochat') {
-    return (
-      <div>
-        <button className="back-btn--llmduochat" onClick={() => navigateTo('/')}>
-          ← Back to Menu
-        </button>
-        <LLMDuoChat />
-      </div>
-    )
-  }
-
   if (pathname === '/sprite-editor') {
     return <SpriteEditor />
   }
@@ -104,9 +92,6 @@ function App() {
       <h1>Select an App</h1>
       <button className="menu-btn" onClick={() => navigateTo('/colony')}>
         Colony Builder Game
-      </button>
-      <button className="menu-btn menu-btn--purple" onClick={() => navigateTo('/llmduochat')}>
-        🎭 LLM Duo Chat
       </button>
       <button className="menu-btn" onClick={() => navigateTo('/sprite-editor')}>
         🖼 Sprite Group Editor

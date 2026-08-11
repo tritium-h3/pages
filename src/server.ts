@@ -11,9 +11,9 @@ import todoSlice from './experiments/todo/server/index.js';
 import transitSlice from './experiments/transit/server/index.js';
 import wikistorySlice from './experiments/wikistory/server/index.js';
 import imageHuntSlice from './experiments/image-hunt/server/index.js';
+import llmDuoChatSlice from './experiments/llm-duo-chat/server/index.js';
 
 // Legacy routers — moved into slices by Tasks 9-17, one per task.
-import llmDuoChatRouter, { initLLMDuoChatWebSocket } from './backend/routes/llm-duo-chat.js';
 import spriteGroupsRouter from './backend/routes/sprite-groups.js';
 import skyRouter from './backend/routes/sky.js';
 
@@ -59,9 +59,9 @@ mount('todo', todoSlice);
 mount('transit', transitSlice);
 mount('wikistory', wikistorySlice);
 mount('image-hunt', imageHuntSlice);
+mount('llm-duo-chat', llmDuoChatSlice);
 
 // --- Legacy flat mounts. Each disappears as its slice migrates. ---
-app.use('/api', llmDuoChatRouter);
 app.use('/api', spriteGroupsRouter);
 app.use('/api', skyRouter);
 
@@ -115,12 +115,6 @@ async function initAll(): Promise<void> {
       unavailable.add(id);
       console.error(`[${id}] attach failed; experiment disabled:`, error);
     }
-  }
-
-  try {
-    initLLMDuoChatWebSocket(server);
-  } catch (error) {
-    console.error('[legacy llm-duo-chat] websocket init failed:', error);
   }
 }
 

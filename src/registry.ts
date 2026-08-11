@@ -6,6 +6,7 @@ import { manifest as weatherManifest } from './experiments/weather/manifest.js';
 import { manifest as transitManifest } from './experiments/transit/manifest.js';
 import { manifest as wikistoryManifest } from './experiments/wikistory/manifest.js';
 import { manifest as imageHuntManifest } from './experiments/image-hunt/manifest.js';
+import { manifest as llmDuoChatManifest } from './experiments/llm-duo-chat/manifest.js';
 
 export interface RegistryEntry extends ExperimentManifest {
   /** absent for external entries, which are links rather than routes */
@@ -18,6 +19,7 @@ export const REGISTRY: RegistryEntry[] = [
   { ...transitManifest, load: () => import('./experiments/transit/page.js') },
   { ...wikistoryManifest, load: () => import('./experiments/wikistory/page.js') },
   { ...imageHuntManifest, load: () => import('./experiments/image-hunt/page.js') },
+  { ...llmDuoChatManifest, load: () => import('./experiments/llm-duo-chat/page.js') },
   {
     id: 'roguelike',
     title: 'Roguelike',

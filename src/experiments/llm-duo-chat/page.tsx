@@ -1,18 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Markdown from 'react-markdown';
-import { apiUrl, wsUrl } from './backendApi';
+import { apiUrl, wsUrl } from '../../platform/backendApi.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
+import type { Character, LLMDuoChatServerMessage } from './types.js';
 
 interface Message {
   speaker: string;
   text: string;
 }
 
-interface Character {
-  name: string;
-  personality: string;
-}
-
-export default function LLMDuoChat() {
+export default function LLMDuoChatPage(_props: ExperimentPageProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [character1, setCharacter1] = useState<Character | null>(null);
   const [character2, setCharacter2] = useState<Character | null>(null);
@@ -80,7 +77,7 @@ export default function LLMDuoChat() {
       };
 
       ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
+        const data = JSON.parse(event.data) as LLMDuoChatServerMessage;
         console.log('WebSocket message received:', data.type);
         
         if (data.type === 'setup') {
@@ -165,7 +162,7 @@ export default function LLMDuoChat() {
     // Poll for active conversation count
     const checkStatus = async () => {
       try {
-        const response = await fetch(apiUrl('/llm-duo-chat/status'));
+        const response = await fetch(apiUrl('llm-duo-chat', '/status'));
         const data = await response.json();
         setActiveConversations(data.activeConversations);
       } catch (err) {

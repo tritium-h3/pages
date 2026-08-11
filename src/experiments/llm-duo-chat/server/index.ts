@@ -1,7 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { WebSocket, WebSocketServer } from 'ws';
 import http from 'http';
-import { ollama } from '../../platform/server/ollama.js';
+import { ollama } from '../../../platform/server/ollama.js';
+import type { SliceServer } from '../../../platform/server/slice.js';
+import type { Character } from '../types.js';
 
 // Mad Libs word lists
 const adjectives = [
@@ -95,11 +97,6 @@ function generateSituation(): string {
     .replace('{solution}', randomChoice(solutions));
 }
 
-interface Character {
-  name: string;
-  personality: string;
-}
-
 function generateCharacter(): Character {
   const adj = randomChoice(adjectives);
   const prof = randomChoice(professions);
@@ -117,12 +114,12 @@ let activeConversations = 0;
 // Create router for HTTP endpoints
 const router = Router();
 
-router.get('/llm-duo-chat/status', (req: Request, res: Response) => {
+router.get('/status', (req: Request, res: Response) => {
   res.json({ activeConversations });
 });
 
 // Initialize WebSocket server
-export function initLLMDuoChatWebSocket(server: http.Server) {
+function initLLMDuoChatWebSocket(server: http.Server) {
   const wss = new WebSocketServer({ server, path: '/ws/llm-duo-chat' });
 
   wss.on('connection', (ws: WebSocket) => {
@@ -260,4 +257,8 @@ You are having a conversation with ${otherChar.name} (${otherChar.personality}).
   console.log('LLM Duo Chat WebSocket server initialized');
 }
 
-export default router;
+const slice: SliceServer = {
+  router,
+  attach: (server) => initLLMDuoChatWebSocket(server),
+};
+export default slice;
