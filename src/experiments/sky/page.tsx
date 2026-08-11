@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { apiUrl } from './backendApi';
-import './SkyPantone.css';
+import styles from './sky.module.css';
+import { apiUrl } from '../../platform/backendApi.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
+import SkyMap from './SkyMap.js';
 
 type Match = { code: string; name: string; hex: string; deltaE: number };
 type Band = Match & { label: 'zenith' | 'mid' | 'horizon' };
@@ -83,7 +85,7 @@ const resolveNearestCamId = (): Promise<string | null> =>
       async (pos) => {
         try {
           const { latitude, longitude } = pos.coords;
-          const resp = await fetch(apiUrl(`/sky/nearest?lat=${latitude}&lon=${longitude}`));
+          const resp = await fetch(apiUrl('sky', `/nearest?lat=${latitude}&lon=${longitude}`));
           if (!resp.ok) return resolve(null);
           const cam = (await resp.json()) as { id?: string };
           resolve(cam.id ?? null);
@@ -96,7 +98,15 @@ const resolveNearestCamId = (): Promise<string | null> =>
     );
   });
 
-export default function SkyPantone() {
+// Navigate to the map sub-route without a full page reload — App.tsx listens
+// for popstate and re-derives the route from window.location on every one.
+const goToMap = (e: React.MouseEvent): void => {
+  e.preventDefault();
+  window.history.pushState({}, '', '/sky/map');
+  window.dispatchEvent(new PopStateEvent('popstate'));
+};
+
+function SkyReading() {
   const [reading, setReading] = useState<Reading | null>(null);
   const [error, setError] = useState('');
   // Tracks a refresh that failed *after* a reading was already on screen —
@@ -112,7 +122,7 @@ export default function SkyPantone() {
     // no cam in the URL and geolocation didn't give us one.
     const load = async (camId: string | null) => {
       try {
-        const resp = await fetch(apiUrl(camId ? `/sky?cam=${encodeURIComponent(camId)}` : '/sky'));
+        const resp = await fetch(apiUrl('sky', camId ? `/?cam=${encodeURIComponent(camId)}` : '/'));
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = (await resp.json()) as Reading;
         if (cancelled) return;
@@ -151,36 +161,36 @@ export default function SkyPantone() {
     return () => { cancelled = true; if (timer) clearInterval(timer); };
   }, []);
 
-  if (error && !reading) return <div className="sky-page sky-page--error">Sky unavailable: {error}</div>;
-  if (!reading) return <div className="sky-page sky-page--loading">Reading the sky…</div>;
+  if (error && !reading) return <div className={`${styles.skyPage} ${styles.skyPageError}`}>Sky unavailable: {error}</div>;
+  if (!reading) return <div className={`${styles.skyPage} ${styles.skyPageLoading}`}>Reading the sky…</div>;
 
   const asOf = formatAsOf(reading.asOf, reading.stale || refreshFailed);
-  const contrastModifier = isLightBackground(reading.hero.hex) ? 'sky-page--light' : 'sky-page--dark';
+  const contrastModifier = isLightBackground(reading.hero.hex) ? styles.skyPageLight : styles.skyPageDark;
 
   return (
-    <div className={`sky-page ${contrastModifier}`} style={{ background: reading.hero.hex }}>
-      <div className="sky-hero">
-        <div className="sky-hero__code">PANTONE {reading.hero.code}</div>
-        <h1 className="sky-hero__name">{reading.hero.name}</h1>
-        <div className="sky-hero__asof">
+    <div className={`${styles.skyPage} ${contrastModifier}`} style={{ background: reading.hero.hex }}>
+      <div className={styles.skyHero}>
+        <div className={styles.skyHeroCode}>PANTONE {reading.hero.code}</div>
+        <h1 className={styles.skyHeroName}>{reading.hero.name}</h1>
+        <div className={styles.skyHeroAsof}>
           the sky, as of {asOf}
         </div>
       </div>
 
-      <div className="sky-bands">
+      <div className={styles.skyBands}>
         {reading.bands.map((b) => (
           // Each band carries its own colour, which can sit on the opposite side
           // of the luminance threshold from the hero — a dark zenith under a lit
           // horizon is exactly the sunset case this page exists for. So each band
           // picks its own text colour rather than inheriting the page's.
           <div
-            className={`sky-band ${isLightBackground(b.hex) ? 'sky-band--light' : 'sky-band--dark'}`}
+            className={`${styles.skyBand} ${isLightBackground(b.hex) ? styles.skyBandLight : styles.skyBandDark}`}
             key={b.label}
             style={{ background: b.hex }}
           >
-            <span className="sky-band__label">{b.label}</span>
-            <span className="sky-band__name">{b.name}</span>
-            <span className="sky-band__code">{b.code}</span>
+            <span className={styles.skyBandLabel}>{b.label}</span>
+            <span className={styles.skyBandName}>{b.name}</span>
+            <span className={styles.skyBandCode}>{b.code}</span>
           </div>
         ))}
       </div>
@@ -193,27 +203,39 @@ export default function SkyPantone() {
       {/* The frame links to its source cam. Nice UX, and some sources (e.g.
           foto-webcam.eu) require that a displayed image click through to them. */}
       <a
-        className="sky-frame-link"
+        className={styles.skyFrameLink}
         href={reading.cam.creditUrl}
         target="_blank"
         rel="noreferrer"
         title={`${reading.cam.name} — source`}
       >
         <img
-          className="sky-frame"
-          src={apiUrl(`/sky/frame/${reading.cam.id}?asOf=${encodeURIComponent(reading.asOf)}`)}
+          className={styles.skyFrame}
+          src={apiUrl('sky', `/frame/${reading.cam.id}?asOf=${encodeURIComponent(reading.asOf)}`)}
           alt={`Live sky camera frame — ${reading.cam.name}`}
         />
       </a>
 
-      <footer className="sky-footer">
-        <span className="sky-badge">{sunLabel(reading.sun)}</span>
-        <span className="sky-credit">
+      <footer className={styles.skyFooter}>
+        <span className={styles.skyBadge}>{sunLabel(reading.sun)}</span>
+        <span className={styles.skyCredit}>
           {reading.cam.name} · © <a href={reading.cam.creditUrl} target="_blank" rel="noreferrer">{reading.cam.credit}</a>
+          {' — '}
+          <a className={styles.skyMaplink} href="/sky/map" onClick={goToMap}>
+            change camera
+          </a>
         </span>
-        <span className="sky-note">Closest chip to what the camera saw. Cameras are not eyes.</span>
-        <a className="sky-maplink" href="/sky/map">🗺 skies around the world</a>
+        <span className={styles.skyNote}>Closest chip to what the camera saw. Cameras are not eyes.</span>
       </footer>
     </div>
   );
+}
+
+export default function SkyPage({ subpath }: ExperimentPageProps) {
+  // `subpath` comes from a raw pathname split, so a stray slash (`/sky//map`,
+  // `/sky/map/`) can hand us an empty-string segment ahead of 'map'. Ignore
+  // blanks rather than only checking subpath[0].
+  const segment = subpath.find((s) => s !== '');
+  if (segment === 'map') return <SkyMap />;
+  return <SkyReading />;
 }

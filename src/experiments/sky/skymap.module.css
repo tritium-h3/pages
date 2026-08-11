@@ -1,4 +1,4 @@
-.sky-map-page {
+.skyMapPage {
   min-height: 100vh;
   box-sizing: border-box;
   padding: 3.5rem 1rem 2rem;
@@ -12,28 +12,28 @@
   text-align: center;
 }
 
-.sky-map-page--msg { justify-content: center; }
+.skyMapPageMsg { justify-content: center; }
 
-.sky-map-title {
+.skyMapTitle {
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 700;
   margin: 0;
 }
 
-.sky-map-sub {
+.skyMapSub {
   margin: 0 0 0.6rem;
   font-size: 0.9rem;
   opacity: 0.72;
   max-width: 40rem;
 }
 
-.sky-map-frame {
+.skyMapFrame {
   position: relative;             /* pips are absolutely placed within */
   width: min(960px, 100%);
   aspect-ratio: 2 / 1;            /* equirectangular */
 }
 
-.sky-map-canvas {
+.skyMapCanvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -52,7 +52,7 @@
 }
 .pip:hover { z-index: 5; }
 
-.pip-dot {
+.pipDot {
   display: block;
   width: 100%;
   height: 100%;
@@ -62,9 +62,9 @@
   box-shadow: 0 0 0 3px rgba(255, 216, 115, 0.35), 0 0 12px 3px rgba(255, 216, 115, 0.55);
   transition: transform 0.12s ease;
 }
-.pip:hover .pip-dot { transform: scale(1.25); }
+.pip:hover .pipDot { transform: scale(1.25); }
 
-.pip-card {
+.pipCard {
   position: absolute;
   bottom: 150%;
   left: 50%;
@@ -82,13 +82,13 @@
   white-space: nowrap;
   pointer-events: none;          /* the card is informational; the pip is the link */
 }
-.pip:hover .pip-card { display: flex; }
+.pip:hover .pipCard { display: flex; }
 
-.pip-card__name { font-weight: 600; font-size: 0.9rem; }
-.pip-card__phase { font-size: 0.82rem; color: #ffd873; }
-.pip-card__credit { font-size: 0.72rem; opacity: 0.6; }
+.pipCardName { font-weight: 600; font-size: 0.9rem; }
+.pipCardPhase { font-size: 0.82rem; color: #ffd873; }
+.pipCardCredit { font-size: 0.72rem; opacity: 0.6; }
 
-.sky-map-note {
+.skyMapNote {
   margin-top: auto;
   padding-top: 1rem;
   font-size: 0.72rem;

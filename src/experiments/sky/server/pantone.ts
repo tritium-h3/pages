@@ -8,17 +8,9 @@
 
 import { rgbToLab, nearestSwatch, type Lab, type Swatch, type ColorMatch } from './color.js';
 
-// Plain import, NOT `with { type: 'json' }`. The import-attribute form fails
-// this backend's `module: ES2020` with TS2823, and switching module kinds to
-// allow it would change resolution for every backend file.
-//
-// Tradeoff, accepted deliberately: tsc emits pantone.json into dist/, but the
-// compiled dist/backend then throws ERR_IMPORT_ATTRIBUTE_MISSING under plain
-// node, which requires the attribute for JSON regardless of what tsc emitted.
-// That costs nothing today — dev and prod both run this via `tsx` (the
-// pages.service systemd unit is `npm run dev`), and nothing executes
-// dist/backend. If that ever changes, load the table with createRequire and
-// copy the .json into dist as a build step.
+// Plain import, resolved under tsconfig.server.json's `moduleResolution:
+// bundler` + `resolveJsonModule`; that config is `noEmit`, so this never has
+// to survive a tsc emit — only `tsx` (dev) or the bundler ever load it.
 import pantoneTable from './pantone.json';
 
 type RawChip = { name: string; hex: string };

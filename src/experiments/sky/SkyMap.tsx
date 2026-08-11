@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { apiUrl } from './backendApi';
-import './SkyMap.css';
+import styles from './skymap.module.css';
+import { apiUrl } from '../../platform/backendApi.js';
 
 type Cam = {
   id: string;
@@ -125,7 +125,7 @@ export default function SkyMap() {
     let cancelled = false;
     const load = async () => {
       try {
-        const resp = await fetch(apiUrl('/sky/cams'));
+        const resp = await fetch(apiUrl('sky', '/cams'));
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const payload = (await resp.json()) as CamsPayload;
         if (!cancelled) { setData(payload); setError(''); }
@@ -148,37 +148,37 @@ export default function SkyMap() {
   }, [land, data]);
 
   if (error && !data) {
-    return <div className="sky-map-page sky-map-page--msg">Map unavailable: {error}</div>;
+    return <div className={`${styles.skyMapPage} ${styles.skyMapPageMsg}`}>Map unavailable: {error}</div>;
   }
 
   return (
-    <div className="sky-map-page">
-      <h1 className="sky-map-title">Skies around the world</h1>
-      <p className="sky-map-sub">
+    <div className={styles.skyMapPage}>
+      <h1 className={styles.skyMapTitle}>Skies around the world</h1>
+      <p className={styles.skyMapSub}>
         Each pip is a live sky. Hover for details; click to watch that sky.
         The map shades day and night in real time.
       </p>
 
-      <div className="sky-map-frame">
-        <canvas ref={canvasRef} width={MAP_W} height={MAP_H} className="sky-map-canvas" />
+      <div className={styles.skyMapFrame}>
+        <canvas ref={canvasRef} width={MAP_W} height={MAP_H} className={styles.skyMapCanvas} />
         {data?.cams.map((c) => (
           <a
             key={c.id}
-            className="pip"
+            className={styles.pip}
             href={`/sky?cam=${encodeURIComponent(c.id)}`}
             style={{ left: `${xFrac(c.lon) * 100}%`, top: `${yFrac(c.lat) * 100}%` }}
           >
-            <span className="pip-dot" />
-            <span className="pip-card" role="tooltip">
-              <span className="pip-card__name">{c.location}</span>
-              <span className="pip-card__phase">{c.phase}</span>
-              <span className="pip-card__credit">© {c.credit}</span>
+            <span className={styles.pipDot} />
+            <span className={styles.pipCard} role="tooltip">
+              <span className={styles.pipCardName}>{c.location}</span>
+              <span className={styles.pipCardPhase}>{c.phase}</span>
+              <span className={styles.pipCardCredit}>© {c.credit}</span>
             </span>
           </a>
         ))}
       </div>
 
-      <p className="sky-map-note">
+      <p className={styles.skyMapNote}>
         Base map: Natural Earth (public domain). Day/night shaded from the sun's position.
       </p>
     </div>

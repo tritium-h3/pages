@@ -1,7 +1,8 @@
 import { Router, Request, Response } from 'express';
-import { solarPosition, solarPhase, subsolarPoint } from '../sun.js';
-import { SKY_CAMS, getCam, nearestCam } from '../sky-cams.js';
-import { getEntry } from '../sky-source.js';
+import type { SliceServer } from '../../../platform/server/slice.js';
+import { solarPosition, solarPhase, subsolarPoint } from './sun.js';
+import { SKY_CAMS, getCam, nearestCam } from './sky-cams.js';
+import { getEntry } from './sky-source.js';
 
 const router = Router();
 
@@ -9,7 +10,7 @@ const router = Router();
 // day/night map) and, per cam, where it is, its current time-of-day, and its
 // attribution. No frame fetching here — pips are neutral, so this is pure sun
 // maths and cheap to re-request each minute.
-router.get('/sky/cams', (_req: Request, res: Response) => {
+router.get('/cams', (_req: Request, res: Response) => {
   const now = new Date();
   res.json({
     subsolar: subsolarPoint(now),
@@ -31,7 +32,7 @@ router.get('/sky/cams', (_req: Request, res: Response) => {
 
 // Resolve the closest cam to a point. The frontend calls this when it has the
 // visitor's coordinates but no cam in the URL; it then pins the returned id.
-router.get('/sky/nearest', (req: Request, res: Response) => {
+router.get('/nearest', (req: Request, res: Response) => {
   const lat = Number(req.query.lat);
   const lon = Number(req.query.lon);
   const valid =
@@ -43,7 +44,7 @@ router.get('/sky/nearest', (req: Request, res: Response) => {
   res.json({ id: cam.id, name: cam.name, credit: cam.credit, creditUrl: cam.creditUrl });
 });
 
-router.get('/sky', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   const id = typeof req.query.cam === 'string' ? req.query.cam : SKY_CAMS[0].id;
   const cam = getCam(id);
   if (!cam) return res.status(404).json({ error: `unknown cam: ${id}` });
@@ -70,7 +71,7 @@ router.get('/sky', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/sky/frame/:camId', async (req: Request, res: Response) => {
+router.get('/frame/:camId', async (req: Request, res: Response) => {
   const cam = getCam(req.params.camId);
   if (!cam) return res.status(404).json({ error: 'unknown cam' });
   try {
@@ -83,4 +84,5 @@ router.get('/sky/frame/:camId', async (req: Request, res: Response) => {
   }
 });
 
-export default router;
+const slice: SliceServer = { router };
+export default slice;
