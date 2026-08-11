@@ -923,6 +923,16 @@ The visual layer, plus the new `App` that renders the gallery at `/` and falls t
   --section-llm-toys: #a87fc9;
   --section-games:    #e8925f;
 
+  /* Semantic state colours. Three pages need "done" and "destructive"; without
+     these each invents its own, and they drift — Todo alone produced two reds
+     and three greens before this existed. */
+  --color-success:       #22c55e;
+  --color-success-dim:   #16a34a;
+  --color-success-wash:  rgba(34, 197, 94, 0.12);
+  --color-danger:        #f87171;
+  --color-danger-dim:    #dc2626;
+  --color-danger-wash:   rgba(220, 38, 38, 0.12);
+
   --radius-plate: 9px;
   --radius-card:  7px;
 
