@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
-import { ollama } from '../../platform/server/ollama.js';
-import * as sessions from '../image-hunt-sessions.js';
+import type { SliceServer } from '../../../platform/server/slice.js';
+import { ollama } from '../../../platform/server/ollama.js';
+import * as sessions from './sessions.js';
+import type { SessionMatch } from '../types.js';
 
 const router = Router();
 
@@ -101,7 +103,7 @@ Respond ONLY with a JSON object of the form {"match": true or false, "reason": "
 }
 
 // Lists vision-capable models for the UI dropdown.
-router.get('/image-hunt/models', async (_req: Request, res: Response) => {
+router.get('/models', async (_req: Request, res: Response) => {
   try {
     const models = await ollama.listVisionModels();
     res.json({ models, default: DEFAULT_MODEL });
@@ -112,7 +114,7 @@ router.get('/image-hunt/models', async (_req: Request, res: Response) => {
 });
 
 // List saved sessions (summaries) for the picker, most-recently-updated first.
-router.get('/image-hunt/sessions', async (_req: Request, res: Response) => {
+router.get('/sessions', async (_req: Request, res: Response) => {
   try {
     res.json({ sessions: await sessions.listSessions() });
   } catch (err) {
@@ -122,7 +124,7 @@ router.get('/image-hunt/sessions', async (_req: Request, res: Response) => {
 });
 
 // Full session (with matches), loaded when the user selects one.
-router.get('/image-hunt/sessions/:id', async (req: Request, res: Response) => {
+router.get('/sessions/:id', async (req: Request, res: Response) => {
   try {
     const session = await sessions.getSession(req.params.id);
     if (!session) {
@@ -137,7 +139,7 @@ router.get('/image-hunt/sessions/:id', async (req: Request, res: Response) => {
 });
 
 // Rename a session.
-router.patch('/image-hunt/sessions/:id', async (req: Request, res: Response) => {
+router.patch('/sessions/:id', async (req: Request, res: Response) => {
   const label = String(req.body?.label ?? '').trim();
   if (!label) {
     res.status(400).json({ error: 'label is required' });
@@ -157,7 +159,7 @@ router.patch('/image-hunt/sessions/:id', async (req: Request, res: Response) => 
 });
 
 // Delete a session.
-router.delete('/image-hunt/sessions/:id', async (req: Request, res: Response) => {
+router.delete('/sessions/:id', async (req: Request, res: Response) => {
   try {
     const ok = await sessions.deleteSession(req.params.id);
     if (!ok) {
@@ -171,7 +173,7 @@ router.delete('/image-hunt/sessions/:id', async (req: Request, res: Response) =>
   }
 });
 
-router.get('/image-hunt', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   const description = String(req.query.description ?? '').trim();
   if (!description) {
     res.status(400).json({ error: 'description query parameter is required' });
@@ -249,7 +251,7 @@ router.get('/image-hunt', async (req: Request, res: Response) => {
           baseAttempts = 0;
           send('session', { id: created.id, label: created.label });
         }
-        const match = {
+        const match: SessionMatch = {
           id: `${Date.now()}-${++matchId}`, // unique within a pooled session
           thumbUrl: image.thumbUrl,
           pageUrl: image.pageUrl,
@@ -296,4 +298,5 @@ router.get('/image-hunt', async (req: Request, res: Response) => {
   res.end();
 });
 
-export default router;
+const slice: SliceServer = { router };
+export default slice;

@@ -5,6 +5,7 @@ import { manifest as todoManifest } from './experiments/todo/manifest.js';
 import { manifest as weatherManifest } from './experiments/weather/manifest.js';
 import { manifest as transitManifest } from './experiments/transit/manifest.js';
 import { manifest as wikistoryManifest } from './experiments/wikistory/manifest.js';
+import { manifest as imageHuntManifest } from './experiments/image-hunt/manifest.js';
 
 export interface RegistryEntry extends ExperimentManifest {
   /** absent for external entries, which are links rather than routes */
@@ -16,6 +17,7 @@ export const REGISTRY: RegistryEntry[] = [
   { ...weatherManifest, load: () => import('./experiments/weather/page.js') },
   { ...transitManifest, load: () => import('./experiments/transit/page.js') },
   { ...wikistoryManifest, load: () => import('./experiments/wikistory/page.js') },
+  { ...imageHuntManifest, load: () => import('./experiments/image-hunt/page.js') },
   {
     id: 'roguelike',
     title: 'Roguelike',

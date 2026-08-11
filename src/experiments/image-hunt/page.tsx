@@ -1,29 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { apiUrl } from './backendApi';
-import './ImageHunt.css';
-
-interface Match {
-  id: string;
-  thumbUrl: string;
-  pageUrl: string;
-  title: string;
-  reason: string;
-  description: string;
-  model: string;
-}
-
-interface SessionSummary {
-  id: string;
-  label: string;
-  attempts: number;
-  matchCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface FullSession extends SessionSummary {
-  matches: Match[];
-}
+import styles from './image-hunt.module.css';
+import { apiUrl } from '../../platform/backendApi.js';
+import type { ExperimentPageProps } from '../../platform/manifest.js';
+import type { HuntSession, SessionMatch, SessionSummary } from './types.js';
 
 function relativeDate(iso: string): string {
   const then = new Date(iso).getTime();
@@ -36,12 +15,12 @@ function relativeDate(iso: string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-export default function ImageHunt() {
+export default function ImageHuntPage(_props: ExperimentPageProps) {
   const [description, setDescription] = useState('');
   const [running, setRunning] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const [currentTitle, setCurrentTitle] = useState('');
-  const [matches, setMatches] = useState<Match[]>([]);
+  const [matches, setMatches] = useState<SessionMatch[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [models, setModels] = useState<string[]>([]);
   const [model, setModel] = useState('');
@@ -55,7 +34,7 @@ export default function ImageHunt() {
   const cancelRenameRef = useRef(false);
 
   const loadSessions = () => {
-    fetch(apiUrl('/image-hunt/sessions'))
+    fetch(apiUrl('image-hunt', '/sessions'))
       .then((r) => r.json())
       .then((data: { sessions: SessionSummary[] }) => setSessions(data.sessions ?? []))
       .catch(() => { /* leave list as-is */ });
@@ -63,7 +42,7 @@ export default function ImageHunt() {
 
   // Load vision models + session list on mount.
   useEffect(() => {
-    fetch(apiUrl('/image-hunt/models'))
+    fetch(apiUrl('image-hunt', '/models'))
       .then((r) => r.json())
       .then((data: { models: string[]; default?: string }) => {
         setModels(data.models);
@@ -98,9 +77,9 @@ export default function ImageHunt() {
   const selectSession = (id: string) => {
     if (running) stop();
     setError(null);
-    fetch(apiUrl(`/image-hunt/sessions/${id}`))
+    fetch(apiUrl('image-hunt', `/sessions/${id}`))
       .then((r) => { if (!r.ok) throw new Error('load failed'); return r.json(); })
-      .then((s: FullSession) => {
+      .then((s: HuntSession) => {
         setActiveSessionId(s.id);
         setAttempts(s.attempts);
         setCurrentTitle('');
@@ -115,7 +94,7 @@ export default function ImageHunt() {
 
   const removeSession = (id: string) => {
     if (id === activeSessionId && running) stop();
-    fetch(apiUrl(`/image-hunt/sessions/${id}`), { method: 'DELETE' })
+    fetch(apiUrl('image-hunt', `/sessions/${id}`), { method: 'DELETE' })
       .then(() => {
         if (id === activeSessionId) newHunt();
         loadSessions();
@@ -127,7 +106,7 @@ export default function ImageHunt() {
     const label = editLabel.trim();
     setEditingId(null);
     if (!label) return;
-    fetch(apiUrl(`/image-hunt/sessions/${id}`), {
+    fetch(apiUrl('image-hunt', `/sessions/${id}`), {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ label }),
@@ -153,7 +132,7 @@ export default function ImageHunt() {
     const params = new URLSearchParams({ description: desc, model });
     if (continuing) params.set('sessionId', activeSessionId as string);
 
-    const es = new EventSource(apiUrl(`/image-hunt?${params.toString()}`));
+    const es = new EventSource(apiUrl('image-hunt', `/?${params.toString()}`));
     esRef.current = es;
 
     es.addEventListener('session', (e) => {
@@ -167,7 +146,7 @@ export default function ImageHunt() {
       setCurrentTitle(data.title);
     });
     es.addEventListener('match', (e) => {
-      const data = JSON.parse((e as MessageEvent).data) as Match;
+      const data = JSON.parse((e as MessageEvent).data) as SessionMatch;
       setMatches((prev) => [data, ...prev]);
     });
     es.addEventListener('error', (e) => {
@@ -182,27 +161,27 @@ export default function ImageHunt() {
   useEffect(() => () => { esRef.current?.close(); }, []);
 
   return (
-    <div className="image-hunt">
-      <aside className={`image-hunt__sidebar${sidebarOpen ? '' : ' is-collapsed'}`}>
-        <div className="image-hunt__sidebar-header">
+    <div className={styles.imageHunt}>
+      <aside className={`${styles.imageHuntSidebar}${sidebarOpen ? '' : ` ${styles.isCollapsed}`}`}>
+        <div className={styles.imageHuntSidebarHeader}>
           <span>Hunts</span>
           <button
-            className="image-hunt__collapse"
+            className={styles.imageHuntCollapse}
             onClick={() => setSidebarOpen(false)}
             title="Collapse sidebar"
           >«</button>
         </div>
-        <button className="image-hunt__newbtn" onClick={newHunt}>+ New hunt</button>
-          <ul className="image-hunt__sessions">
-            {sessions.length === 0 && <li className="image-hunt__empty">No saved hunts yet</li>}
+        <button className={styles.imageHuntNewbtn} onClick={newHunt}>+ New hunt</button>
+          <ul className={styles.imageHuntSessions}>
+            {sessions.length === 0 && <li className={styles.imageHuntEmpty}>No saved hunts yet</li>}
             {sessions.map((s) => (
               <li
                 key={s.id}
-                className={`image-hunt__session${s.id === activeSessionId ? ' is-active' : ''}`}
+                className={`${styles.imageHuntSession}${s.id === activeSessionId ? ` ${styles.isActive}` : ''}`}
               >
                 {editingId === s.id ? (
                   <input
-                    className="image-hunt__rename"
+                    className={styles.imageHuntRename}
                     autoFocus
                     value={editLabel}
                     onChange={(e) => setEditLabel(e.target.value)}
@@ -213,14 +192,14 @@ export default function ImageHunt() {
                     }}
                   />
                 ) : (
-                  <button className="image-hunt__session-main" onClick={() => selectSession(s.id)}>
-                    <span className="image-hunt__session-label">{s.label}</span>
-                    <span className="image-hunt__session-meta">
+                  <button className={styles.imageHuntSessionMain} onClick={() => selectSession(s.id)}>
+                    <span className={styles.imageHuntSessionLabel}>{s.label}</span>
+                    <span className={styles.imageHuntSessionMeta}>
                       {s.matchCount} match{s.matchCount === 1 ? '' : 'es'} · {relativeDate(s.updatedAt)}
                     </span>
                   </button>
                 )}
-                <div className="image-hunt__session-actions">
+                <div className={styles.imageHuntSessionActions}>
                   <button
                     title="Rename"
                     onClick={() => { setEditingId(s.id); setEditLabel(s.label); }}
@@ -234,7 +213,7 @@ export default function ImageHunt() {
 
         {!sidebarOpen && (
           <button
-            className="image-hunt__opener"
+            className={styles.imageHuntOpener}
             onClick={() => setSidebarOpen(true)}
             title="Show sidebar"
           >☰ Hunts</button>
@@ -242,11 +221,11 @@ export default function ImageHunt() {
 
         <h1>Image Hunt</h1>
 
-        <div className="image-hunt__main">
-          <div className="image-hunt__controls">
+        <div className={styles.imageHuntMain}>
+          <div className={styles.imageHuntControls}>
             <input
               type="text"
-              className="image-hunt__input"
+              className={styles.imageHuntInput}
               placeholder="Describe what to look for (e.g. happy person)"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -254,7 +233,7 @@ export default function ImageHunt() {
               onKeyDown={(e) => { if (e.key === 'Enter' && !running && model) start(); }}
             />
             <select
-              className="image-hunt__select"
+              className={styles.imageHuntSelect}
               value={model}
               disabled={running || models.length === 0}
               onChange={(e) => setModel(e.target.value)}
@@ -263,35 +242,35 @@ export default function ImageHunt() {
               {models.map((m) => <option key={m} value={m}>{m}</option>)}
             </select>
             {running ? (
-              <button className="image-hunt__btn" onClick={stop}>Stop</button>
+              <button className={styles.imageHuntBtn} onClick={stop}>Stop</button>
             ) : (
-              <button className="image-hunt__btn" onClick={start} disabled={!description.trim() || !model}>
+              <button className={styles.imageHuntBtn} onClick={start} disabled={!description.trim() || !model}>
                 {activeSessionId ? 'Continue' : 'Start'}
               </button>
             )}
           </div>
 
-          <div className="image-hunt__meter">
+          <div className={styles.imageHuntMeter}>
             Checked: {attempts} · Matches: {matches.length}
             {model && <span> · model: {model}</span>}
-            {running && <span className="image-hunt__checking"> · checking… {currentTitle}</span>}
+            {running && <span className={styles.imageHuntChecking}> · checking… {currentTitle}</span>}
           </div>
 
-          {error && <div className="image-hunt__error">{error}</div>}
+          {error && <div className={styles.imageHuntError}>{error}</div>}
 
-          <div className="image-hunt__gallery">
+          <div className={styles.imageHuntGallery}>
             {matches.map((m) => (
               <a
                 key={m.id}
                 href={m.pageUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="image-hunt__tile"
+                className={styles.imageHuntTile}
                 title={m.reason}
               >
                 <img src={m.thumbUrl} alt={m.title} loading="lazy" />
-                <span className="image-hunt__reason">{m.reason}</span>
-                <span className="image-hunt__tag">
+                <span className={styles.imageHuntReason}>{m.reason}</span>
+                <span className={styles.imageHuntTag}>
                   {m.model}
                   {m.description.trim() !== description.trim() && ` · “${m.description}”`}
                 </span>

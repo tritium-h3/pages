@@ -10,12 +10,11 @@ import type { SliceServer } from './platform/server/slice.js';
 import todoSlice from './experiments/todo/server/index.js';
 import transitSlice from './experiments/transit/server/index.js';
 import wikistorySlice from './experiments/wikistory/server/index.js';
+import imageHuntSlice from './experiments/image-hunt/server/index.js';
 
 // Legacy routers — moved into slices by Tasks 9-17, one per task.
 import llmDuoChatRouter, { initLLMDuoChatWebSocket } from './backend/routes/llm-duo-chat.js';
 import spriteGroupsRouter from './backend/routes/sprite-groups.js';
-import imageHuntRouter from './backend/routes/image-hunt.js';
-import { initSessionStorage } from './backend/image-hunt-sessions.js';
 import skyRouter from './backend/routes/sky.js';
 
 const app: Express = express();
@@ -59,11 +58,11 @@ function mount(id: string, slice: SliceServer): void {
 mount('todo', todoSlice);
 mount('transit', transitSlice);
 mount('wikistory', wikistorySlice);
+mount('image-hunt', imageHuntSlice);
 
 // --- Legacy flat mounts. Each disappears as its slice migrates. ---
 app.use('/api', llmDuoChatRouter);
 app.use('/api', spriteGroupsRouter);
-app.use('/api', imageHuntRouter);
 app.use('/api', skyRouter);
 
 interface HttpError extends Error {
@@ -118,10 +117,6 @@ async function initAll(): Promise<void> {
     }
   }
 
-  // Legacy init, removed as slices migrate.
-  await Promise.all([
-    initSessionStorage().catch(e => console.error('[legacy image-hunt] init failed:', e)),
-  ]);
   try {
     initLLMDuoChatWebSocket(server);
   } catch (error) {

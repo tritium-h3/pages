@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import ColonyGame from './ColonyGame'
 import LLMDuoChat from './LLMDuoChat'
 import SpriteEditor from './SpriteEditor'
-import ImageHunt from './ImageHunt'
 import SkyPantone from './SkyPantone'
 import SkyMap from './SkyMap'
 import { apiUrl } from './backendApi'
@@ -71,17 +70,6 @@ function App() {
     return <SpriteEditor />
   }
 
-  if (pathname === '/imagehunt') {
-    return (
-      <div>
-        <button className="back-btn" onClick={() => navigateTo('/')}>
-          ← Back to Menu
-        </button>
-        <ImageHunt />
-      </div>
-    )
-  }
-
   if (pathname === '/sky') {
     return (
       <div>
@@ -122,9 +110,6 @@ function App() {
       </button>
       <button className="menu-btn" onClick={() => navigateTo('/sprite-editor')}>
         🖼 Sprite Group Editor
-      </button>
-      <button className="menu-btn" onClick={() => navigateTo('/imagehunt')}>
-        🔍 Image Hunt
       </button>
       <button className="menu-btn" onClick={() => navigateTo('/sky')}>
         🌇 Sky Pantone
