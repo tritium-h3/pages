@@ -1,0 +1,43 @@
+:root {
+  --bg:            #0d0f14;
+  --surface:       #151922;
+  --surface-raised:#171a21;
+  --border:        #232936;
+  --border-strong: #2f3542;
+
+  --text:          #e6e8ee;
+  --text-strong:   #f2f4f8;
+  --text-muted:    #79808f;
+  --text-faint:    #5d6474;
+
+  --section-tools:    #8fbf7a;
+  --section-llm-toys: #a87fc9;
+  --section-games:    #e8925f;
+
+  --radius-plate: 9px;
+  --radius-card:  7px;
+
+  --step-0: 0.8125rem;
+  --step-1: 0.9375rem;
+  --step-2: 1.3125rem;
+  --step-3: 1.75rem;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 40px;
+
+  --font: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+}

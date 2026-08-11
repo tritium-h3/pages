@@ -1,0 +1,16 @@
+.colophon {
+  border-top: 1px solid var(--border);
+  margin: var(--space-6) var(--space-4) var(--space-4);
+  padding-top: var(--space-3);
+  font-size: var(--step-0);
+  color: var(--text-faint);
+}
+.link { color: var(--text-muted); text-decoration: none; }
+.link:hover { color: var(--text-strong); }
+.kbd {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  padding: 1px 4px;
+}

@@ -1,0 +1,29 @@
+.plate {
+  display: block;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--surface);
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--border);
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+.plate:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+/* Artwork is authored at 1024x512. A ratio rather than a fixed height, so the
+   art scales with the card instead of letterboxing at narrow widths. */
+.art { aspect-ratio: 2 / 1; }
+.caption { padding: var(--space-3); }
+.title {
+  display: block;
+  font-size: var(--step-1);
+  font-weight: 640;
+  color: var(--text-strong);
+}
+.mark { color: var(--text-muted); }
+.blurb {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--step-0);
+  color: var(--text-muted);
+  line-height: 1.4;
+}
