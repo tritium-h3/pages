@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import ColonyGame from './ColonyGame'
 import WeatherApp from './WeatherApp'
 import WikiStory from './WikiStory'
-import TodoList from './TodoList'
 import LLMDuoChat from './LLMDuoChat'
 import SpriteEditor from './SpriteEditor'
 import TransitDisplay from './TransitDisplay'
@@ -82,17 +81,6 @@ function App() {
     )
   }
 
-  if (pathname === '/todo') {
-    return (
-      <div>
-        <button className="back-btn--todo" onClick={() => navigateTo('/')}>
-          ← Back to Menu
-        </button>
-        <TodoList />
-      </div>
-    )
-  }
-
   if (pathname === '/llmduochat') {
     return (
       <div>
@@ -163,9 +151,6 @@ function App() {
       </button>
       <button className="menu-btn" onClick={() => navigateTo('/wikistory')}>
         WikiStory Generator
-      </button>
-      <button className="menu-btn" onClick={() => navigateTo('/todo')}>
-        Todo List
       </button>
       <button className="menu-btn menu-btn--purple" onClick={() => navigateTo('/llmduochat')}>
         🎭 LLM Duo Chat

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Check, X, Plus, Trash2 } from 'lucide-react';
-import { apiUrl } from './backendApi';
+import { apiUrl } from '../../platform/backendApi.js';
+import type { ExperimentPageProps } from '../../registry.js';
 
 interface Todo {
   id: string;
@@ -9,7 +10,7 @@ interface Todo {
   createdAt: string;
 }
 
-export default function TodoList() {
+export default function TodoPage(_props: ExperimentPageProps) {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodoText, setNewTodoText] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,7 @@ export default function TodoList() {
 
   const loadTodos = async () => {
     try {
-      const response = await fetch(apiUrl('/todos'));
+      const response = await fetch(apiUrl('todo', '/'));
       if (!response.ok) throw new Error('Failed to load todos');
       const data = await response.json();
       setTodos(data);
@@ -39,7 +40,7 @@ export default function TodoList() {
 
     setLoading(true);
     try {
-      const response = await fetch(apiUrl('/todos'), {
+      const response = await fetch(apiUrl('todo', '/'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: newTodoText })
@@ -61,7 +62,7 @@ export default function TodoList() {
 
   const toggleTodo = async (id: string, completed: boolean) => {
     try {
-      const response = await fetch(apiUrl(`/todos/${id}`), {
+      const response = await fetch(apiUrl('todo', `/${id}`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ completed: !completed })
@@ -80,7 +81,7 @@ export default function TodoList() {
 
   const deleteTodo = async (id: string) => {
     try {
-      const response = await fetch(apiUrl(`/todos/${id}`), {
+      const response = await fetch(apiUrl('todo', `/${id}`), {
         method: 'DELETE'
       });
 

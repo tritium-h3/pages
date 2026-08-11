@@ -11,19 +11,19 @@ Frontend (`src/frontend/`) and backend (`src/backend/`) run concurrently in dev.
 - **Routing is hand-rolled in `App.jsx`** — no router library. `App` keeps `pathname` in state, updates it via `window.history.pushState` + a `popstate` listener, and renders one page component per path. To add a page: create the component, import it in `App.jsx`, add a `pathname === '/x'` branch, and add a menu button.
 - Current pages: `/weather`, `/colony` (Colony Builder game), `/wikistory`, `/todo`, `/llmduochat`, `/sprite-editor`, `/transit`.
 - Entry: `main.jsx` → `App.jsx`. Mixed `.jsx`/`.tsx` — newer pages tend to be `.tsx`.
-- **Reaching the backend:** use the helpers in `src/frontend/backendApi.ts` (`apiUrl('/health')`, `getApiBaseUrl()`, `getBackendOrigin()`). They target the backend on port **5174** at the current hostname. Don't hardcode API URLs.
+- **Reaching the backend:** migrated slices use the helpers in `src/platform/backendApi.ts` — `apiUrl(id, path)` builds `/api/<id>/...`, `healthUrl()` is the one route outside a slice namespace, `wsUrl(path)` builds a same-origin WebSocket URL. Unmigrated pages still use the older `src/frontend/backendApi.ts` (`apiUrl(path)`, single argument) until they migrate. Both go through the Vite dev server's same-origin `/api`/`/ws` proxy — neither hardcodes a host or port. Don't hardcode API URLs.
 
 ### Backend (`src/backend/`)
 TypeScript/Express server (`index.ts`), used for:
 1. **Ollama integration** — wraps the Ollama server so its raw interface isn't exposed.
-2. **Long-term storage** — anything needing persistence (e.g. `todos.json`, `sprite-groups.json`).
+2. **Long-term storage** — anything needing persistence. Migrated slices persist via `createJsonStore` into gitignored `data/` (e.g. `data/todos.json`); unmigrated routes still use ad hoc files (e.g. `sprite-groups.json`).
 3. **Cross-user coordination** — features coordinating multiple users (e.g. WebSocket LLM Duo Chat).
 
 - Listens on **port 5174** (`PORT` env override). Single `http.Server` shares Express + WebSocket.
-- Routes live in `src/backend/routes/` and are mounted under `/api` in `index.ts`: `todos`, `mbta`, `llm-duo-chat`, `wikipedia-story`, `sprite-groups`. Health: `GET /api/health`.
-- Adding a route: create `routes/<name>.ts` exporting a router, import and `app.use('/api', <name>Router)` in `index.ts`. If it needs init (storage, WebSocket), export an init fn and call it before/after `server.listen` like `initTodoStorage()` / `initLLMDuoChatWebSocket(server)`.
+- Routes live in `src/backend/routes/` and are mounted under `/api` in `index.ts`: `mbta`, `llm-duo-chat`, `wikipedia-story`, `sprite-groups`. Health: `GET /api/health`. Migrated slices (e.g. `todo`) mount instead at `/api/<id>` via `mount(id, slice)` in `src/server.ts` — see `src/experiments/<id>/server/index.ts`.
+- Adding a legacy route: create `routes/<name>.ts` exporting a router, import and `app.use('/api', <name>Router)` in `index.ts`. If it needs init (storage, WebSocket), export an init fn and call it before/after `server.listen` like `initLLMDuoChatWebSocket(server)`.
 - CORS origins are an explicit allowlist in `index.ts` (localhost, `samarkand.hopto.org`, `torment-nexus.local`). New hostnames must be added there.
-- Run with `tsx watch` in dev; built with `tsc -p src/backend/tsconfig.json`. Note ESM `.js` import specifiers in TS source (e.g. `from './routes/todos.js'`).
+- Run with `tsx watch` in dev; built with `tsc -p src/backend/tsconfig.json`. Note ESM `.js` import specifiers in TS source (e.g. `from './routes/mbta.js'`).
 - **The backend always runs via `tsx`, never from `dist/`** — `pages.service` is `npm run dev`, and no script executes `dist/backend`. `npm run build` type-checks the backend and emits output, but that output is not directly runnable under plain `node`: `pantone.ts` imports `pantone.json` without an import attribute (the attribute form can't compile under `module: ES2020`), which `node` rejects at runtime. Fine while `tsx` is the only runner; see the comment in `pantone.ts` if you ever need `dist/backend` to run.
 
 #### Ollama library (`src/backend/ollama.ts`)

@@ -7,8 +7,9 @@ import { corsOrigins, PORTS } from './platform/config.js';
 import { ensureDataDir } from './platform/server/storage.js';
 import type { SliceServer } from './platform/server/slice.js';
 
+import todoSlice from './experiments/todo/server/index.js';
+
 // Legacy routers — moved into slices by Tasks 9-17, one per task.
-import todosRouter, { initTodoStorage } from './backend/routes/todos.js';
 import mbtaRouter from './backend/routes/mbta.js';
 import llmDuoChatRouter, { initLLMDuoChatWebSocket } from './backend/routes/llm-duo-chat.js';
 import wikipediaStoryRouter from './backend/routes/wikipedia-story.js';
@@ -55,8 +56,9 @@ function mount(id: string, slice: SliceServer): void {
   }, slice.router);
 }
 
+mount('todo', todoSlice);
+
 // --- Legacy flat mounts. Each disappears as its slice migrates. ---
-app.use('/api', todosRouter);
 app.use('/api', llmDuoChatRouter);
 app.use('/api', wikipediaStoryRouter);
 app.use('/api', spriteGroupsRouter);
@@ -118,7 +120,6 @@ async function initAll(): Promise<void> {
 
   // Legacy init, removed as slices migrate.
   await Promise.all([
-    initTodoStorage().catch(e => console.error('[legacy todos] init failed:', e)),
     initSessionStorage().catch(e => console.error('[legacy image-hunt] init failed:', e)),
   ]);
   try {

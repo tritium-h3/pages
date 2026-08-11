@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 import type { ExperimentManifest } from './platform/manifest.js';
 import { EXTERNAL_URLS } from './platform/config.js';
+import { manifest as todoManifest } from './experiments/todo/manifest.js';
 
 export interface ExperimentPageProps {
   /** path segments below the experiment's route; [] at its root */
@@ -13,6 +14,7 @@ export interface RegistryEntry extends ExperimentManifest {
 }
 
 export const REGISTRY: RegistryEntry[] = [
+  { ...todoManifest, load: () => import('./experiments/todo/page.js') },
   {
     id: 'roguelike',
     title: 'Roguelike',
