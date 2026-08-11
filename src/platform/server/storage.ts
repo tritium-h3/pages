@@ -32,7 +32,10 @@ export function createJsonStore<T>(name: string, fallback: T, dir: string = DATA
       try {
         return JSON.parse(await fs.readFile(file, 'utf-8')) as T;
       } catch {
-        return fallback;
+        // A fresh copy every time. Callers mutate what read() returns
+        // (`todos.push(...)`), so handing out the same object would let one
+        // failed read plus one write permanently poison the fallback.
+        return structuredClone(fallback);
       }
     },
 

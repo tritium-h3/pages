@@ -1,12 +1,7 @@
 import type { ComponentType } from 'react';
-import type { ExperimentManifest } from './platform/manifest.js';
+import type { ExperimentManifest, ExperimentPageProps } from './platform/manifest.js';
 import { EXTERNAL_URLS } from './platform/config.js';
 import { manifest as todoManifest } from './experiments/todo/manifest.js';
-
-export interface ExperimentPageProps {
-  /** path segments below the experiment's route; [] at its root */
-  subpath: string[];
-}
 
 export interface RegistryEntry extends ExperimentManifest {
   /** absent for external entries, which are links rather than routes */

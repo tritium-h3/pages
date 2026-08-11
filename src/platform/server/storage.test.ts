@@ -53,4 +53,12 @@ describe('createJsonStore', () => {
     await store.write(['ok']);
     expect(await store.read()).toEqual(['ok']);
   });
+
+  it('hands out a fresh fallback copy on every failed read, not a shared reference', async () => {
+    const store = createJsonStore<{ id: string }[]>('missing', [], dir);
+    const first = await store.read();
+    first.push({ id: 'ghost' });
+    const second = await store.read();
+    expect(second).toEqual([]);
+  });
 });

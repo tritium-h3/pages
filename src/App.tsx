@@ -1,7 +1,8 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import type { ComponentType } from 'react';
-import type { ExperimentPageProps, RegistryEntry } from './registry.js';
+import type { RegistryEntry } from './registry.js';
 import { REGISTRY } from './registry.js';
+import type { ExperimentPageProps } from './platform/manifest.js';
 import { matchRoute } from './router.js';
 import { Gallery } from './platform/ui/Gallery.js';
 import { Shell } from './platform/ui/Shell.js';

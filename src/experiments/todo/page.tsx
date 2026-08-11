@@ -1,14 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Check, X, Plus, Trash2 } from 'lucide-react';
+import { Check, Plus, Trash2 } from 'lucide-react';
 import { apiUrl } from '../../platform/backendApi.js';
-import type { ExperimentPageProps } from '../../registry.js';
-
-interface Todo {
-  id: string;
-  text: string;
-  completed: boolean;
-  createdAt: string;
-}
+import type { ExperimentPageProps } from '../../platform/manifest.js';
+import type { Todo } from './types.js';
 
 export default function TodoPage(_props: ExperimentPageProps) {
   const [todos, setTodos] = useState<Todo[]>([]);

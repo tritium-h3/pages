@@ -1,13 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { createJsonStore } from '../../../platform/server/storage.js';
 import type { SliceServer } from '../../../platform/server/slice.js';
-
-export interface Todo {
-  id: string;
-  text: string;
-  completed: boolean;
-  createdAt: string;
-}
+import type { Todo } from '../types.js';
 
 const store = createJsonStore<Todo[]>('todos', []);
 

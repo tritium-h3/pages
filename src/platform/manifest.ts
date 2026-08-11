@@ -25,6 +25,11 @@ export interface Section {
   blurb: string;
 }
 
+export interface ExperimentPageProps {
+  /** path segments below the experiment's route; [] at its root */
+  subpath: string[];
+}
+
 export const SECTIONS: Section[] = [
   { id: 'tools', title: 'Tools', blurb: 'Things I actually use' },
   { id: 'llm-toys', title: 'LLM Toys', blurb: 'Everything that talks back' },

@@ -21,20 +21,6 @@
   border-radius: 8px;
 }
 
-.back-btn--todo {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  padding: 10px 20px;
-  cursor: pointer;
-  z-index: 1000;
-  background-color: white;
-  color: #4f46e5;
-  border: 2px solid #4f46e5;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
 .back-btn--llmduochat {
   position: fixed;
   top: 20px;
