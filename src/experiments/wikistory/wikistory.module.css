@@ -201,6 +201,23 @@
   font-size: var(--step-1);
 }
 
+/* h5/h6 are unlikely from the model but react-markdown will emit them for
+   ##### / ###### — continue the h3/h4 hierarchy rather than leaving them to
+   the UA's 0.83em/0.67em auto-sizing (only masked right now by Tailwind's
+   preflight, which zeroes every heading's font-size/margin/weight). */
+.story h5,
+.story h6 {
+  margin: var(--space-4) 0 var(--space-2);
+  color: var(--text-strong);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: var(--step-1);
+}
+
+.story h6 {
+  color: var(--text-muted);
+}
+
 .story p {
   margin: 0 0 var(--space-3);
 }
@@ -267,6 +284,41 @@
   font-size: 0.875em;
 }
 
+/* Fenced code blocks: react-markdown wraps these as <pre><code>. Without an
+   overflow guard a long unbroken line would widen the story card (and, per
+   this project's rule that wide content must scroll in its own container,
+   never the page); this scrolls inside .story instead. The inline .story
+   code chip (background/padding/radius above) would otherwise also apply to
+   the code element nested in here, so it's neutralised below. */
+.story pre {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow-x: auto;
+}
+
+.story pre:last-child {
+  margin-bottom: 0;
+}
+
+.story pre code {
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  color: var(--text);
+  font-size: 0.875em;
+}
+
+/* Images are unlikely from this model (plain-text extract, no markdown image
+   syntax in the prompt) but react-markdown will render one verbatim if the
+   model ever emits ![]() — keep it inside the card instead of overflowing. */
+.story img {
+  max-width: 100%;
+  height: auto;
+}
+
 .story a {
   color: var(--section-llm-toys);
   text-decoration: none;
@@ -290,6 +342,7 @@
 }
 
 .loadingText {
+  margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
