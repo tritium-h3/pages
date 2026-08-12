@@ -1,19 +1,23 @@
-# React + Vite
+# pages
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A collection of mostly-disconnected React "pages" — small self-contained experiments — served by Vite and backed by a shared TypeScript/Express server. Each experiment lives as a **slice** under `src/experiments/<id>/`: its own frontend page plus, if it needs one, its own `server/` with backend routes namespaced at `/api/<id>`. A thin platform layer (`src/platform/`) wires slices together — `src/registry.ts` drives frontend routing and the gallery, `src/server.ts` mounts each slice's backend routes — so adding an experiment never means touching a menu or a router switch by hand. See `CLAUDE.md` for the full architecture writeup.
 
-Currently, two official plugins are available:
+## Running it
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+npm run dev
+```
 
-## React Compiler
+starts Vite (frontend, port 5173) and the Express backend (port 5174) together via `concurrently`. In this environment the dev server normally runs as a **systemd user service** (`pages.service`), started at boot and kept alive by `Restart=always`:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+systemctl --user status pages    # status
+systemctl --user stop pages      # stop
+journalctl --user -u pages -f    # follow logs
+npm run dev:restart              # restart after changes (systemctl --user restart pages)
+```
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+`npm run build` builds the frontend and type-checks the backend (`tsc --noEmit`) — the backend itself always runs via `tsx`, never a compiled artifact.
 
 ## Sprite sheet build
 
@@ -100,8 +104,6 @@ Group schema:
 ```
 
 Coordinates are sheet-relative and stable across manifest rebuilds. Games look up a group by name and call `resolveSpriteGroup()` to get tile URLs — no hardcoded row/column constants needed.
-const roadSprite = getSpriteUrl(manifest, 'colony-db32-grounds-ready:0,0');
-```
 
 ## TMX and manifest layout (current understanding)
 

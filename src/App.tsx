@@ -6,7 +6,6 @@ import type { ExperimentPageProps } from './platform/manifest.js';
 import { matchRoute } from './router.js';
 import { Gallery } from './platform/ui/Gallery.js';
 import { Shell } from './platform/ui/Shell.js';
-import LegacyApp from './frontend/App.jsx';
 import './platform/ui/tokens.css';
 
 /** lazy() must not run during render — a fresh component identity each pass
@@ -44,7 +43,16 @@ export default function App() {
     return <Gallery onNavigate={navigate} />;
   }
 
-  if (!match) return <LegacyApp />;
+  if (!match) {
+    return (
+      <Shell chrome="colophon" experimentCount={localCount} onNavigate={navigate}>
+        <main style={{ maxWidth: 640, margin: '0 auto', padding: 40 }}>
+          <h1>Nothing here</h1>
+          <p>No experiment owns <code>{pathname}</code>.</p>
+        </main>
+      </Shell>
+    );
+  }
 
   const Page = pageFor(match.entry.id, match.entry.load!);
   return (

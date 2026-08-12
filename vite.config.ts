@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import http from 'node:http'
+import { HOSTNAMES, PORTS } from './src/platform/config.js'
 
 // Vite plugin: HTTP→HTTPS redirect server on port 5172 (map external port 80 here)
 function httpRedirectPlugin() {
@@ -11,7 +12,7 @@ function httpRedirectPlugin() {
         const host = req.headers.host?.replace(/:\d+$/, '') ?? 'samarkand.hopto.org'
         res.writeHead(301, { Location: `https://${host}${req.url}` })
         res.end()
-      }).listen(5172, '0.0.0.0')
+      }).listen(PORTS.httpRedirect, '0.0.0.0')
     },
   }
 }
@@ -25,10 +26,10 @@ export default defineConfig({
       cert: '/etc/ssl/certs/samarkand_hopto_org.pem',
       key: '/home/tritium/myserver.key',
     },
-    allowedHosts: ['torment-nexus.local', 'samarkand.hopto.org'],
+    allowedHosts: HOSTNAMES.filter(host => host !== 'localhost') as string[],
     proxy: {
       '/api': {
-        target: 'http://localhost:5174',
+        target: `http://localhost:${PORTS.api}`,
         // http-proxy does not propagate a client disconnect to the upstream for
         // long-lived streaming responses (e.g. the /api/image-hunt SSE stream).
         // Without this, the backend never sees req 'close', so its scan loop runs
@@ -45,7 +46,7 @@ export default defineConfig({
           });
         },
       },
-      '/ws': { target: 'ws://localhost:5174', ws: true },
+      '/ws': { target: `ws://localhost:${PORTS.api}`, ws: true },
     },
   },
 })

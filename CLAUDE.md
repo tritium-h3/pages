@@ -4,31 +4,35 @@ A collection of mostly-disconnected React "pages" (small self-contained apps) se
 
 ## Architecture
 
-Frontend (`src/frontend/`) and backend (`src/backend/`) run concurrently in dev.
+The project is organized as **slices** under `src/experiments/<id>/` — each one a self-contained experiment with its own frontend page and (optionally) its own backend routes. A thin, shared platform (`src/platform/`) wires them together: a registry drives routing on the frontend, and a `mount()` loop namespaces each slice's routes on the backend. Frontend and backend run concurrently in dev via `concurrently`.
 
-### Frontend (`src/frontend/`)
-- React 19, styled with Tailwind CSS 4, icons from `lucide-react`.
-- **Routing is registry-driven** — `src/registry.ts` lists every experiment's `manifest` (id, title, route, section, chrome) plus a lazy `load()` for its `page`; `src/App.tsx` keeps `pathname` in state (via `window.history.pushState` + a `popstate` listener), matches it against `REGISTRY`, and renders the matched page inside `Shell`, or `Gallery` at `/`. To add a page: create `src/experiments/<id>/manifest.ts` and `page.tsx`/`page.jsx`, import the manifest in `registry.ts`, and add a `{ ...manifest, load: () => import('./experiments/<id>/page.js') }` entry — no menu button or `pathname === '/x'` branch to hand-write. `src/frontend/App.jsx` is a legacy fallback `src/App.tsx` renders only for an unmatched route; since Colony (the last slice still using it) migrated to the registry, it no longer routes anywhere itself and is slated for deletion in Task 22.
-- Current pages: all experiments are registry-driven now — see `src/registry.ts` for the full list.
-- Entry: `main.jsx` → `App.jsx`. Mixed `.jsx`/`.tsx` — newer pages tend to be `.tsx`.
-- **Reaching the backend:** migrated slices use the helpers in `src/platform/backendApi.ts` — `apiUrl(id, path)` builds `/api/<id>/...`, `healthUrl()` is the one route outside a slice namespace, `wsUrl(path)` builds a same-origin WebSocket URL. Unmigrated pages still use the older `src/frontend/backendApi.ts` (`apiUrl(path)`, single argument) until they migrate. Both go through the Vite dev server's same-origin `/api`/`/ws` proxy — neither hardcodes a host or port. Don't hardcode API URLs.
+### Frontend (`src/`)
+- React 19, icons from `lucide-react`, CSS Modules for styling (no CSS framework).
+- **Routing is registry-driven** — `src/registry.ts` lists every experiment's `manifest` (id, title, route, section, chrome) plus a lazy `load()` for its `page`; `src/App.tsx` keeps `pathname` in state (via `window.history.pushState` + a `popstate` listener), matches it against `REGISTRY`, and renders the matched page inside `Shell`, or `Gallery` at `/`. An unmatched path renders a small "nothing here" state inside `Shell` rather than a fallback app.
+- To add a page: create `src/experiments/<id>/` with `manifest.ts` and `page.tsx`, add one line to `src/registry.ts` (`{ ...manifest, load: () => import('./experiments/<id>/page.js') }`), and — if it needs a backend — add `server/index.ts` plus a `mount()` line in `src/server.ts`. No menu button or `pathname === '/x'` branch to hand-write.
+- Current pages: `src/registry.ts` is the source of truth for the full list — check there rather than here, so this doc cannot drift out of sync with it again.
+- Entry: `main.tsx` → `App.tsx`. Mostly `.tsx`; Colony's page is `.jsx` and is expected to stay that way (see `src/jsx-modules.d.ts`).
+- **Reaching the backend:** slices use the helpers in `src/platform/backendApi.ts` — `apiUrl(id, path)` builds `/api/<id>/...`, `healthUrl()` is the one route outside a slice namespace, `wsUrl(path)` builds a same-origin WebSocket URL. These go through the Vite dev server's same-origin `/api`/`/ws` proxy — neither hardcodes a host or port. Don't hardcode API URLs.
 
-### Backend (`src/backend/`)
-TypeScript/Express server (`index.ts`), used for:
+### Backend (`src/server.ts` + `src/experiments/<id>/server/`)
+The host (`src/server.ts`) is a thin TypeScript/Express server that namespaces each slice's routes at `/api/<id>` and shares:
 1. **Ollama integration** — wraps the Ollama server so its raw interface isn't exposed.
-2. **Long-term storage** — anything needing persistence. Migrated slices persist runtime state via `createJsonStore` into gitignored `data/` (e.g. `data/todos.json`). A slice that owns hand-authored, version-controlled content instead keeps it inside its own directory rather than `data/` — e.g. `src/experiments/sprites/sprite-groups.json`.
+2. **Long-term storage** — anything needing persistence. Slices persist runtime state via `createJsonStore` into gitignored `data/` (e.g. `data/todos.json`). A slice that owns hand-authored, version-controlled content instead keeps it inside its own directory rather than `data/` — e.g. `src/experiments/sprites/sprite-groups.json`.
 3. **Cross-user coordination** — features coordinating multiple users (e.g. WebSocket LLM Duo Chat).
 
+> **`data/` is gitignored and holds real, unrecoverable state** — `data/todos.json` and `data/image-hunt-sessions.json` are the owner's actual todos and hunt sessions, with no version-control history behind them (unlike the old `src/backend/todos.json`, which was tracked). `git clean -xdf` would delete them permanently. Back them up before running any destructive git cleanup.
+
 - Listens on **port 5174** (`PORT` env override). Single `http.Server` shares Express + WebSocket.
-- No legacy flat-mounted routes remain in `src/backend/routes/` — every route now mounts as a slice at `/api/<id>` via `mount(id, slice)` in `src/server.ts` (`todo`, `transit`, `wikistory`, `image-hunt`, `llm-duo-chat`, `sprites`, `sky`) — see `src/experiments/<id>/server/index.ts`. Health: `GET /api/health` is the one route outside a slice namespace.
-- Adding a slice route: declare its own `init?: () => Promise<void>` and/or `attach?: (server: http.Server) => void` directly on the `SliceServer` object it exports (see `src/platform/server/slice.ts`) — the host's `mount(id, slice)` calls `init` automatically, and a generic loop in `src/server.ts` calls every slice's `attach` with the shared `http.Server` once init has run, so there's no separate wiring per slice. `llm-duo-chat` is the one slice that uses `attach`, to upgrade WebSocket connections on that shared server (see `src/experiments/llm-duo-chat/server/index.ts`). Most slices need neither: `createJsonStore` already returns its fallback when the backing file is missing, which is why `image-hunt`'s old `initSessionStorage` disappeared entirely on migration.
-- CORS origins are an explicit allowlist in `index.ts` (localhost, `samarkand.hopto.org`, `torment-nexus.local`). New hostnames must be added there.
+- Every route mounts as a slice at `/api/<id>` via `mount(id, slice)` in `src/server.ts` (`todo`, `transit`, `wikistory`, `image-hunt`, `llm-duo-chat`, `sprites`, `sky`) — see `src/experiments/<id>/server/index.ts`. Health: `GET /api/health` is the one route outside a slice namespace.
+- A slice exports a `SliceServer` object (see `src/platform/server/slice.ts`): a required `router`, an optional `init?: () => Promise<void>`, and an optional `attach?: (server: http.Server) => void`. The host's `mount(id, slice)` calls `init` automatically, and a generic loop in `src/server.ts` calls every slice's `attach` with the shared `http.Server` once init has run — no separate wiring per slice. A failing `init` disables only that one slice (its routes answer 503) rather than taking the whole server down. `llm-duo-chat` is the one slice that uses `attach`, to upgrade WebSocket connections on that shared server (see `src/experiments/llm-duo-chat/server/index.ts`). Most slices need neither: `createJsonStore` already returns its fallback when the backing file is missing, which is why `image-hunt`'s old `initSessionStorage` disappeared entirely on migration.
+- CORS origins are generated by `corsOrigins()` in `src/platform/config.ts` from the shared `HOSTNAMES` list (localhost, `samarkand.hopto.org`, `torment-nexus.local`), not hand-listed in the server. New hostnames go in `config.ts`.
 - Run with `tsx watch` in dev. Note ESM `.js` import specifiers in TS source (e.g. `from './sun.js'` inside a slice's `server/`).
+- `npm run build` type-checks the backend with `tsc --noEmit -p tsconfig.server.json` and emits nothing runnable — the backend is always run via `tsx`, never the compiled output.
 
 #### Ollama library (`src/platform/server/ollama.ts`)
 - Server runs on port **11434**. Default model `qwen3:12b`, keep-alive `60m`.
 - Streaming: `generateStream()`, `chatStream()`. Non-streaming: `generate()`, `chat()`. Also `listModels()`, `healthCheck()`.
-- Shared across slices — three experiments use it. Import as `../../../platform/server/ollama.js` from a slice server (e.g. `src/experiments/<id>/server/index.ts`).
+- Shared across slices — every consumer reaches it the same way, three levels down from its own `server/index.ts`: `../../../platform/server/ollama.js`.
 
 ```typescript
 import { ollama } from '../../../platform/server/ollama.js';
@@ -39,7 +43,7 @@ for await (const chunk of ollama.generateStream({
 ```
 
 ## Tech stack
-- React 19 · Vite (**rolldown-vite**, pinned via `overrides`) · Tailwind CSS 4 · Express + TypeScript · `concurrently` · `lucide-react` · `react-markdown` · `ws` (WebSocket).
+- React 19 · Vite (**rolldown-vite**, pinned via `overrides`) · CSS Modules · Express + TypeScript · `concurrently` · `lucide-react` · `react-markdown` · `ws` (WebSocket).
 
 ## Dev workflow
 
@@ -56,11 +60,11 @@ npm run dev:restart     # systemctl --user restart pages
 ```
 This avoids stale process state.
 
-### HTTPS / proxy (`vite.config.js`)
+### HTTPS / proxy (`vite.config.ts`)
 - Vite serves HTTPS using certs at `/etc/ssl/certs/samarkand_hopto_org.pem` and `/home/tritium/myserver.key`.
 - A small plugin runs an HTTP→HTTPS 301 redirect server on port **5172** (map external port 80 there).
 - Vite proxies `/api` → `http://localhost:5174` and `/ws` (WebSocket) → `ws://localhost:5174`.
-- `allowedHosts`: `torment-nexus.local`, `samarkand.hopto.org`.
+- `allowedHosts` is `HOSTNAMES` from `src/platform/config.ts` minus `localhost` (currently `torment-nexus.local`, `samarkand.hopto.org`) — add a new hostname there, not in `vite.config.ts`.
 
 ### Scripts
 - `npm run dev` / `npm start` — Vite + backend via `concurrently`.
