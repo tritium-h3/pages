@@ -29,14 +29,24 @@ export function createJsonStore<T>(name: string, fallback: T, dir: string = DATA
 
   return {
     async read(): Promise<T> {
+      let raw: string;
       try {
-        return JSON.parse(await fs.readFile(file, 'utf-8')) as T;
-      } catch {
+        raw = await fs.readFile(file, 'utf-8');
+      } catch (error) {
+        // A missing file is the ordinary first-run case — fall back. Anything
+        // else (EACCES, EMFILE, EISDIR) is a real failure and must propagate:
+        // swallowing it would report an empty collection, and the next write
+        // would persist that emptiness over live data. `data/` is gitignored
+        // with no history, so that loss is unrecoverable.
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
         // A fresh copy every time. Callers mutate what read() returns
         // (`todos.push(...)`), so handing out the same object would let one
         // failed read plus one write permanently poison the fallback.
         return structuredClone(fallback);
       }
+      // A parse failure is the most dangerous case of all — the file exists and
+      // holds something. Never treat corruption as "empty".
+      return JSON.parse(raw) as T;
     },
 
     async write(value: T): Promise<void> {

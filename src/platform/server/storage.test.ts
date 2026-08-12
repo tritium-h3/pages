@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { promises as fs } from 'fs';
+import { promises as fs, constants as fsConstants } from 'fs';
 import path from 'path';
 import os from 'os';
 import { createJsonStore } from './storage.js';
@@ -26,10 +26,27 @@ describe('createJsonStore', () => {
     expect(await store.read()).toEqual({ a: 42 });
   });
 
-  it('returns the fallback when the file holds invalid JSON', async () => {
+  it('throws rather than falling back when the file holds invalid JSON', async () => {
+    // The file exists and holds something. Reporting the fallback here would
+    // present live-but-corrupt data as empty, and the next write would persist
+    // that emptiness over it.
     await fs.writeFile(path.join(dir, 'broken.json'), '{ not json');
     const store = createJsonStore<string[]>('broken', ['fallback'], dir);
-    expect(await store.read()).toEqual(['fallback']);
+    await expect(store.read()).rejects.toThrow();
+  });
+
+  it('throws rather than falling back when the file cannot be read', async () => {
+    const file = path.join(dir, 'locked.json');
+    await fs.writeFile(file, '["real data"]');
+    await fs.chmod(file, 0o000);
+    const store = createJsonStore<string[]>('locked', ['fallback'], dir);
+    try {
+      // Skip when the test runs as root, where the mode bits do not apply.
+      await fs.access(file, fsConstants.R_OK);
+    } catch {
+      await expect(store.read()).rejects.toThrow();
+    }
+    await fs.chmod(file, 0o600);
   });
 
   it('leaves no temp files behind after a write', async () => {
