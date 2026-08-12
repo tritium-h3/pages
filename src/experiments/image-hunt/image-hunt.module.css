@@ -29,6 +29,7 @@
   border: 1px solid #374151;
   background: #111827;
   color: #e5e7eb;
+  font-family: inherit;
   font-size: 1rem;
 }
 
@@ -38,6 +39,7 @@
   border: 1px solid #374151;
   background: #111827;
   color: #e5e7eb;
+  font-family: inherit;
   font-size: 1rem;
   cursor: pointer;
 }
@@ -53,6 +55,7 @@
   border-radius: 0.5rem;
   background: #6d28d9;
   color: white;
+  font-family: inherit;
   font-size: 1rem;
   cursor: pointer;
 }
@@ -150,6 +153,7 @@
   color: #e5e7eb;
   cursor: pointer;
   padding: 0.15rem 0.5rem;
+  font-family: inherit;
   font-size: 0.9rem;
   line-height: 1;
 }
@@ -171,6 +175,8 @@
   background: transparent;
   color: #e5e7eb;
   cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
 }
 
 .imageHuntSessions { list-style: none; margin: 0; padding: 0; }
@@ -232,6 +238,7 @@
   border: 1px solid #374151;
   background: #111827;
   color: #e5e7eb;
+  font-family: inherit;
   font-size: 0.85rem;
 }
 

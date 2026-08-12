@@ -50,4 +50,5 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
+  line-height: 1.5;
 }

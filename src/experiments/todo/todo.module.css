@@ -139,6 +139,7 @@
   border: 2px solid var(--border-strong);
   border-radius: 6px;
   cursor: pointer;
+  font-family: inherit;
   transition: border-color 120ms ease;
 }
 
@@ -182,6 +183,7 @@
   color: var(--text-faint);
   opacity: 0;
   cursor: pointer;
+  font-family: inherit;
   transition: opacity 120ms ease, color 120ms ease, background 120ms ease;
 }
 
