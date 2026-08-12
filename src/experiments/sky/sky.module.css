@@ -56,8 +56,11 @@
 .skyBandName { font-weight: 600; font-size: 0.95rem; }
 .skyBandCode { font-size: 0.7rem; opacity: 0.65; }
 
-/* Wrapper anchor: size to the image, no underline or inline-gap artefacts. */
-.skyFrameLink { display: inline-block; line-height: 0; width: min(500px, 100%); }
+/* Wrapper anchor: size to the image, no underline or inline-gap artefacts.
+   text-decoration: none is redundant while this wraps only an <img> (no
+   text to underline) but is explicit now that Tailwind's preflight (which
+   used to set a { text-decoration: inherit }) is gone. */
+.skyFrameLink { display: inline-block; line-height: 0; width: min(500px, 100%); text-decoration: none; }
 .skyFrame {
   width: 100%; border-radius: 10px; display: block;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
@@ -75,6 +78,11 @@
 .skyPageDark .skyBadge {
   background: rgba(0, 0, 0, 0.55);
 }
-.skyCredit a { color: inherit; text-decoration-color: currentColor; }
+/* text-decoration: none restores what Tailwind's preflight used to provide
+   via a { text-decoration: inherit } (inheriting "none" from the ambient
+   footer text) — without it these links pick up the browser's default
+   underline. text-decoration-color stays set for whenever these grow a
+   hover/focus state that re-enables the line. */
+.skyCredit a { color: inherit; text-decoration: none; text-decoration-color: currentColor; }
 .skyNote { font-style: italic; opacity: 0.75; }
-.skyMaplink { color: inherit; text-decoration-color: currentColor; font-size: 0.82rem; opacity: 0.9; }
+.skyMaplink { color: inherit; text-decoration: none; text-decoration-color: currentColor; font-size: 0.82rem; opacity: 0.9; }

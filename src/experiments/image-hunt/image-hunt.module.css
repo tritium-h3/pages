@@ -5,9 +5,15 @@
   color: #e5e7eb;
 }
 
+/* font-size/font-weight used to come for free from Tailwind's preflight
+   (headings forced to inherit size/weight from their surroundings). With
+   preflight gone, this bare <h1> would revert to the UA default (~2em,
+   bold) — restore the original inherited look explicitly. */
 .imageHunt h1 {
+  margin: 0 0 1.5rem;
+  font-size: inherit;
+  font-weight: inherit;
   text-align: center;
-  margin-bottom: 1.5rem;
 }
 
 .imageHuntControls {

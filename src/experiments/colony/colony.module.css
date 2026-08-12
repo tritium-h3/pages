@@ -7,8 +7,15 @@
   background: linear-gradient(135deg, #e8edf5 0%, #dce6f0 100%);
 }
 
+/* font-size/font-weight/margin here used to come for free from Tailwind's
+   preflight (headings forced to inherit size/weight; every element's margin
+   zeroed). With preflight gone, this bare <h1> would revert to the UA
+   default (~2em, bold, ~0.67em top/bottom margin) — restore the plain-text
+   look explicitly instead. */
 .colonyGame h1 {
-  margin-bottom: 10px;
+  margin: 0 0 10px;
+  font-size: inherit;
+  font-weight: inherit;
 }
 
 .colonyControls {
@@ -18,9 +25,13 @@
   align-items: flex-start;
 }
 
+/* Same story for these bare <h3> labels — restore preflight's inherited
+   size/weight and the zeroed margin (only margin-top was ever set here). */
 .colonyBuildPanel h3,
 .colonyInfoPanel h3 {
-  margin-top: 0;
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
 }
 
 .colonyBuildBtn {
@@ -61,6 +72,13 @@
   margin-top: 20px;
   font-size: 14px;
   color: #666;
+}
+
+/* Tailwind's preflight used to zero every element's margin, including these
+   bare <p> tags; without it they pick up the browser's ~1em default
+   top/bottom margin and the once-tight instruction list spreads out. */
+.colonyInstructions p {
+  margin: 0;
 }
 
 .colonyCanvas {

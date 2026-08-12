@@ -203,8 +203,8 @@
 
 /* h5/h6 are unlikely from the model but react-markdown will emit them for
    ##### / ###### — continue the h3/h4 hierarchy rather than leaving them to
-   the UA's 0.83em/0.67em auto-sizing (only masked right now by Tailwind's
-   preflight, which zeroes every heading's font-size/margin/weight). */
+   the UA's 0.83em/0.67em auto-sizing (Tailwind's preflight used to zero every
+   heading's font-size/margin/weight; now that it's gone, this is explicit). */
 .story h5,
 .story h6 {
   margin: var(--space-4) 0 var(--space-2);
@@ -232,9 +232,8 @@
   padding-left: var(--space-5);
 }
 
-/* Tailwind's preflight (still active until Task 21 removes Tailwind) sets
-   list-style: none globally; restore native markers explicitly so this
-   isn't silently dependent on that reset going away. */
+/* Tailwind's preflight used to set list-style: none globally; native markers
+   are restored explicitly here so this doesn't depend on that reset. */
 .story ul {
   list-style: disc;
 }
@@ -313,8 +312,12 @@
 
 /* Images are unlikely from this model (plain-text extract, no markdown image
    syntax in the prompt) but react-markdown will render one verbatim if the
-   model ever emits ![]() — keep it inside the card instead of overflowing. */
+   model ever emits ![]() — keep it inside the card instead of overflowing.
+   display: block is needed explicitly now that Tailwind's preflight (which
+   set img/svg/video/etc to display: block) is gone — without it, an <img>
+   is inline and picks up the classic few-pixel baseline gap beneath it. */
 .story img {
+  display: block;
   max-width: 100%;
   height: auto;
 }
