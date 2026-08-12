@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { ChromeMode } from '../manifest.js';
 import { Colophon } from './Colophon.js';
+import styles from './Shell.module.css';
 
 interface ShellProps {
   chrome: ChromeMode;
@@ -31,9 +32,9 @@ export function Shell({ chrome, experimentCount, onNavigate, children }: ShellPr
   }, [onNavigate]);
 
   return (
-    <>
-      {children}
+    <div className={styles.shell}>
+      <div className={styles.content}>{children}</div>
       {chrome === 'colophon' && <Colophon count={experimentCount} onNavigate={onNavigate} />}
-    </>
+    </div>
   );
 }

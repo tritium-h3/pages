@@ -2,7 +2,8 @@
 
 /* ── Page shell ────────────────────────────────────────────── */
 .app {
-  min-height: 100vh;
+  /* Grows into the shell's content column; the shell owns the viewport. */
+  flex: 1 0 auto;
   background: linear-gradient(to bottom right, #6366f1, #a855f7, #ec4899);
   display: flex;
   align-items: center;

@@ -1,0 +1,21 @@
+/* The shell owns the full-viewport ground, not the individual pages.
+   Four pages used to set `min-height: 100vh` themselves, which forced the page
+   block to fill the screen and left the colophon stranded below the fold —
+   reading as a band of bare background between the content and the footer. */
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* Takes the slack, so the colophon sits at the bottom of the viewport on a
+   short page instead of floating directly under the content. It is itself a
+   column so that a page carrying its own background (Weather, Sky, Colony) can
+   grow into the space rather than ending early and exposing the shell beneath —
+   which would reintroduce the same band this fix removes. */
+.content {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}

@@ -3,7 +3,8 @@
 .colonyGame {
   padding: 20px;
   font-family: Arial, sans-serif;
-  min-height: 100vh;
+  /* Grows into the shell's content column; the shell owns the viewport. */
+  flex: 1 0 auto;
   background: linear-gradient(135deg, #e8edf5 0%, #dce6f0 100%);
 }
 
