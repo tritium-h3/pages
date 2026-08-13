@@ -11,8 +11,34 @@
 .plate:hover { transform: translateY(-2px); border-color: var(--border-strong); }
 /* Artwork is authored at 1024x512. A ratio rather than a fixed height, so the
    art scales with the card instead of letterboxing at narrow widths. */
-.art { aspect-ratio: 2 / 1; }
-.caption { padding: var(--space-3); }
+.art {
+  aspect-ratio: 2 / 1;
+  position: relative;
+}
+
+/* Dissolves the bottom of the artwork into the card, so the image reads as
+   continuous with the caption rather than as a picture sitting above a label.
+   Ends in --surface exactly, which is the plate's own background, so there is
+   no seam. Applies to generated placeholders too, keeping un-arted cards
+   consistent with arted ones. */
+.art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Reaches full --surface before the art's bottom edge, so the strip the
+     caption overlaps is opaque card colour and the text stays legible whatever
+     the artwork does down there. */
+  background: linear-gradient(to bottom, transparent 34%, var(--surface) 88%);
+}
+
+/* Pulled up into the faded strip so the caption reads as part of the image
+   rather than a label beneath it. `position: relative` puts it above the
+   gradient's stacking context. */
+.caption {
+  position: relative;
+  margin-top: -44px;
+  padding: var(--space-3);
+}
 .title {
   display: block;
   font-size: var(--step-1);

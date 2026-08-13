@@ -8,4 +8,5 @@ export const manifest: ExperimentManifest = {
   route: '/sky',
   chrome: 'colophon',
   hasServer: true,
+  art: '/art/sky.webp'
 };
