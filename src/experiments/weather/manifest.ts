@@ -6,6 +6,7 @@ export const manifest: ExperimentManifest = {
   blurb: 'Forecast, plainly',
   section: 'tools',
   route: '/weather',
+  art: '/art/weather.webp',
   chrome: 'colophon',
   hasServer: false,
 };
