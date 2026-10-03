@@ -15,6 +15,8 @@ export interface OllamaGenerateRequest {
   prompt: string;
   stream?: boolean;
   keep_alive?: string;
+  /** reasoning models (qwen3, …): false skips the hidden thinking pass */
+  think?: boolean;
   images?: string[]; // base64-encoded images for vision models
   format?: 'json';   // constrain output to valid JSON
   options?: {
@@ -47,6 +49,8 @@ export interface OllamaChatRequest {
   messages: OllamaChatMessage[];
   stream?: boolean;
   keep_alive?: string;
+  /** reasoning models (qwen3, …): false skips the hidden thinking pass */
+  think?: boolean;
   options?: {
     temperature?: number;
     top_p?: number;

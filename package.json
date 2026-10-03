@@ -9,6 +9,7 @@
     "dev:restart": "systemctl --user restart pages",
     "build:sprites": "node ./scripts/build-sprites.mjs",
     "art": "node ./scripts/import-art.mjs",
+    "chess:pool": "tsx ./scripts/import-chess-pool.ts",
     "build": "npm run build:sprites && vite build && tsc --noEmit -p tsconfig.server.json",
     "start": "concurrently \"vite\" \"tsx watch ./src/server.ts\"",
     "lint": "eslint .",
@@ -18,6 +19,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.server.json"
   },
   "dependencies": {
+    "chess.js": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^17.3.1",
     "express": "^4.18.2",

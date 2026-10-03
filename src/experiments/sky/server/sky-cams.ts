@@ -53,11 +53,20 @@ export const SKY_CAMS: SkyCam[] = [
     lon: -71.1144,
     credit: 'CAMNET / Blue Hill Observatory',
     creditUrl: 'https://hazecam.net/camsite.aspx?site=bluehill',
-    // 500x250 frame; treeline sits at about y=185. Err high (excluding sky)
-    // rather than low (including trees) — dark trees drag a median far harder
-    // than a little missing sky does. (Not included: bluehill_right.jpg — weather
-    // instrument towers stab into its sky and it has a burned-in timestamp.)
-    skyMask: { top: 0, bottom: 175 },
+    // 500x250 frame. RE-AIMED 2026-09-20: the cam was tilted down and panned, so
+    // the old {0,175} mask (treeline then at y=185) now reads mostly treetops —
+    // it was returning a near-black horizon band under a pale overcast sky. The
+    // horizon now sits at y=135 (ragged, 135-139 left-to-right), and an antenna
+    // mast with dishes has come into frame at x=43-71, topping out at y~92 — i.e.
+    // straight through the horizon band, which is precisely where sunset glow
+    // shows first. So bottom:125 keeps the same ~10px margin above the treeline
+    // (err high, excluding sky, rather than low and dragging the median with dark
+    // trees), and left:80 crops the mast the way Höfn crops its weather mast.
+    // Losing x<80 costs 16% of the columns; including the mast would cost the
+    // horizon band. Right is left open — the rest of the frame is clean sky.
+    // (Not included: bluehill_right.jpg — weather instrument towers stab into its
+    // sky and it has a burned-in timestamp.)
+    skyMask: { top: 0, bottom: 125, left: 80 },
   },
   {
     id: 'zugspitze',
