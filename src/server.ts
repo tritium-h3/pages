@@ -14,6 +14,7 @@ import imageHuntSlice from './experiments/image-hunt/server/index.js';
 import llmDuoChatSlice from './experiments/llm-duo-chat/server/index.js';
 import spritesSlice from './experiments/sprites/server/index.js';
 import skySlice from './experiments/sky/server/index.js';
+import chessVoicesSlice from './experiments/chess-voices/server/index.js';
 
 const app: Express = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : PORTS.api;
@@ -60,6 +61,7 @@ mount('image-hunt', imageHuntSlice);
 mount('llm-duo-chat', llmDuoChatSlice);
 mount('sprites', spritesSlice);
 mount('sky', skySlice);
+mount('chess-voices', chessVoicesSlice);
 
 interface HttpError extends Error {
   status?: number;

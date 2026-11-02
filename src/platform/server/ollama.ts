@@ -13,6 +13,8 @@ export interface OllamaModel {
 export interface OllamaGenerateRequest {
   model: string;
   prompt: string;
+  /** overrides the model's default system prompt */
+  system?: string;
   stream?: boolean;
   keep_alive?: string;
   /** reasoning models (qwen3, …): false skips the hidden thinking pass */

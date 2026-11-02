@@ -9,6 +9,7 @@ import { manifest as imageHuntManifest } from './experiments/image-hunt/manifest
 import { manifest as llmDuoChatManifest } from './experiments/llm-duo-chat/manifest.js';
 import { manifest as spritesManifest } from './experiments/sprites/manifest.js';
 import { manifest as skyManifest } from './experiments/sky/manifest.js';
+import { manifest as chessVoicesManifest } from './experiments/chess-voices/manifest.js';
 import { manifest as colonyManifest } from './experiments/colony/manifest.js';
 
 export interface RegistryEntry extends ExperimentManifest {
@@ -25,6 +26,7 @@ export const REGISTRY: RegistryEntry[] = [
   { ...llmDuoChatManifest, load: () => import('./experiments/llm-duo-chat/page.js') },
   { ...spritesManifest, load: () => import('./experiments/sprites/page.js') },
   { ...skyManifest, load: () => import('./experiments/sky/page.js') },
+  { ...chessVoicesManifest, load: () => import('./experiments/chess-voices/page.js') },
   { ...colonyManifest, load: () => import('./experiments/colony/page.jsx') },
   {
     id: 'roguelike',
