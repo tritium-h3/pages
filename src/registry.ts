@@ -11,6 +11,7 @@ import { manifest as spritesManifest } from './experiments/sprites/manifest.js';
 import { manifest as skyManifest } from './experiments/sky/manifest.js';
 import { manifest as chessVoicesManifest } from './experiments/chess-voices/manifest.js';
 import { manifest as colonyManifest } from './experiments/colony/manifest.js';
+import { manifest as newTimeManifest } from './experiments/new-time/manifest.js';
 
 export interface RegistryEntry extends ExperimentManifest {
   /** absent for external entries, which are links rather than routes */
@@ -28,6 +29,7 @@ export const REGISTRY: RegistryEntry[] = [
   { ...skyManifest, load: () => import('./experiments/sky/page.js') },
   { ...chessVoicesManifest, load: () => import('./experiments/chess-voices/page.js') },
   { ...colonyManifest, load: () => import('./experiments/colony/page.jsx') },
+  { ...newTimeManifest, load: () => import('./experiments/new-time/page.js') },
   {
     id: 'roguelike',
     title: 'Roguelike',
