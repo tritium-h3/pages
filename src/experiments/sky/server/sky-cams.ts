@@ -184,6 +184,29 @@ export const SKY_CAMS: SkyCam[] = [
     // above the mountains and left of the mast.
     skyMask: { top: 28, bottom: 228, left: 0, right: 540 },
   },
+  {
+    id: 'casey',
+    name: 'Casey Research Station',
+    location: 'Casey Station, Antarctica',
+    // Australian Antarctic Division station cam on the Bailey Peninsula, Wilkes
+    // Land. The listing page only links timestamped frames
+    // (webcams/casey/YYYY/MM/DD/C<yymmddhhmm>s.jpg), but the image host also
+    // serves a stable `latest.jpg` alias with a real Last-Modified, updated every
+    // few minutes — so this is a plain static cam, no latestFromPage needed.
+    // At 66°S it swings between near-midnight-sun around December and long
+    // polar-night darkness mid-year.
+    url: 'https://images.antarctica.gov.au/webcams/casey/latest.jpg',
+    lat: -66.2823,
+    lon: 110.5278,
+    credit: 'Australian Antarctic Division',
+    creditUrl: 'https://www.antarctica.gov.au/antarctic-operations/webcams/casey/',
+    // 704x564 frame. A purple caption bar fills the top to y~18 (and a timestamp
+    // bar the bottom). The red main building's roofline and rooftop plant reach up
+    // to ~y195, and a thin antenna mast at x~428 tops out at ~y183; the far hills
+    // on the right sit at ~y205. top:22/bottom:178 keeps the whole width in open
+    // sky above all of it.
+    skyMask: { top: 22, bottom: 178 },
+  },
 ];
 
 export const getCam = (id: string): SkyCam | undefined =>

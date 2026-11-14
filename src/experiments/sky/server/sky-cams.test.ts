@@ -37,6 +37,7 @@ describe('nearestCam', () => {
     expect(nearestCam(42.36, -71.06).id).toBe('bluehill-1'); // Boston, US
     expect(nearestCam(48.14, 11.58).id).toBe('zugspitze');   // Munich, near the Alps
     expect(nearestCam(-43.53, 172.63).id).toBe('tekapo');    // Christchurch, NZ
+    expect(nearestCam(-77.85, 166.67).id).toBe('casey');     // McMurdo, Antarctica
     expect(SKY_CAMS.length).toBeGreaterThanOrEqual(3);
   });
 });
